@@ -1,0 +1,12 @@
+{
+  "name": "Universal-Library",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+      "hapi" : "1.20.x",
+      "neo4j": "0.2.20",
+      "request": "2.27.0",
+      "passport": "0.1.17",
+      "karma" : "0.10.x"
+  }
+}
