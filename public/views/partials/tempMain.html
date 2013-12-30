@@ -1,3 +1,20 @@
-<div>
-	Temp main says: {{hello}}
+<div ng-controller="TabsDemoCtrl">
+
+  <tabset>
+    <tab heading="Scale of the Universe">Static content</tab>
+    <tab heading="Content Type" active="tab.active">
+      {{tab.content}}
+    </tab>
+    <tab heading="The Humanities">
+      {{tab.content}}
+    </tab>
+    <tab heading="Tool Terms">
+      {{tab.content}}
+    </tab>
+  </tabset>
+
+  <hr />
+  <div ng-controller="NewTermModalCtrl" class="">         
+    <button class='btn btn-large' ng-click="open()">Add New Term</button>
+  </div>
 </div>

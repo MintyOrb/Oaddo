@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
       "hapi" : "1.20.x",
+      "yar" : "0.4.1",
+      "travelogue" : "0.4.3",
+      "joi" : "2.1.0",
       "neo4j": "0.2.20",
       "request": "2.27.0",
       "passport": "0.1.17",
