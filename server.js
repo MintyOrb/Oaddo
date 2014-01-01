@@ -1,6 +1,9 @@
 'use strict';
 
-var Hapi = require('hapi');
+var Hapi = require('hapi'),
+	LocalStrategy = require('passport-local').Strategy,
+    handlers = require("./handlers");
+
 
 //server config
 var config = {
@@ -10,25 +13,21 @@ var config = {
         failureRedirect: '/login',
         successRedirect: '/'
     },
-    facebook: {
-        clientID: "...",
-        clientSecret: "...",
-        callbackURL: "http://localhost:8000/auth/facebook/callback"
-    }
+    excludePaths: ['/public/']
 };
 
 //hapi plugins
 var plugins = {
     yar: {
         cookieOptions: {
-            password: 'worldofwalmart', // cookie secret
+            password: 'WOWOWOWSOSECRET', // cookie secret
             isSecure: false // required for non-https applications
         }
     },
     travelogue: config
 };
 
-
+//init server
 var server = new Hapi.Server(config.hostname, config.port);
 server.pack.allow({ ext: true }).require(plugins, function (err) { 
 
@@ -37,12 +36,10 @@ server.pack.allow({ ext: true }).require(plugins, function (err) {
     }
 });
 
+//setup auth
 var Passport = server.plugins.travelogue.passport;
 
-// Follow normal Passport rules to add Strategies
-Passport.use(facebook);
-Passport.serializeUser(ser);
-Passport.deserializeUser(deser);
+Passport.use(new LocalStrategy(function (username, password, done) {handlers.findUser}));
 
 
 

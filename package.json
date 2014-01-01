@@ -5,11 +5,14 @@
   "dependencies": {
       "hapi" : "1.20.x",
       "yar" : "0.4.1",
-      "travelogue" : "0.4.3",
       "joi" : "2.1.0",
+      "travelogue" : "0.4.3",
+      "passport": "0.1.17",
+      "passport-local" : "0.1.x",
       "neo4j": "0.2.20",
       "request": "2.27.0",
-      "passport": "0.1.17",
-      "karma" : "0.10.x"
+      "karma" : "0.10.x",
+      "bcrypt" : "0.7.7",
+      "node-gyp" : "0.12.2"
   }
 }
