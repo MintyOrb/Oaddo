@@ -53,9 +53,13 @@ server.route([
     { method: 'GET', path: '/js/{path*}', handler: { directory: { path: './public/js' } } },
 
     //serve index as entry point into angular app
-    { method: 'GET', path: '/{path*}', handler: {file: './public/views/index.html'} }
+    { method: 'GET', path: '/{path*}', handler: {file: './public/views/index.html'} },
 
     //api routes
+    { method: 'GET', path: '/user/{id}', handler: handlers.findUser },
+    { method: 'POST', path: '/user', handler: handlers.addAccount },
+
+    { method: 'GET', path: '/login', handler: handlers.login }
 
 ]);     
 
