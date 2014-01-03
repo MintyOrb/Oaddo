@@ -38,10 +38,19 @@ server.pack.allow({ ext: true }).require(plugins, function (err) {
 
 //setup auth
 var Passport = server.plugins.travelogue.passport;
+Passport.use(new LocalStrategy( handlers.authUser ) );
 
-Passport.use(new LocalStrategy(function (username, password, done) {handlers.findUser}));
+    //for sessions
+Passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
 
-
+Passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+// The serialization and deserialization logic is supplied by the application, allowing the application to choose an appropriate database and/or object mapper, without imposition by the authentication layer.
 
 // routes
 server.route([        
@@ -56,10 +65,39 @@ server.route([
     { method: 'GET', path: '/{path*}', handler: {file: './public/views/index.html'} },
 
     //api routes
-    { method: 'GET', path: '/user/{id}', handler: handlers.findUser },
+    { method: 'GET', path: '/user/{id}', handler: handlers.authUser },
     { method: 'POST', path: '/user', handler: handlers.addAccount },
 
-    { method: 'GET', path: '/login', handler: handlers.login }
+    { method: 'POST', path: '/login', config: {
+            handler: function (request) {
+
+                console.log("/login handler here.");
+    
+                Passport.authenticate('local')(request, function (err) {
+
+                    console.log("request after authentication");
+    
+                    if (err && err.isBoom) {
+                        console.log("error and error is boom...");
+                        // This would be a good place to flash error message
+                    }
+                    //send what is missing to user (if incorrect)?
+                    return request.reply();
+                });
+            }
+        }
+    }
+//     server.addRoute({
+//     method: 'GET',
+//     path: '/home',
+//     config: { auth: 'passport' },
+//     handler: function (request) {
+
+//         // If logged in already, redirect to /home
+//         // else to /login
+//         request.reply("ACCESS GRANTED");
+//     }
+// });
 
 ]);     
 
