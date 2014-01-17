@@ -2,18 +2,16 @@
 
 var Hapi = require('hapi'),
 	LocalStrategy = require('passport-local').Strategy,
-    handlers = require("./handlers");
-
+    handlers = require("./handlers"),
+    //for deserialization... TODO reorganize
+    neo4j = require('neo4j'),
+    db = new neo4j.GraphDatabase('http://localhost:7474');
 
 //server config
 var config = {
     hostname: 'localhost',
     port: 8000,
-    urls: {
-        failureRedirect: '/login',
-        successRedirect: '/'
-    },
-    excludePaths: ['/public/']
+    apiMode: true
 };
 
 //hapi plugins
@@ -42,20 +40,37 @@ Passport.use(new LocalStrategy( handlers.authUser ) );
 
     //for sessions
 Passport.serializeUser(function(user, done) {
-  done(null, user.id);
+    console.log("serial user: " + JSON.stringify(user));
+
+    done(null, user);
 });
 
-Passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
-    done(err, user);
-  });
+Passport.deserializeUser(function (obj, done) {
+    console.log("deserializeUser here...")
+    done(null, obj);
+
+    // function(id, done) {
+    // console.log("deserial id: " + id);
+    // console.log("deserial done: " + done);
+
+
+    // var properties = { username: id };
+    // var query = 'MATCH (memberNode:member {name: {username} }) RETURN memberNode.name AS name';    
+    // db.query(query, properties, function (err, userInfo) {
+    //     if (err) {console.log("error in db query: " + err)};
+    //     if(userInfo[0] === undefined){
+    //         console.log("name not found...oops...");
+    //     } else {
+    //         console.log(userInfo);
+    //         done(err, userInfo)
+    //     }
+    // });
 });
-// The serialization and deserialization logic is supplied by the application, allowing the application to choose an appropriate database and/or object mapper, without imposition by the authentication layer.
 
 // routes
 server.route([        
 
-	//utility routes
+	//resource routes
     { method: 'GET', path: '/partials/{path*}', handler: { directory: { path: './public/views/partials' } } }, 
     { method: 'GET', path: '/css/{path*}', handler: { directory: { path: './public/css' } } },
     { method: 'GET', path: '/img/{path*}', handler: { directory: { path: './public/images' } } },
@@ -65,24 +80,33 @@ server.route([
     { method: 'GET', path: '/{path*}', handler: {file: './public/views/index.html'} },
 
     //api routes
-    { method: 'GET', path: '/user/{id}', handler: handlers.authUser },
+    // { method: 'GET', path: '/user/{id}', handler: handlers.authUser },
     { method: 'POST', path: '/user', handler: handlers.addAccount },
 
+    { method: 'GET', path: '/loggedin', handler: handlers.loggedin},
+
+    { method: 'POST', path: '/logout', handler: handlers.logout},
+
+    { method: 'GET', path: '/test', config: {auth: 'passport'}, handler: function(request, reply){
+        console.log("user must be logged on for you to see this...");
+        reply();
+    }},
+
     { method: 'POST', path: '/login', config: {
-            handler: function (request) {
+            handler: function (request, reply) {
 
                 console.log("/login handler here.");
     
                 Passport.authenticate('local')(request, function (err) {
 
-                    console.log("request after authentication");
+                    console.log("successful authentication?");
     
                     if (err && err.isBoom) {
                         console.log("error and error is boom...");
                         // This would be a good place to flash error message
                     }
                     //send what is missing to user (if incorrect)?
-                    return request.reply();
+                    reply({message: "logged in"});
                 });
             }
         }

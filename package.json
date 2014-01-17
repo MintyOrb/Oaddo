@@ -6,7 +6,7 @@
       "hapi" : "1.20.x",
       "yar" : "0.4.1",
       "joi" : "2.1.0",
-      "travelogue" : "0.4.3",
+      "travelogue" : "0.4.4",
       "passport": "0.1.17",
       "passport-local" : "0.1.x",
       "neo4j": "0.2.20",
