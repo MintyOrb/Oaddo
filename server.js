@@ -1,17 +1,14 @@
 'use strict';
 
+//import dependencies
 var Hapi = require('hapi'),
 	LocalStrategy = require('passport-local').Strategy,
-    handlers = require("./handlers"),
-    //for deserialization... TODO reorganize
-    neo4j = require('neo4j'),
-    db = new neo4j.GraphDatabase('http://localhost:7474');
+    handlers = require("./handlers");
 
 //server config
 var config = {
     hostname: 'localhost',
-    port: 8000,
-    apiMode: true
+    port: 8000
 };
 
 //hapi plugins
@@ -41,30 +38,12 @@ Passport.use(new LocalStrategy( handlers.authUser ) );
     //for sessions
 Passport.serializeUser(function(user, done) {
     console.log("serial user: " + JSON.stringify(user));
-
     done(null, user);
 });
 
 Passport.deserializeUser(function (obj, done) {
-    console.log("deserializeUser here...")
+    console.log("deserialize User here...")
     done(null, obj);
-
-    // function(id, done) {
-    // console.log("deserial id: " + id);
-    // console.log("deserial done: " + done);
-
-
-    // var properties = { username: id };
-    // var query = 'MATCH (memberNode:member {name: {username} }) RETURN memberNode.name AS name';    
-    // db.query(query, properties, function (err, userInfo) {
-    //     if (err) {console.log("error in db query: " + err)};
-    //     if(userInfo[0] === undefined){
-    //         console.log("name not found...oops...");
-    //     } else {
-    //         console.log(userInfo);
-    //         done(err, userInfo)
-    //     }
-    // });
 });
 
 // routes
@@ -87,15 +66,20 @@ server.route([
 
     { method: 'POST', path: '/logout', handler: handlers.logout},
 
-    { method: 'GET', path: '/test', config: {auth: 'passport'}, handler: function(request, reply){
+    { method: 'GET', path: '/test', config: {auth: 'passport'} , handler: function(request, reply){
         console.log("user must be logged on for you to see this...");
-        reply();
+        reply({message: 'Oh, hey! You must be logged in.'});
+    }},
+    //GET /login is a temporary work around...passport auth failure redirects here automatically.
+    { method: 'GET', path: '/login', handler: function(request, reply){
+        console.log("get login here. about to reply with a 401...");
+        reply().code(401);
     }},
 
     { method: 'POST', path: '/login', config: {
             handler: function (request, reply) {
 
-                console.log("/login handler here.");
+                console.log("POST /login handler here.");
     
                 Passport.authenticate('local')(request, function (err) {
 
@@ -111,17 +95,6 @@ server.route([
             }
         }
     }
-//     server.addRoute({
-//     method: 'GET',
-//     path: '/home',
-//     config: { auth: 'passport' },
-//     handler: function (request) {
-
-//         // If logged in already, redirect to /home
-//         // else to /login
-//         request.reply("ACCESS GRANTED");
-//     }
-// });
 
 ]);     
 
