@@ -1,0 +1,76 @@
+
+    <div class="modal-header">
+        <h3>Identify Term</h3>  
+    </div>
+    <div class="modal-body">
+
+        <form>
+            <label> Term:
+                <input type="text" required ng-pattern="" ng-minlength="3" ng-maxlength="40" ng-model="newTerm.termName">
+            </label>
+            <span>What is this term (check all that apply)?</span>
+                <ul>
+                    <li>
+                        <label> Person
+                            <input type="checkbox" ng-model="newTerm.person">
+                        </label>
+                    </li>
+                
+               
+                    <li>
+                        <label> Place
+                            <input type="checkbox" ng-model="newTerm.place">
+                        </label>
+                    </li>
+          
+               
+                    <li>
+                        <label> Group/Organization
+                            <input type="checkbox" ng-model="newTerm.group">
+                        </label>
+                    </li>
+                
+               
+                    <li>
+                        <label> Idea/Concept
+                            <input type="checkbox" ng-model="newTerm.idea">
+                        </label>
+                    </li>
+                
+               
+                    <li>
+                        <label> Descriptor
+                            <input type="checkbox" ng-model="newTerm.descriptor">
+                        </label>
+                    </li>
+                
+               
+                    <li>
+                        <label> Physical Object
+                            <input type="checkbox" ng-model="newTerm.object">
+                        </label>
+                    </li>
+                
+               
+                    <li>
+                        <label> Jargon
+                            <input type="checkbox" ng-model="newTerm.jargon">
+                        </label>
+                    </li>
+                
+               
+                    <li>
+                        <label> Field of Study
+                            <input type="checkbox" ng-model="newTerm.study">
+                        </label>
+                    </li>
+                </ul>
+            <label> Enter a one sentence definition of this term for the definition competition (optional):
+                <input type="text" ng-model="newTerm.termDef">
+            </label>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
