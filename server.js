@@ -1,5 +1,6 @@
+/*global console, require */
+/*jslint node: true */
 'use strict';
-
 //import dependencies
 var Hapi = require('hapi'),
 	LocalStrategy = require('passport-local').Strategy,
@@ -42,7 +43,7 @@ Passport.serializeUser(function(user, done) {
 });
 
 Passport.deserializeUser(function (obj, done) {
-    console.log("deserialize User here...")
+    console.log("deserialize User here...");
     done(null, obj);
 });
 
@@ -58,24 +59,7 @@ server.route([
     //serve index as entry point into angular app
     { method: 'GET', path: '/{path*}', handler: {file: './public/views/index.html'} },
 
-    //api routes
-    // { method: 'GET', path: '/user/{id}', handler: handlers.authUser },
-    { method: 'POST', path: '/user', handler: handlers.addAccount },
-
-    { method: 'GET', path: '/loggedin', handler: handlers.loggedin},
-
-    { method: 'POST', path: '/logout', handler: handlers.logout},
-
-    { method: 'GET', path: '/test', config: {auth: 'passport'} , handler: function(request, reply){
-        console.log("user must be logged on for you to see this...");
-        reply({message: 'Oh, hey! You must be logged in.'});
-    }},
-    //GET /login is a temporary work around...passport auth failure redirects here automatically.
-    { method: 'GET', path: '/login', handler: function(request, reply){
-        console.log("get login here. about to reply with a 401...");
-        reply().code(401);
-    }},
-
+    //auth routes
     { method: 'POST', path: '/login', config: {
             handler: function (request, reply) {
 
@@ -94,7 +78,31 @@ server.route([
                 });
             }
         }
-    }
+    },
+
+    //GET /login is a temporary work around...passport auth failure redirects here automatically.
+    { method: 'GET', path: '/login', handler: function(request, reply){
+        console.log("get login here. about to reply with a 401...");
+        reply().code(401);
+    }},
+
+
+    //api routes
+    // { method: 'GET', path: '/user/{id}', handler: handlers.authUser },
+    { method: 'POST', path: '/user', handler: handlers.addAccount },
+
+    { method: 'GET', path: '/loggedin', handler: handlers.loggedin},
+
+    { method: 'POST', path: '/logout', handler: handlers.logout},
+
+    { method: 'GET', path: '/test', config: {auth: 'passport'} , handler: function(request, reply){
+        console.log("user must be logged on for you to see this...");
+        reply({message: 'Oh, hey! You must be logged in.'});
+    }},
+
+    { method: 'POST', path: '/term', config: {auth: 'passport'}, handler: handlers.addTerm},
+
+    { method: 'GET', path: '/explore/term', config: {auth: 'passport'}, handler: handlers.relatedTerms}
 
 ]);     
 

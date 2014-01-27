@@ -13,10 +13,10 @@ var universalLibrary = angular.module('universalLibrary',
     ]).
     config(function($routeProvider, $locationProvider, $httpProvider) {
 
-    
+    //do this in cookies instead?
     var checkLoggedin = function ($q, $timeout, $http, $location, $window, LoginService) {
         
-        console.log("check logged in function here.")
+        console.log("check logged in function here.");
 
         // Initialize a new promise 
         var deferred = $q.defer();
@@ -25,23 +25,22 @@ var universalLibrary = angular.module('universalLibrary',
         $http.get('/loggedin').success(function(response){
             // Authenticated
             if (response.message === true){
-                console.log("user is logged in...")
-                deferred.resolve
+                console.log("user is logged in...");
+                deferred.resolve();
             // Not Authenticated
             } else {
-                console.log('user needs to login...')
-                
+                console.log('user needs to login...');
                 $window.history.back();
                 console.log("location: " + $location.path());
                 deferred.reject();
-    
+
                 LoginService.open();
     
             }
         });
 
         return deferred.promise;
-    }
+    };
 
     $routeProvider
     .when('/home', {templateUrl: 'partials/tempMain.html', controller: 'tempMainCtrl'})
@@ -67,7 +66,7 @@ controller('LoginModalCtrl', function ($scope, LoginService) {
     
 }).
     
-controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, LoginService) {
+controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, LoginService, authService) {
     console.log("instance ctrl here");
     $scope.message = "test";
     $scope.newUser = {};
@@ -114,6 +113,8 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
     //when modal closes make sure to note it in LoginService
     $modalInstance.result.then(function () {
         console.log('Modal success at:' + new Date());
+        authService.loginConfirmed();
+        console.log('Login Confirmed: ' + new Date());
         LoginService.modalIsOpen = false;
     }, function () {
         console.log('Modal dismissed at: ' + new Date());
@@ -130,25 +131,25 @@ controller('buttonCtrl', function($scope, API, $location) {
         logout.$save(function(data){
             console.log(data);
         });
-    }
+    };
     $scope.loggedin = function(){
         var loggedin = new API.LoggedIn;
         loggedin.$get(function(response){
             console.log(response);
-        })
-    }
+        });
+    };
 
     $scope.test = function(){
         var test = new API.test;
         test.$get(function(response){
             console.log(response);
-        })
-    }
+        });
+    };
 
     $scope.navigateToAddContent = function(){
-        console.log("lets add new content")
-        $location.path('/content/new')
-    }
+        console.log("lets add new content");
+        $location.path('/content/new');
+    };
     
 }).
 
@@ -183,5 +184,5 @@ factory('LoginService', function ($modal) {
             }
         }
     };
-})
+});
 
