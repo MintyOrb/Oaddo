@@ -1,3 +1,4 @@
+/*global console, angular */
 'use strict';
 
 var universalLibrary = angular.module('universalLibrary', 
@@ -9,6 +10,7 @@ var universalLibrary = angular.module('universalLibrary',
         'universalLibrary.controllers',
         'adding_content',
         'http-auth-interceptor',
+        'language_universality',
         'textAngular'
     ]).
     config(function($routeProvider, $locationProvider, $httpProvider) {
@@ -61,7 +63,7 @@ run(function ($rootScope, LoginService) {
 
 controller('LoginModalCtrl', function ($scope, LoginService) {
 
-    console.log("loginModalCtrl here.")
+    console.log("loginModalCtrl here.");
     $scope.Login = LoginService;
     
 }).
@@ -124,23 +126,23 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
 
 }).
 
-controller('buttonCtrl', function($scope, API, $location) {
+controller('buttonCtrl', function($scope, API, $location, $http) {
     
     $scope.logout = function (){
-        var logout = new API.Logout;
+        var logout = new API.Logout();
         logout.$save(function(data){
             console.log(data);
         });
     };
     $scope.loggedin = function(){
-        var loggedin = new API.LoggedIn;
+        var loggedin = new API.LoggedIn();
         loggedin.$get(function(response){
             console.log(response);
         });
     };
 
     $scope.test = function(){
-        var test = new API.test;
+        var test = new API.test();
         test.$get(function(response){
             console.log(response);
         });
@@ -149,6 +151,12 @@ controller('buttonCtrl', function($scope, API, $location) {
     $scope.navigateToAddContent = function(){
         console.log("lets add new content");
         $location.path('/content/new');
+    };
+
+    $scope.addTerm = function(){
+        console.log("lets add a new term");
+        $http.post("/term");
+        
     };
     
 }).

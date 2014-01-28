@@ -1,6 +1,6 @@
-/*global console, require */
 /*jslint node: true */
 'use strict';
+
 //import dependencies
 var Hapi = require('hapi'),
 	LocalStrategy = require('passport-local').Strategy,
@@ -73,7 +73,6 @@ server.route([
                         console.log("error and error is boom...");
                         // This would be a good place to flash error message
                     }
-                    //send what is missing to user (if incorrect)?
                     reply({message: "logged in"});
                 });
             }
