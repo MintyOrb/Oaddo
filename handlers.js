@@ -5,15 +5,17 @@ var bcrypt = require('bcrypt'),
     db = new neo4j.GraphDatabase('http://localhost:7474'),
     Passport = require('Passport'),
     freebase = require('freebase'),
-    async = require('async');
+    async = require('async'),
+    uuid = require('node-uuid');
 
 
 //auth and sessions
 
 exports.authUser = function (username, password, done) {
+
     console.log("authUser function here.");
     var properties = { username: username };
-    var query = 'MATCH (memberNode:member {name: {username} }) RETURN memberNode.passwordHash AS pass, memberNode.name AS name';
+    var query = 'MATCH (memberNode:member {name: {username} }) RETURN memberNode.passwordHash AS pass, memberNode.UUID AS id';
 
     db.query(query, properties, function (err, userInfo) {
         if (err) {console.log("error in db query: " + err);}
@@ -37,6 +39,7 @@ exports.authUser = function (username, password, done) {
 };
 
 exports.logout = function (request, reply) {
+
     console.log('logout here');
     request.session._logOut();
     console.log('logged out');
@@ -44,6 +47,7 @@ exports.logout = function (request, reply) {
 };
 
 exports.loggedin = function (request, reply) {
+
     console.log('checking if logged in...');
     console.log(request.session._isAuthenticated());
     reply({message: request.session._isAuthenticated()});
@@ -53,63 +57,105 @@ exports.loggedin = function (request, reply) {
 
 exports.addAccount = function (request, reply) {
 
-    //TODO check if username already exists
-
     var properties = {props: {} };
-    properties.props.name = request.payload.data.name;
+    properties.props.primaryEmail = request.payload.data.name;
     properties.props.dateJoined = new Date();
-    var query = 'CREATE (memberNode:member:temp { props } )';
+    properties.props.UUID = uuid.v4();
+    var createQuery = 'CREATE (memberNode:member:temp { props } )';
+    
+    var email = {email: request.payload.data.name};
+    var checkQuery = 'MATCH (memberNode:member:temp { primaryEmail: {email} } ) RETURN memberNode.primaryEmail as email';
 
-    //create hash from supplied password
-    bcrypt.genSalt(10, function(err, salt) {
-        bcrypt.hash(request.payload.data.password, salt, function(err, hash) {
-            properties.props.passwordHash = hash;
-            
-            // create and store new member node and store info in DB
-            db.query(query, properties, function (err, results) {
+
+    async.series([
+
+        //check if email already exists
+        function(callback){
+            db.query(checkQuery, email, function (err, results) {
+                if (err) {console.log("error: " + err);}
+                if (results === undefined){
+                    console.log("empty");
+                    callback();
+                } else{
+                    reply({message: "Email address already registered."});
+                    callback(true);
+                }
+            });
+        },
+
+        //create hash from supplied password
+        function(callback){
+            bcrypt.genSalt(10, function(err, salt) {
+                bcrypt.hash(request.payload.data.password, salt, function(err, hash) {
+                    properties.props.passwordHash = hash;
+                    callback();
+                });
+            });
+        },
+
+        //create and store new member node in DB
+        function(callback){
+            db.query(createQuery, properties, function (err, results) {
                 if (err) {throw err;}
                 //perform login here?
                 //ensure they follow through to desired page...?
                 //navigate to introduction page?
                 reply({message: "SUCCESS"});
+                callback();
             });
-        });
-    });  
+        }
+    ]);
+   
 };
 
 //other
 
 exports.addTerm = function (request, reply) {
 
-
-    // freebase.sentence("Humanities", {type:"/common/topic"}, function(result){
-    //     console.log("result: " + result);
-    // });
-    var MID = "/m/01_0z4";
+    
+    console.log("req.payload: " + JSON.stringify(request.payload));
+    console.log("req.session: " + JSON.stringify(request.session));
+    console.log("req.user: " + JSON.stringify(request.user));
     
     var freebasQuery={
-          "mid": MID,
+          "mid": request.payload.mid,
           "type": "/common/topic",
           "name": [{}]
         };
 
-    var properties = {
+    var createProperties = {
             "coreProps" : {
-                "MID": MID,
+                "MID": request.payload.mid,
                 "dateAdded": new Date(),
-                "addedBy" : "someones UUID",
-                // "languageAddedIn" : request.session.user.lang,
+                "addedBy" : request.user.id,
+                "UUID": uuid.v4()
+                // "languageAddedIn" : passed from directive?,
             },
             "metaProps" : []
         };
-
-    var query = "CREATE (newTerm:term:test {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_META {languageCode: props.languageCode}]->(:termMeta:test {name: props.name, dateAdded: props.dateAdded})) WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
-
+    var createQuery = "CREATE (newTerm:term:test {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_META {languageCode: props.languageCode}]->(:termMeta:test {name: props.name, dateAdded: props.dateAdded})) WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
+    
+    var checkProperites = {mid: request.payload.mid};
+    var checkQuery = "MATCH (node:term {MID: {mid} }) RETURN node.UUID";
+    
     async.series([
         
-        //check if term is already in database (search by MID?)
-            //TODO
-            //callback(true); to stop series execution
+        //check if term is already in database (search by MID)
+        function(callback){
+            db.query(checkQuery, checkProperites, function (err, results) {
+                if (err) {console.log("error performing db query: " + err);}
+                if (results[0] === undefined){
+                    console.log("not in DB");
+                    callback();
+                } else{
+                    console.log("term already in  db");
+                    console.log("results: " + JSON.stringify(results));
+
+                    reply({newTerm: false, UUID: results[0]});
+                    callback(true);
+                }
+            });
+        },
 
         //MQL query for termMeta, build meta from results
         function(callback){
@@ -119,29 +165,25 @@ exports.addTerm = function (request, reply) {
                     console.log("word: " + result.result.name[ii].value);
         
                     var metaProp = {
-                        languageCode: result.result.name[ii].lang.substr(6,result.result.name[ii].lang.length),
+                        languageCode: result.result.name[ii].lang.substr(6,result.result.name[ii].lang.length), //get rid of "/lang/"
                         name: result.result.name[ii].value,
                         dateAdded: new Date()
                     };
         
-                    properties.metaProps.push(metaProp);
+                    createProperties.metaProps.push(metaProp);
                 }
-        
-                console.log(properties);
-    
+                console.log(createProperties);
                 console.log("done with freebase");
                 callback();   
-    
-        
             });
         },
         
         //add term AND respective term meta in all avaialble languages on freebase
         function(callback){
-            db.query(query, properties, function (err, results) {
+            db.query(createQuery, createProperties, function (err, results) {
                 if (err) {console.log("error: " + err);}
                 console.log("results: " + results);
-                reply({message: "SUCCESS"});
+                reply({newTerm: true, UUID: results});
                 console.log("done with noe4j");
                 callback();
             });
@@ -160,8 +202,7 @@ exports.relatedTerms = function (request, reply) {
 
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
-        //perform login here?
-        //ensure they follow through to desired page...
+        
         reply({message: "SUCCESS"});
     });
 };

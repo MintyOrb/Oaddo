@@ -39,7 +39,7 @@ Passport.use(new LocalStrategy( handlers.authUser ) );
     //for sessions
 Passport.serializeUser(function(user, done) {
     console.log("serial user: " + JSON.stringify(user));
-    done(null, user);
+    done(null, user.id);
 });
 
 Passport.deserializeUser(function (obj, done) {

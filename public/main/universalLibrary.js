@@ -1,4 +1,4 @@
-/*global console, angular */
+/*global console, angular, setTimeout, alert */
 'use strict';
 
 var universalLibrary = angular.module('universalLibrary', 
@@ -8,14 +8,14 @@ var universalLibrary = angular.module('universalLibrary',
         'ngSanitize',
         'ngResource',
         'adding_content',
-        'http-auth-interceptor',
+        'loginAndSessions',
         'language_universality',
+        'http-auth-interceptor',
         'textAngular'
     ]).
     config(function($routeProvider, $locationProvider, $httpProvider) {
 
-    //do this in cookies instead?
-    var checkLoggedin = function ($q, $timeout, $http, $location, $window, LoginService) {
+        var checkLoggedin = function ($q, $timeout, $http, $location, $window, LoginService) {
         
         console.log("check logged in function here.");
 
@@ -43,6 +43,8 @@ var universalLibrary = angular.module('universalLibrary',
         return deferred.promise;
     };
 
+    
+
     $routeProvider
     .when('/home', {templateUrl: 'partials/main/tempMain.html', controller: 'tempMainCtrl'})
     .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/main/test.html'})
@@ -60,70 +62,6 @@ run(function ($rootScope, LoginService) {
     
 }).
 
-controller('LoginModalCtrl', function ($scope, LoginService) {
-
-    console.log("loginModalCtrl here.");
-    $scope.Login = LoginService;
-    
-}).
-    
-controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, LoginService, authService) {
-    console.log("instance ctrl here");
-    $scope.message = "test";
-    $scope.newUser = {};
-    
-    $scope.create = function () {
-        var user = new API.User();
-        user.data = $scope.newUser;
-        console.log(user);
-        user.$save();
-        $modalInstance.close();
-    };
-
-    $scope.login = function (username, password) {
-        console.log("username: " +  username);
-        var login = new API.Login();
-        console.log("password: " +  password);
-        login.$save({ 'username': username, 'password': password }, 
-            function (data) { // success callback
-                console.log("success here");
-                console.log(data);
-                $modalInstance.close();
-                LoginService.modalIsOpen = false;
-
-            // do what you want with values returned from successful request, contained in 'data'
-            },
-            function (error) {
-                console.log("error here");
-                console.log(error); // Error details
-                $scope.message = error.data.message;
-            }
-        );
-        //$modalInstance.close();
-
-    };
-    
-    $scope.cancel = function () {
-        $scope.newUser = {};
-        $scope.username = "";
-        $scope.password = "";
-        $modalInstance.dismiss('cancel');
-        LoginService.modalIsOpen = false;
-    };
-
-    //when modal closes make sure to note it in LoginService
-    $modalInstance.result.then(function () {
-        console.log('Modal success at:' + new Date());
-        authService.loginConfirmed();
-        console.log('Login Confirmed: ' + new Date());
-        LoginService.modalIsOpen = false;
-    }, function () {
-        console.log('Modal dismissed at: ' + new Date());
-        LoginService.modalIsOpen = false;
-    });
-
-
-}).
 
 controller('buttonCtrl', function($scope, API, $location, $http) {
     
@@ -160,39 +98,6 @@ controller('buttonCtrl', function($scope, API, $location, $http) {
     
 }).
 
-factory('API', ['$resource', function ($resource) {
-    return {
-        User: $resource('/user/:id', {id: '@id'} ),
-        Login: $resource('/login'),
-        Logout: $resource('/logout'),
-        LoggedIn: $resource('/loggedin'),
-        test: $resource('/test')
-        // Group:  $resource('/groups/:id', {id: '@id'})
-    };
-}]).
-
-factory('LoginService', function ($modal) {
-    
-    return {
-
-        modalIsOpen: false,
-
-        open: function () {
-            console.log(this.modalIsOpen);
-            if(!this.modalIsOpen){
-
-                this.modalIsOpen = true;
-
-                var modalInstance = $modal.open({
-                    templateUrl: 'partials/loginAndSessions/LoginModal.html',
-                    controller: 'LoginModalInstanceCtrl',
-                    windowClass: "",
-                });
-            }
-        }
-    };
-}).
-
 controller('tempMainCtrl', function ($scope) {
         $scope.hello = "Hi! controller here";
 }).
@@ -211,5 +116,16 @@ controller('tempMainCtrl', function ($scope) {
     };
   
     $scope.navType = 'pills';
-});
+}).
+
+factory('API', ['$resource', function ($resource) {
+    return {
+        User: $resource('/user/:id', {id: '@id'} ),
+        Login: $resource('/login'),
+        Logout: $resource('/logout'),
+        LoggedIn: $resource('/loggedin'),
+        test: $resource('/test')
+        // Group:  $resource('/groups/:id', {id: '@id'})
+    };
+}]);
 

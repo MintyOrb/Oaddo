@@ -72,18 +72,25 @@ angular.module('adding_content', []).
 
 }]).
 
-directive('suggest', function() {
+directive('suggest', function($http) {
     //TODO search language reflect users preferred language
-    //TODO
+    //TODO attribute for languge
 
     return {
         restrict: 'E',
         template: "<input type='text'>",
         replace:true,
         link: function(scope, element, attrs) {
-            $(element).suggest({"key":"AIzaSyCrHUlKm60rk271WLK58cZJxEnzqNwVCw4"})
-                .bind("fb-select", function(e, data) { console.log(data);});
-    
+          var language = 'en';
+          $(element).suggest({
+            "key": "AIzaSyCrHUlKm60rk271WLK58cZJxEnzqNwVCw4",
+            "lang": language
+          })
+          .bind("fb-select", function(e, data) { 
+            console.log(data);
+            $http.post("/term",data);
+          });
+  
         }
     };
 });
