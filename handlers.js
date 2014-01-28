@@ -109,6 +109,7 @@ exports.addTerm = function (request, reply) {
         
         //check if term is already in database (search by MID?)
             //TODO
+            //callback(true); to stop series execution
 
         //MQL query for termMeta, build meta from results
         function(callback){

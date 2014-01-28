@@ -7,7 +7,6 @@ var universalLibrary = angular.module('universalLibrary',
         'ui.bootstrap',
         'ngSanitize',
         'ngResource',
-        'universalLibrary.controllers',
         'adding_content',
         'http-auth-interceptor',
         'language_universality',
@@ -45,9 +44,9 @@ var universalLibrary = angular.module('universalLibrary',
     };
 
     $routeProvider
-    .when('/home', {templateUrl: 'partials/tempMain.html', controller: 'tempMainCtrl'})
-    .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/test.html'})
-    .when('/content/new', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/newContent.html'})
+    .when('/home', {templateUrl: 'partials/main/tempMain.html', controller: 'tempMainCtrl'})
+    .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/main/test.html'})
+    .when('/content/new', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/addingContent/newContent.html'})
     .otherwise({redirectTo: '/home'});
     $locationProvider.html5Mode(true);
 }).
@@ -185,12 +184,32 @@ factory('LoginService', function ($modal) {
                 this.modalIsOpen = true;
 
                 var modalInstance = $modal.open({
-                    templateUrl: 'partials/LoginModal.html',
+                    templateUrl: 'partials/loginAndSessions/LoginModal.html',
                     controller: 'LoginModalInstanceCtrl',
                     windowClass: "",
                 });
             }
         }
     };
+}).
+
+controller('tempMainCtrl', function ($scope) {
+        $scope.hello = "Hi! controller here";
+}).
+
+    controller('TabsDemoCtrl', function ($scope) {
+
+      $scope.tabs = [
+      { title:"Dynamic Title 1", content:"Dynamic content 1" },
+      { title:"Dynamic Title 2", content:"Dynamic content 2", disabled: true }
+    ];
+  
+    $scope.alertMe = function() {
+      setTimeout(function() {
+        alert("You've selected the alert tab!");
+      });
+    };
+  
+    $scope.navType = 'pills';
 });
 

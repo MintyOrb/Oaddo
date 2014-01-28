@@ -2,13 +2,20 @@
 'use strict';
 
 angular.module('adding_content', []).
+
+//   config(function($routeProvider, $locationProvider, $httpProvider) {
+//     $routeProvider
+//     .when('/content/new', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/addingContent/newContent.html'})
+//     $locationProvider.html5Mode(true);
+// }).
+
 	
   controller('NewTermModalCtrl', function ($scope, $modal) {
 
     $scope.open = function () {
 
       var modalInstance = $modal.open({
-        templateUrl: 'partials/newTermModal.html',
+        templateUrl: 'partials/addingContent/newTermModal.html',
         controller: 'NewTermModalInstanceCtrl',
         windowClass: "",
       });
