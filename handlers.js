@@ -57,13 +57,13 @@ exports.loggedin = function (request, reply) {
 
 exports.addAccount = function (request, reply) {
 
-    var properties = {props: {} };
-    properties.props.primaryEmail = request.payload.data.name;
-    properties.props.dateJoined = new Date();
-    properties.props.UUID = uuid.v4();
+    var createProperties = {props: {} };
+    createProperties.props.primaryEmail = request.payload.data.name;
+    createProperties.props.dateJoined = new Date();
+    createProperties.props.UUID = uuid.v4();
     var createQuery = 'CREATE (memberNode:member:temp { props } )';
     
-    var email = {email: request.payload.data.name};
+    var checkProperites = {email: request.payload.data.name};
     var checkQuery = 'MATCH (memberNode:member:temp { primaryEmail: {email} } ) RETURN memberNode.primaryEmail as email';
 
 
@@ -71,14 +71,14 @@ exports.addAccount = function (request, reply) {
 
         //check if email already exists
         function(callback){
-            db.query(checkQuery, email, function (err, results) {
+            db.query(checkQuery, checkProperites, function (err, results) {
                 if (err) {console.log("error: " + err);}
                 if (results === undefined){
                     console.log("empty");
                     callback();
                 } else{
                     reply({message: "Email address already registered."});
-                    callback(true);
+                    callback(true); //passing 'true' stops async series execution
                 }
             });
         },
@@ -87,7 +87,7 @@ exports.addAccount = function (request, reply) {
         function(callback){
             bcrypt.genSalt(10, function(err, salt) {
                 bcrypt.hash(request.payload.data.password, salt, function(err, hash) {
-                    properties.props.passwordHash = hash;
+                    createProperties.props.passwordHash = hash;
                     callback();
                 });
             });
@@ -95,7 +95,7 @@ exports.addAccount = function (request, reply) {
 
         //create and store new member node in DB
         function(callback){
-            db.query(createQuery, properties, function (err, results) {
+            db.query(createQuery, createProperties, function (err, results) {
                 if (err) {throw err;}
                 //perform login here?
                 //ensure they follow through to desired page...?
