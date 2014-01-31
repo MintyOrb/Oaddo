@@ -1,7 +1,7 @@
 /*global console, angular, setTimeout, alert*/
 'use strict';
 
-angular.module('adding_content', []).
+angular.module('adding_content', ['angularFileUpload']).
 
 //   config(function($routeProvider, $locationProvider, $httpProvider) {
 //     $routeProvider
@@ -9,119 +9,96 @@ angular.module('adding_content', []).
 //     $locationProvider.html5Mode(true);
 // }).
 
-	
-  controller('NewTermModalCtrl', function ($scope, $modal) {
+controller("fileUploadCtrl", function ($scope, $upload){
 
-    $scope.open = function () {
-
-        var modalInstance = $modal.open({
-          templateUrl: 'partials/addingContent/newTermModal.html',
-          controller: 'NewTermModalInstanceCtrl',
-          windowClass: "",
+    $scope.onFileSelect = function($files) {
+      //$files: an array of files selected, each file has name, size, and type.
+      for (var i = 0; i < $files.length; i++) {
+        var file = $files[i];
+        $scope.upload = $upload.upload({
+          url: 'server/upload/url', //upload.php script, node.js route, or servlet url
+          // method: POST or PUT,
+          // headers: {'headerKey': 'headerValue'},
+          // withCredential: true,
+          data: {myObj: $scope.myModelObj},
+          file: file,
+          // file: $files, //upload multiple files, this feature only works in HTML5 FromData browsers
+          /* set file formData name for 'Content-Desposition' header. Default: 'file' */
+          //fileFormDataName: myFile, //OR for HTML5 multiple upload only a list: ['name1', 'name2', ...]
+          /* customize how data is added to formData. See #40#issuecomment-28612000 for example */
+          //formDataAppender: function(formData, key, val){} 
+        }).progress(function(evt) {
+          console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
+        }).success(function(data, status, headers, config) {
+          // file is uploaded successfully
+          console.log(data);
         });
+        //.error(...)
+        //.then(success, error, progress); 
+      }
     };
-}).
-	
-controller('NewTermModalInstanceCtrl' , function ($scope, $modalInstance) {
-
-    $scope.newTerm = {
-        termName: "",
-        termDef: "",
-        person: false,
-        place: false,
-        group: false,
-        idea: false,
-        descriptor: false,
-        object: false,
-        jargon: false,
-        study: false,
-        language: "en"
-    };
-
-    $scope.ok = function () {
-        $modalInstance.close();
-    };
-		
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}).
-
-controller("termSelectionCtrl", function ($scope, contentTerms) {
-    $scope.test = function(){
-        console.log("test here");
-    };
-    $scope.addToSelected = function(data){
-                console.log("hello?");
-
-        // console.log("lang: " + data );
-        // $scope.lang = data;
-        // contentTerms.selectedTerms.push({mid:data.mid,name:data.name});
-        // console.log("ht" + JSON.stringify(contentTerms.selectedTerms));
-    };
-}).
-
-controller('DropdownCtrl', ['$scope', function ($scope) {
-    $scope.items = [
-        "The first choice!",
-        "And another choice for you.",
-        "but wait! A third!"
-    ];
-}]).
-
-controller('TabsDemoCtrl', ['$scope', function ($scope) {
     
- 
-    $scope.tabs = [
-        { title:"Dynamic Title 1", content:"Dynamic content 1" },
-        { title:"Dynamic Title 2", content:"Dynamic content 2", disabled: true }
-    ];
 
-    $scope.alertMe = function() {
-        setTimeout(function() {
-            alert("You've selected the alert tab!");
-        });
-    };
+}).
 
-    $scope.navType = 'tabs';
-
-}]).
 
 service('contentTerms', [function () {
-    this.selectedTerms = {};
+    this.selectedTerms = [];
 }]).
 
-directive('suggest', function($http) {
+controller("termSelectionCtrl", function ($scope, contentTerms, $http) {
+
+    $scope.terms = contentTerms.selectedTerms;
+
+   
+    $scope.addToSelected = function(termData){
+        //add to array to prevent visual delay
+        contentTerms.selectedTerms.push({mid:termData.mid,name:termData.name,langAddedIn:termData.lang});
+        //add to database (if not already stored) and return UUID
+        $http.post('/term', termData)
+        .success(function(returned){
+            //add UUID to item in selectedTerms
+            for(var index = 0; index < contentTerms.selectedTerms.length; index++){
+                if(contentTerms.selectedTerms[index].mid === termData.mid){
+                    contentTerms.selectedTerms.UUID = returned.UUID;
+                }
+            }
+            console.log("data: " + JSON.stringify(returned));
+        });
+        console.log("selectedTerms: " + JSON.stringify(contentTerms.selectedTerms));
+
+    };
+
+    $scope.removeFromSelected = function(id){
+        for(var index = 0; index < contentTerms.selectedTerms.length; index++){
+            if(contentTerms.selectedTerms[index].mid === id){
+                contentTerms.selectedTerms.splice(index,1);
+            }
+        }
+    };
+
+}).
+
+directive('suggest', function() {
     return {
         restrict: 'E',
         template: "<input type='text'>",
         replace:true,
         scope:{onSelect:'&'},
         link: function(scope, element, attrs) {
-            var language; 
-            
             attrs.$observe('lang', function(value) {
-                language = value;
                 $(element).suggest({
-                    lang: language,
+                    lang: value,
                     key: "AIzaSyCrHUlKm60rk271WLK58cZJxEnzqNwVCw4"
                 })
+                .unbind("fb-select")
                 .bind("fb-select", function(e, info) { 
                     console.log(info);
-
-                    console.log("hello");
-                    scope.onSelect();
+                    scope.$apply(
+                        scope.onSelect({data:info})
+                    );
                 });
             });
-            
-            // $(element).suggest({
-            //     key: "AIzaSyCrHUlKm60rk271WLK58cZJxEnzqNwVCw4",
-            //     lang: language
-            // })
-            // .bind("fb-select", function(e, info) { 
-            //     console.log(info);
-            //     scope.onSelect({data:info});
-            // });
         }
     };
 });

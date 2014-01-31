@@ -5,12 +5,16 @@
     <title></title>
 
   </head>
-  <body>
+  <body ng-controller="appCtrl">
   <!-- include site navigation here. Profile, explore, about... -->
     <p> index here</p>
     <div ng-view></div>
 
   <!-- Scripts & css -->
+  
+
+    <!-- file upload shim - needs to be loaded before angular -->
+    <script type="text/javascript" src="resources/angular-file-upload-shim.min.js"></script>
 
     <!-- angular -->
     <script type="text/javascript" src="resources/angular/angular.js"></script>
@@ -19,12 +23,16 @@
     <script type="text/javascript" src="resources/angular/angular-sanitize.min.js"></script>
     <script type="text/javascript" src="resources/angular/angular-resource.min.js"></script>
 
-    <!-- resources -->
+     <!-- resources -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/font-awesome-4.0.3/css/font-awesome.min.css">
     <script type="text/javascript" src='resources/textAngular.min.js'></script>
     <script type="text/javascript" src="resources/ui-bootstrap-tpls-0.7.0.min.js"></script>
     <script type="text/javascript" src="resources/http-auth-interceptor.js"></script>
+    <script type="text/javascript" src="resources/angular-file-upload.min.js"></script>
+    
+    <script type="text/javascript" src="js/bower_components/angular-loading-bar/src/loading-bar.js"></script>
+    <link rel="stylesheet" href="js/bower_components/angular-loading-bar/src/loading-bar.css"></link>
     
     <!-- freebase search widget -->
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/freebase/suggest/4_2/suggest.min.css" />
@@ -37,6 +45,7 @@
     <script type="text/javascript" src="js/addingContent/adding_content.js"></script>
     <script type="text/javascript" src="js/languageUniversality/language_universality.js"></script>
     <script type="text/javascript" src="js/loginAndSessions/login_and_sessions.js"></script>
+
 
   </body>
 </html>

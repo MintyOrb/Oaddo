@@ -1,28 +1,24 @@
-/*globals window, angular*/
+/*globals window, angular, console*/
 'use strict';
 
-angular.module('language_universality', []).
+angular.module('language_universality', []);
 
-	run(function () {
+// run(function ($cookieStore, appLanguage) {
 
-	// var supportedLanguages = [
-	// 	'en'
-	// ];
-	var lang = window.navigator.userLanguage || window.navigator.language;
-	console.log("lng " + lang);
-	// if (lang) {
-	// 	if (lang.length > 2) {
-	// 		// Convert e.g. 'en-GB' to 'en'. We do not support
-	// 		// resources for specific cultures at the moment.
-	// 		lang = lang.substring(0, 2);
-	// 	}
-		
-	// 	// If language not supported, use english
-	// 	if (supportedLanguages.indexOf(lang) === -1) {
-	// 		lang = 'en';
-	// 	}
-	// }
-	// else {
-	// 	lang = 'en';
-	// }
-});
+// 	var langFromCookie = $cookieStore.get('languagePreference');
+
+// 	if (langFromCookie === undefined){
+// 		var lang = window.navigator.userLanguage || window.navigator.language;
+// 		$cookieStore.put('languagePreference',lang);
+// 		console.log("language from window.nav: " + lang);
+// 		appLanguage.lang = lang;
+// 		//shorten to two letter code?
+// 	} else {
+// 		//set lang pref based on previously stored cookie
+// 		appLanguage.lang = langFromCookie;
+// 	}
+// }).
+
+// service('appLanguage', [function () {
+// 	this.lang = "";
+// }]);

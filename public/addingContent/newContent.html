@@ -1,98 +1,83 @@
 <h1>Add Library Content</h1>
 
 <div>
-  <accordion>
-    <accordion-group heading="Identify Your Content">
-      <div>
-        Provide the content (select file, paste URL)
-      </div>
+    <accordion>
+        <accordion-group heading="Identify Your Content">
+            <div>
+                Provide the content (select file, paste URL)
+            </div>
+
+            <div ng-controller="fileUploadCtrl">
+              <input type="text" ng-model="myModelObj">
+              <input type="file" ng-file-select="onFileSelect($files)" >
+              <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class"
+                    ng-show="dropSupported">drop files here</div>
+              <div ng-file-drop-available="dropSupported=true" 
+                    ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
+              <button ng-click="upload.abort()">Cancel Upload</button>
+            </div>
       
-    </accordion-group>
+        </accordion-group>
 
-    <accordion-group ng-controller="termSelectionCtrl" heading="Identify Relevant Terms">
-      <div> 
-        Base Terms (scale of the universe, humanities, content type)
-      </div>
-      <div> 
-        Relevant terms based off of selected terms (query the database)
-      </div>
-      <div>
-        Selected Terms (tag content with these terms)
-      </div>
-      <div> Manual Term Entry (can't find what you're looking for?)
-        <suggest on-select="addToSelected(data)" lang="{{language}}"></suggest>
-        <p>Lang: {{language}}</p>
-        <input type='text' ng-model='language'>
-        <button class="btn" ng-click="change(language)">change lang to {{language}}</button>
-        <div ng-repeat="term in terms">
-          <button>{{term.name}}</button>
-        </div>
-      </div>
-    </accordion-group>
+        <accordion-group heading="Identify Relevant Terms">
+            <div ng-controller="termSelectionCtrl">
+                <div> 
+                    Base Terms (scale of the universe, humanities, content type)
+                </div>
+                <div> 
+                    Relevant terms based off of selected terms (query the database)
+                </div>
+                <div>
+                    Selected Terms (tag content with these terms)
+                </div>
+                <div>
+                    <tabset>
+                        <tab heading="Scale of the Universe">Static content</tab>
+                        <tab heading="Content Type" active="tab.active">
+                            images and charts and graphs and stuff
+                        </tab>
+                        <tab heading="The Humanities">
+                            arts and stuff
+                        </tab>
+                    </tabset>
+                </div>
+                <div> Manual Term Entry (can't find what you're looking for?)
+                    <suggest on-select="addToSelected(data)" lang="{{displayLanguage}}"></suggest>
+                    <p>Lang: {{displayLanguage}}</p>
+                    <input type='text' ng-model='displayLanguage'>
+                    <br>
+                    Tag content with the following terms:
+                    <div ng-repeat="term in terms">
+                        <div class='dropdown'>
+                            <a class='dropdown-toggle'>
+                                <button class='btn'>{{term.name}}</button>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li ng-click="removeFromSelected(term.mid)"><a>Remove</a></li>
+                                <li><a>Focus Term</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </accordion-group>
 
-    <accordion-group heading="Initialize Content Fields">
-      <div>
-        Initialize Content (description, source, publisher, etc)
-      </div>
-    </accordion-group>
-  </accordion>
+        <accordion-group heading="Add Meta Information">
+            <div>
+                source, publisher, dates, locations
+            </div>
+        </accordion-group>
+
+        <accordion-group heading="Initialize Content Fields">
+            <div>
+                Initialize Content (description, why it is valuable, facts...
+            </div>
+        </accordion-group>
+
+    </accordion>
 </div>
 
 
 <div>
 	<text-angular ta-toolbar="[['h1','h2','h3'],['bold','italics']]" ng-model="example"></text-angular>
-</div>
-<div ng-repeat="term in terms">
-	<button ng-click="">{{term.name}}</button>
-</div>
-
-<li class="dropdown" ng-controller="DropdownCtrl">
-  <a class="dropdown-toggle">
-    Click me for a dropdown, yo!
-  </a>
-  <ul class="dropdown-menu">
-    <li ng-repeat="choice in items">
-      <a>{{choice}}</a>
-    </li>
-  </ul>
-</li>
-
-<div ng-controller="TabsDemoCtrl">
-  <p>Select a tab by setting active binding to true:</p>
-  <p>
-    <button class="btn btn-default btn-sm" ng-click="tabs[0].active = true">Select second tab</button>
-    <button class="btn btn-default btn-sm" ng-click="tabs[1].active = true">Select third tab</button>
-  </p>
-  <p>
-    <button class="btn btn-default btn-sm" ng-click="tabs[1].disabled = ! tabs[1].disabled">Enable / Disable third tab</button>
-  </p>
-  <hr />
-
-  <tabset>
-    <tab heading="Static title">Static content</tab>
-    <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
-      {{tab.content}}
-    </tab>
-    <tab select="alertMe()">
-      <tab-heading>
-        <i class="glyphicon glyphicon-bell"></i> Alert!
-      </tab-heading>
-      I've got an HTML heading, and a select callback. Pretty cool!
-    </tab>
-  </tabset>
-
-  <hr />
-
-  <tabset vertical="true" type="navType">
-    <tab heading="Vertical 1">Vertical content 1</tab>
-    <tab heading="Vertical 2">Vertical content 2</tab>
-  </tabset>
-
-  <hr />
-
-  <tabset vertical='true' type='pills'>
-    <tab heading="Justified">Justified content</tab>
-    <tab heading="SJ">Short Labeled Justified content</tab>
-    <tab heading="Long Justified">Long Labeled Justified content</tab>
-  </tabset>
 </div>

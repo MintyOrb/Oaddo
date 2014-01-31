@@ -1,4 +1,4 @@
-/*global console, angular, setTimeout, alert */
+/*global console, angular, setTimeout, alert, window */
 'use strict';
 
 var universalLibrary = angular.module('universalLibrary', 
@@ -7,11 +7,13 @@ var universalLibrary = angular.module('universalLibrary',
         'ui.bootstrap',
         'ngSanitize',
         'ngResource',
+        'ngCookies',
         'adding_content',
         'loginAndSessions',
         'language_universality',
         'http-auth-interceptor',
-        'textAngular'
+        'textAngular',
+        'chieffancypants.loadingBar'
     ]).
     config(function($routeProvider, $locationProvider, $httpProvider) {
 
@@ -53,15 +55,38 @@ var universalLibrary = angular.module('universalLibrary',
     $locationProvider.html5Mode(true);
 }).
 
-run(function ($rootScope, LoginService) {
+run(function ($rootScope, LoginService, $cookieStore, appLanguage) {
 
-     $rootScope.$on('event:auth-loginRequired', function() {
-            console.log("auth event fired");
-            LoginService.open();
-        });
+    //respond to 401s by opening login modal
+    $rootScope.$on('event:auth-loginRequired', function() {
+        console.log("auth event fired");
+        LoginService.open();
+    });
+
+    //set language for session based on saved value or value from window
+    var langFromCookie = $cookieStore.get('languagePreference');
+    if (langFromCookie === undefined){
+        var lang = window.navigator.userLanguage || window.navigator.language;
+        lang = lang.substr(0,2);
+        console.log("language from window.nav: " + lang);
+        $cookieStore.put('languagePreference',lang);
+        appLanguage.lang = lang;
+       
+    } else {
+        //set lang pref based on previously stored cookie
+        appLanguage.lang = langFromCookie;
+        console.log("lang from cookie: " + langFromCookie);
+    }
     
 }).
 
+service('appLanguage', [function () {
+    this.lang = "";
+}]).
+
+controller('appCtrl', ['$scope', 'appLanguage', function ($scope, appLanguage) {
+    $scope.displayLanguage = appLanguage.lang;
+}]).
 
 controller('buttonCtrl', function($scope, API, $location, $http) {
     
@@ -98,15 +123,11 @@ controller('buttonCtrl', function($scope, API, $location, $http) {
     
 }).
 
-controller('tempMainCtrl', function ($scope) {
-        $scope.hello = "Hi! controller here";
-}).
+controller('TabsDemoCtrl', function ($scope) {
 
-    controller('TabsDemoCtrl', function ($scope) {
-
-      $scope.tabs = [
-      { title:"Dynamic Title 1", content:"Dynamic content 1" },
-      { title:"Dynamic Title 2", content:"Dynamic content 2", disabled: true }
+    $scope.tabs = [
+        { title:"Dynamic Title 1", content:"Dynamic content 1" },
+        { title:"Dynamic Title 2", content:"Dynamic content 2", disabled: true }
     ];
   
     $scope.alertMe = function() {

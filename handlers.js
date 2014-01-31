@@ -128,15 +128,15 @@ exports.addTerm = function (request, reply) {
                 "MID": request.payload.mid,
                 "dateAdded": new Date(),
                 "addedBy" : request.user.id,
-                "UUID": uuid.v4()
-                // "languageAddedIn" : passed from directive?,
+                "UUID": uuid.v4(),
+                "languageAddedIn" : request.payload.langAddedIn
             },
             "metaProps" : []
         };
     var createQuery = "CREATE (newTerm:term:test {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_META {languageCode: props.languageCode}]->(:termMeta:test {name: props.name, dateAdded: props.dateAdded})) WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
     
     var checkProperites = {mid: request.payload.mid};
-    var checkQuery = "MATCH (node:term {MID: {mid} }) RETURN node.UUID";
+    var checkQuery = "MATCH (node:term {MID: {mid} }) RETURN node.UUID as UUID";
     
     async.series([
         
@@ -151,7 +151,7 @@ exports.addTerm = function (request, reply) {
                     console.log("term already in  db");
                     console.log("results: " + JSON.stringify(results));
 
-                    reply({newTerm: false, UUID: results[0]});
+                    reply({newTerm: false, UUID: results[0].UUID});
                     callback(true);
                 }
             });
@@ -183,7 +183,7 @@ exports.addTerm = function (request, reply) {
             db.query(createQuery, createProperties, function (err, results) {
                 if (err) {console.log("error: " + err);}
                 console.log("results: " + results);
-                reply({newTerm: true, UUID: results});
+                reply({newTerm: true, UUID: createProperties.coreProps.UUID});
                 console.log("done with noe4j");
                 callback();
             });
@@ -196,9 +196,7 @@ exports.addTerm = function (request, reply) {
 exports.relatedTerms = function (request, reply) {
     
     var properties = {props: {} };
-    properties.props.name = request.payload.data.name;
-    properties.props.dateJoined = new Date();
-    var query = 'CREATE (term:init { props } )';
+    //var query = 'CREATE (term:init { props } )';
 
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
