@@ -5,7 +5,8 @@ var bcrypt = require('bcrypt'),
     db = new neo4j.GraphDatabase('http://localhost:7474'),
     freebase = require('freebase'),
     async = require('async'),
-    uuid = require('node-uuid');
+    uuid = require('node-uuid'),
+    webshot = require('webshot');
 
 
 //auth and sessions
@@ -224,19 +225,33 @@ exports.relatedTerms = function (request, reply) {
 //     res.send();
 // }
 exports.validateURL = function (request, reply){  
-    console.log("hi " + JSON.stringify(request.payload));
+
+    //determine type of content
+
+    //if image, save to disk
+
+    //if webpage or video take a screenshot and save to disk
     requestModule.head({uri:request.payload.url}, function (error, response) {
             if(error){console.log("error on head request: " + error);}
             console.log("made it through request...");
-            console.log((response));
+            // console.log((response));
     });
+
+    //screen shot and stream back to user
+    // webshot('google.com', function(err, renderStream) {
+    //   var file = fs.createWriteStream('google.png', {encoding: 'binary'});
+    
+    //   renderStream.on('data', function(data) {
+    //     file.write(data.toString('binary'), 'binary');
+    //   });
+    // });
 
 };
 
 exports.addContent = function (request, reply){  
 };
 
-exports.addImage = function (request, reply){
+exports.addImageFile = function (request, reply){
     console.log("about to write file");
     //request.payload.name.split('.').pop();
     fs.writeFile("./img/submittedContent/" + request.payload.name, request.payload.file, function (err) {

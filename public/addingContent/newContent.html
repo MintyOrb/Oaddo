@@ -5,27 +5,31 @@
         <accordion>
             <accordion-group heading="Identify Your Content">
     
-    
-                <div ng-controller="fileUploadCtrl">
+                <div ng-controller="fileSelectionCtrl">
     
                     <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.msg}}</alert>
     
                     <h4>Paste a URL below or choose a file to upload:</h4>
-                    <div class="fileUpload btn btn-primary">
+                    <div  ng-disabled="settings.disableFileSelection" class="fileUpload btn btn-primary">
                         <span>Select File</span>
-                        <input type="file" class="upload" ng-file-select="onFileSelect($files)"/>
+                        <input ng-disabled="settings.disableFileSelection" type="file" class="upload" ng-file-select="onFileSelect($files)"/>
                     </div>
-                    <input ng-if="fileSelected" ng-model="fileName" type="text"/>
-                    <input ng-if="!fileSelected" name="pasteURL" ng-model="contentObject.contentURL" type="URL" ng-change="validateURL()">
+                    <input ng-if="settings.fileSelected" ng-model="settings.fileName" disabled type="text"/>
+                    <input ng-if="!settings.fileSelected" name="pasteURL" ng-model="contentObject.webURL" type="URL" ng-change="validateURL()">
+                    <button ng-show="settings.optionSelected" class="btn fileUpload" ng-click="reset()">Reset</button>
                     <!-- support for dropping files, canceling uploads. Good place to show upload progress? -->
                     <!--  <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class"
                           ng-show="dropSupported">drop files here</div>
                     <div ng-file-drop-available="dropSupported=true" 
                           ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
                     <button ng-click="upload.abort()">Cancel Upload</button> -->
-                    <div ng-show="fileSelected">
-                        Preview:
-                        <img width="200px" ng-src="{{dataUrl.image}}">
+                    <div ng-if="settings.fileSelected">
+                        Preview:<br>
+                        <img width="200px" ng-src="{{settings.dataUrl.image}}">
+                    </div>
+                    <div ng-if="settings.imageURLPresent">
+                        Preview:<br>
+                        <img width="200px" ng-src="{{contentObject.webURL}}">
                     </div>
                 </div>
           

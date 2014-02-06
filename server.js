@@ -115,7 +115,7 @@ server.route([
 
     { method: 'GET', path: '/explore/term', config: {auth: 'passport'}, handler: handlers.relatedTerms},
 
-    { method: 'POST', path: '/newImage', config: {auth: 'passport'}, handler: handlers.addImage},
+    { method: 'POST', path: '/newImage', config: {auth: 'passport'}, handler: handlers.addImageFile},
 
     { method: 'POST', path: '/validateURL', config: {auth: 'passport'}, handler: handlers.validateURL}
 

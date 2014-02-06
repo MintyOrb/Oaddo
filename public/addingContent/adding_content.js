@@ -15,10 +15,15 @@ controller('addingContentCtrl', ['$scope', function ($scope) {
     
 }]).
 
-controller("fileUploadCtrl", function ($timeout, $scope, $http, $upload){
+controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload){
 
-    $scope.fileSelected = false;
-    $scope.dataUrl = {};
+    $scope.settings = {
+        fileSelected : false,
+        imageURLPresent : false,
+        dataUrl : {},
+        optionSelected : false,
+        disableFileSelection : false
+    };
 
     $scope.alerts = [];
     $scope.closeAlert = function(index) {
@@ -32,18 +37,20 @@ controller("fileUploadCtrl", function ($timeout, $scope, $http, $upload){
             $scope.alerts.push({type: 'danger', msg: "You may only add images files from your local file system at this time."});
         } else {
 
+            //get data for displaying image preview
             if (window.FileReader) {
                 var fileReader = new FileReader();
                 fileReader.readAsDataURL(file[0]);
                 fileReader.onload = function(e) {
                     $timeout(function() {
-                        $scope.dataUrl.image = e.target.result;
+                        $scope.settings.dataUrl.image = e.target.result;
                     });
                 };
             }    
 
-            $scope.fileSelected = true;
-            $scope.fileName = file[0].name;
+            $scope.settings.optionSelected = true;  //display cancel button
+            $scope.settings.fileSelected = true;     //display image preview and selected file name
+            $scope.settings.fileName = file[0].name; //place file name in exposed input
 
             $upload.upload({
                 url: '/newImage',
@@ -55,7 +62,7 @@ controller("fileUploadCtrl", function ($timeout, $scope, $http, $upload){
                     console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
                 }
             }).then(function(data, status, headers, config) {
-                // return new file server URL from server and update newContent obj
+                // return new file serverURL from server and update newContent obj
                 // file is uploaded successfully
                 console.log("it worked: " + data);
             }); 
@@ -64,13 +71,17 @@ controller("fileUploadCtrl", function ($timeout, $scope, $http, $upload){
 
     $scope.validateURL = function () {
         console.log("validate here");
-        // console.log("valid: " + $scope.addContentForm.pasteURL.$valid);
+        console.log("URL: " + $scope.contentObject.webURL);
 
-        console.log("URL: " + $scope.contentObject.contentURL);
-        if($scope.addContentForm.pasteURL.$valid && $scope.contentObject.contentURL.length > 0){
-            //send to server to validation and/or downloading (if necessary)
+        $scope.settings.optionSelected = true;  //display cancel button
+        $scope.settings.disableFileSelection = true;
+        $scope.settings.imageURLPresent = true;
 
-            $http.post('/validateURL', {'url':$scope.contentObject.contentURL}).
+
+        if($scope.addContentForm.pasteURL.$valid && $scope.contentObject.webURL.length > 0){
+            //send to server to determine type and/or downloading (if necessary)
+            //return serverURL
+            $http.post('/validateURL', {'url':$scope.contentObject.webURL}).
             success(function(){
     
             });
@@ -78,6 +89,18 @@ controller("fileUploadCtrl", function ($timeout, $scope, $http, $upload){
             // $scope.alerts.push({type: 'danger', msg: "Not a valid URL"});
 
         }
+    };
+
+    $scope.reset = function(){
+        $scope.settings = {
+            fileSelected : false,
+            imageURLPresent : false,
+            dataUrl : {},
+            optionSelected : false,
+            disableFileSelection : false
+        };
+        $scope.contentObject.webURL = '';
+
     };
 }).
 
