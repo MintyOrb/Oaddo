@@ -11,16 +11,17 @@ controller('LoginModalCtrl', function ($scope, LoginService) {
     
 }).
     
-controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, LoginService, authService) {
+controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, LoginService, authService, $http) {
     console.log("instance ctrl here");
     $scope.message = "test";
     $scope.newUser = {};
     
     $scope.create = function () {
-        var user = new API.User();
-        user.data = $scope.newUser;
-        console.log(user);
-        user.$save();
+        // var user = new API.User();
+        // user.data = $scope.newUser;
+        // console.log("user: " + user);
+        // user.$save();
+        $http.post('/user', $scope.newUser);
         $modalInstance.close();
     };
 
@@ -43,8 +44,6 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
                 $scope.message = error.data.message;
             }
         );
-        //$modalInstance.close();
-
     };
     
     $scope.cancel = function () {
@@ -63,6 +62,7 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
         LoginService.modalIsOpen = false;
     }, function () {
         console.log('Modal dismissed at: ' + new Date());
+        authService.loginCancelled();
         LoginService.modalIsOpen = false;
     });
 

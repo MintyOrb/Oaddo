@@ -13,7 +13,7 @@ var universalLibrary = angular.module('universalLibrary',
         'language_universality',
         'http-auth-interceptor',
         'textAngular',
-        'chieffancypants.loadingBar'
+        'chieffancypants.loadingBar',
     ]).
     config(function($routeProvider, $locationProvider, $httpProvider) {
 
@@ -25,9 +25,9 @@ var universalLibrary = angular.module('universalLibrary',
         var deferred = $q.defer();
     
         // Make an AJAX call to check if the user is logged in
-        $http.get('/loggedin').success(function(response){
+        $http.get('/loggedin').success(function(data){
             // Authenticated
-            if (response.message === true){
+            if (data.message === true){
                 console.log("user is logged in...");
                 deferred.resolve();
             // Not Authenticated
@@ -36,9 +36,7 @@ var universalLibrary = angular.module('universalLibrary',
                 $window.history.back();
                 console.log("location: " + $location.path());
                 deferred.reject();
-
                 LoginService.open();
-    
             }
         });
 
@@ -48,7 +46,7 @@ var universalLibrary = angular.module('universalLibrary',
     
 
     $routeProvider
-    .when('/home', {templateUrl: 'partials/main/tempMain.html', controller: 'tempMainCtrl'})
+    .when('/home', {templateUrl: 'partials/main/tempMain.html'})
     .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/main/test.html'})
     .when('/content/new', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/addingContent/newContent.html'})
     .otherwise({redirectTo: '/home'});

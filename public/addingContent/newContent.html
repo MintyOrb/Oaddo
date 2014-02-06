@@ -1,80 +1,93 @@
 <h1>Add Library Content</h1>
 
-<div>
-    <accordion>
-        <accordion-group heading="Identify Your Content">
-            <div>
-                Provide the content (select file, paste URL)
-            </div>
-
-            <div ng-controller="fileUploadCtrl">
-              <input type="text" ng-model="myModelObj">
-              <input type="file" ng-file-select="onFileSelect($files)" >
-              <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class"
-                    ng-show="dropSupported">drop files here</div>
-              <div ng-file-drop-available="dropSupported=true" 
-                    ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
-              <button ng-click="upload.abort()">Cancel Upload</button>
-            </div>
-      
-        </accordion-group>
-
-        <accordion-group heading="Identify Relevant Terms">
-            <div ng-controller="termSelectionCtrl">
-                <div> 
-                    Base Terms (scale of the universe, humanities, content type)
+<div ng-controller="addingContentCtrl">
+    <form name="addContentForm">
+        <accordion>
+            <accordion-group heading="Identify Your Content">
+    
+    
+                <div ng-controller="fileUploadCtrl">
+    
+                    <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.msg}}</alert>
+    
+                    <h4>Paste a URL below or choose a file to upload:</h4>
+                    <div class="fileUpload btn btn-primary">
+                        <span>Select File</span>
+                        <input type="file" class="upload" ng-file-select="onFileSelect($files)"/>
+                    </div>
+                    <input ng-if="fileSelected" ng-model="fileName" type="text"/>
+                    <input ng-if="!fileSelected" name="pasteURL" ng-model="contentObject.contentURL" type="URL" ng-change="validateURL()">
+                    <!-- support for dropping files, canceling uploads. Good place to show upload progress? -->
+                    <!--  <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class"
+                          ng-show="dropSupported">drop files here</div>
+                    <div ng-file-drop-available="dropSupported=true" 
+                          ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
+                    <button ng-click="upload.abort()">Cancel Upload</button> -->
+                    <div ng-show="fileSelected">
+                        Preview:
+                        <img width="200px" ng-src="{{dataUrl.image}}">
+                    </div>
                 </div>
-                <div> 
-                    Relevant terms based off of selected terms (query the database)
-                </div>
-                <div>
-                    Selected Terms (tag content with these terms)
-                </div>
-                <div>
-                    <tabset>
-                        <tab heading="Scale of the Universe">Static content</tab>
-                        <tab heading="Content Type" active="tab.active">
-                            images and charts and graphs and stuff
-                        </tab>
-                        <tab heading="The Humanities">
-                            arts and stuff
-                        </tab>
-                    </tabset>
-                </div>
-                <div> Manual Term Entry (can't find what you're looking for?)
-                    <suggest on-select="addToSelected(data)" lang="{{displayLanguage}}"></suggest>
-                    <p>Lang: {{displayLanguage}}</p>
-                    <input type='text' ng-model='displayLanguage'>
-                    <br>
-                    Tag content with the following terms:
-                    <div ng-repeat="term in terms">
-                        <div class='dropdown'>
-                            <a class='dropdown-toggle'>
-                                <button class='btn'>{{term.name}}</button>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li ng-click="removeFromSelected(term.mid)"><a>Remove</a></li>
-                                <li><a>Focus Term</a></li>
-                            </ul>
+          
+            </accordion-group>
+    
+            <accordion-group heading="Identify Relevant Terms">
+                <div ng-controller="termSelectionCtrl">
+                    <div> 
+                        Base Terms (scale of the universe, humanities, content type)
+                    </div>
+                    <div> 
+                        Relevant terms based off of selected terms (query the database)
+                    </div>
+                    <div>
+                        Selected Terms (tag content with these terms)
+                    </div>
+                    <div>
+                        <tabset>
+                            <tab heading="Scale of the Universe">Static content</tab>
+                            <tab heading="Content Type" active="tab.active">
+                                images and charts and graphs and stuff
+                            </tab>
+                            <tab heading="The Humanities">
+                                arts and stuff
+                            </tab>
+                        </tabset>
+                    </div>
+                    <div> Manual Term Entry (can't find what you're looking for?)
+                        <suggest on-select="addToSelected(data)" lang="{{displayLanguage}}"></suggest>
+                        <p>Lang: {{displayLanguage}}</p>
+                        <input type='text' ng-model='displayLanguage'>
+                        <br>
+                        Tag content with the following terms:
+                        <div ng-repeat="term in terms">
+                            <div class='dropdown'>
+                                <a class='dropdown-toggle'>
+                                    <button class='btn'>{{term.name}}</button>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li ng-click="removeFromSelected(term.mid)"><a>Remove</a></li>
+                                    <li><a>Focus Term</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </accordion-group>
-
-        <accordion-group heading="Add Meta Information">
-            <div>
-                source, publisher, dates, locations
-            </div>
-        </accordion-group>
-
-        <accordion-group heading="Initialize Content Fields">
-            <div>
-                Initialize Content (description, why it is valuable, facts...
-            </div>
-        </accordion-group>
-
-    </accordion>
+            </accordion-group>
+    
+            <accordion-group heading="Add Meta Information">
+                <div>
+                    source, publisher, dates, locations
+                </div>
+            </accordion-group>
+    
+            <accordion-group heading="Initialize Content Fields">
+                <div>
+                    Initialize Content (description, why it is valuable, facts...
+                </div>
+            </accordion-group>
+    
+        </accordion>
+    </form>
 </div>
 
 

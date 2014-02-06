@@ -9,36 +9,76 @@ angular.module('adding_content', ['angularFileUpload']).
 //     $locationProvider.html5Mode(true);
 // }).
 
-controller("fileUploadCtrl", function ($scope, $upload){
+controller('addingContentCtrl', ['$scope', function ($scope) {
 
-    $scope.onFileSelect = function($files) {
-      //$files: an array of files selected, each file has name, size, and type.
-      for (var i = 0; i < $files.length; i++) {
-        var file = $files[i];
-        $scope.upload = $upload.upload({
-          url: 'server/upload/url', //upload.php script, node.js route, or servlet url
-          // method: POST or PUT,
-          // headers: {'headerKey': 'headerValue'},
-          // withCredential: true,
-          data: {myObj: $scope.myModelObj},
-          file: file,
-          // file: $files, //upload multiple files, this feature only works in HTML5 FromData browsers
-          /* set file formData name for 'Content-Desposition' header. Default: 'file' */
-          //fileFormDataName: myFile, //OR for HTML5 multiple upload only a list: ['name1', 'name2', ...]
-          /* customize how data is added to formData. See #40#issuecomment-28612000 for example */
-          //formDataAppender: function(formData, key, val){} 
-        }).progress(function(evt) {
-          console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
-        }).success(function(data, status, headers, config) {
-          // file is uploaded successfully
-          console.log(data);
-        });
-        //.error(...)
-        //.then(success, error, progress); 
-      }
-    };
+    $scope.contentObject = {};
     
+}]).
 
+controller("fileUploadCtrl", function ($timeout, $scope, $http, $upload){
+
+    $scope.fileSelected = false;
+    $scope.dataUrl = {};
+
+    $scope.alerts = [];
+    $scope.closeAlert = function(index) {
+        $scope.alerts.splice(index, 1);
+    };
+
+    $scope.onFileSelect = function(file) {
+
+        //only allow image files
+        if (file[0].type.indexOf('image') === -1) {
+            $scope.alerts.push({type: 'danger', msg: "You may only add images files from your local file system at this time."});
+        } else {
+
+            if (window.FileReader) {
+                var fileReader = new FileReader();
+                fileReader.readAsDataURL(file[0]);
+                fileReader.onload = function(e) {
+                    $timeout(function() {
+                        $scope.dataUrl.image = e.target.result;
+                    });
+                };
+            }    
+
+            $scope.fileSelected = true;
+            $scope.fileName = file[0].name;
+
+            $upload.upload({
+                url: '/newImage',
+                file: file[0],
+                //best way to get extension?
+                data: {name:file[0].name},
+                progress: function(evt){
+                //TODO show upload progress to user
+                    console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
+                }
+            }).then(function(data, status, headers, config) {
+                // return new file server URL from server and update newContent obj
+                // file is uploaded successfully
+                console.log("it worked: " + data);
+            }); 
+        }
+    };
+
+    $scope.validateURL = function () {
+        console.log("validate here");
+        // console.log("valid: " + $scope.addContentForm.pasteURL.$valid);
+
+        console.log("URL: " + $scope.contentObject.contentURL);
+        if($scope.addContentForm.pasteURL.$valid && $scope.contentObject.contentURL.length > 0){
+            //send to server to validation and/or downloading (if necessary)
+
+            $http.post('/validateURL', {'url':$scope.contentObject.contentURL}).
+            success(function(){
+    
+            });
+        } else {
+            // $scope.alerts.push({type: 'danger', msg: "Not a valid URL"});
+
+        }
+    };
 }).
 
 

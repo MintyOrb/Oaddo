@@ -5,11 +5,19 @@
 var Hapi = require('hapi'),
 	LocalStrategy = require('passport-local').Strategy,
     handlers = require("./handlers");
+    // Passport = require('Passport');
 
 //server config
 var config = {
     hostname: 'localhost',
     port: 8000
+};
+
+var options = { 
+    payload:{
+        maxBytes:104857600
+    }
+        
 };
 
 //hapi plugins
@@ -24,26 +32,30 @@ var plugins = {
 };
 
 //init server
-var server = new Hapi.Server(config.hostname, config.port);
-server.pack.allow({ ext: true }).require(plugins, function (err) { 
+var server = new Hapi.Server(config.hostname, config.port, options);
+
+server.pack.require(plugins, function (err) { 
 
     if (err) {
         throw err;
     }
 });
+server.auth.strategy('passport', 'passport');
 
 //setup auth
 var Passport = server.plugins.travelogue.passport;
+
 Passport.use(new LocalStrategy( handlers.authUser ) );
 
     //for sessions
 Passport.serializeUser(function(user, done) {
     console.log("serial user: " + JSON.stringify(user));
-    done(null, user.id);
+    done(null, user);
 });
 
 Passport.deserializeUser(function (obj, done) {
     console.log("deserialize User here...");
+    console.log(JSON.stringify(obj));
     done(null, obj);
 });
 
@@ -64,7 +76,7 @@ server.route([
     { method: 'POST', path: '/login', config: {
             handler: function (request, reply) {
 
-                console.log("POST /login handler here.");
+                console.log("/login handler here.");
     
                 Passport.authenticate('local')(request, function (err) {
 
@@ -80,7 +92,7 @@ server.route([
         }
     },
 
-    //GET /login is a temporary work around...passport auth failure redirects here automatically.
+    // GET /login is a temporary work around...passport auth failure redirects here automatically.
     { method: 'GET', path: '/login', handler: function(request, reply){
         console.log("get login here. about to reply with a 401...");
         reply().code(401);
@@ -88,7 +100,6 @@ server.route([
 
 
     //api routes
-    // { method: 'GET', path: '/user/{id}', handler: handlers.authUser },
     { method: 'POST', path: '/user', handler: handlers.addAccount },
 
     { method: 'GET', path: '/loggedin', handler: handlers.loggedin},
@@ -102,7 +113,12 @@ server.route([
 
     { method: 'POST', path: '/term', config: {auth: 'passport'}, handler: handlers.addTerm},
 
-    { method: 'GET', path: '/explore/term', config: {auth: 'passport'}, handler: handlers.relatedTerms}
+    { method: 'GET', path: '/explore/term', config: {auth: 'passport'}, handler: handlers.relatedTerms},
+
+    { method: 'POST', path: '/newImage', config: {auth: 'passport'}, handler: handlers.addImage},
+
+    { method: 'POST', path: '/validateURL', config: {auth: 'passport'}, handler: handlers.validateURL}
+
 
 ]);     
 
