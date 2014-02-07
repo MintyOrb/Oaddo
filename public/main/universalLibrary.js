@@ -43,8 +43,6 @@ var universalLibrary = angular.module('universalLibrary',
         return deferred.promise;
     };
 
-    
-
     $routeProvider
     .when('/home', {templateUrl: 'partials/main/tempMain.html'})
     .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/main/test.html'})
@@ -86,6 +84,9 @@ controller('appCtrl', ['$scope', 'appLanguage', function ($scope, appLanguage) {
     $scope.displayLanguage = appLanguage.lang;
 }]).
 
+
+
+//testing
 controller('buttonCtrl', function($scope, API, $location, $http) {
     
     $scope.logout = function (){

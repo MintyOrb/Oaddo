@@ -1,41 +1,36 @@
-/*global console, angular, setTimeout, alert*/
+/*global console, angular, setTimeout, window, FileReader, $ */
 'use strict';
 
 angular.module('adding_content', ['angularFileUpload']).
 
-//   config(function($routeProvider, $locationProvider, $httpProvider) {
-//     $routeProvider
-//     .when('/content/new', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/addingContent/newContent.html'})
-//     $locationProvider.html5Mode(true);
-// }).
-
 controller('addingContentCtrl', ['$scope', function ($scope) {
 
     $scope.contentObject = {};
+
+    $scope.submitNewContent = function(){
+    };
     
 }]).
 
-controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload){
+controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appLanguage){
 
-    $scope.settings = {
+    $scope.displaySettings = {
         fileSelected : false,
         imageURLPresent : false,
-        dataUrl : {},
+        dataUrl : [],
         optionSelected : false,
-        disableFileSelection : false
-    };
-
-    $scope.alerts = [];
-    $scope.closeAlert = function(index) {
-        $scope.alerts.splice(index, 1);
+        disableFileSelection : false,
+        uploadNonImage : false,
     };
 
     $scope.onFileSelect = function(file) {
 
         //only allow image files
         if (file[0].type.indexOf('image') === -1) {
-            $scope.alerts.push({type: 'danger', msg: "You may only add images files from your local file system at this time."});
+            $scope.displaySettings.uploadNonImage = true;
         } else {
+
+            $scope.displaySettings.uploadNonImage = false; //hide error message if shown
 
             //get data for displaying image preview
             if (window.FileReader) {
@@ -43,64 +38,77 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload){
                 fileReader.readAsDataURL(file[0]);
                 fileReader.onload = function(e) {
                     $timeout(function() {
-                        $scope.settings.dataUrl.image = e.target.result;
+                        $scope.displaySettings.dataUrl.image = e.target.result;
                     });
                 };
             }    
 
-            $scope.settings.optionSelected = true;  //display cancel button
-            $scope.settings.fileSelected = true;     //display image preview and selected file name
-            $scope.settings.fileName = file[0].name; //place file name in exposed input
+            $scope.displaySettings.optionSelected = true;   //display cancel button
+            $scope.displaySettings.fileSelected = true;     //display image preview and selected file name
+            $scope.displaySettings.fileName = file[0].name; //place file name in exposed input
 
             $upload.upload({
                 url: '/newImage',
                 file: file[0],
-                //best way to get extension?
-                data: {name:file[0].name},
+                data: {name: file[0].name, language: appLanguage.lang},
                 progress: function(evt){
                 //TODO show upload progress to user
                     console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
                 }
             }).then(function(data, status, headers, config) {
-                // return new file serverURL from server and update newContent obj
-                // file is uploaded successfully
+                $scope.contentObject.savedAs = data.savedAs;
+                $scope.contentObject.fileSystemID = data.id;
+                $scope.contentObject.displayType = data.displayType;
                 console.log("it worked: " + data);
             }); 
         }
     };
 
-    $scope.validateURL = function () {
-        console.log("validate here");
-        console.log("URL: " + $scope.contentObject.webURL);
-
-        $scope.settings.optionSelected = true;  //display cancel button
-        $scope.settings.disableFileSelection = true;
-        $scope.settings.imageURLPresent = true;
-
+    $scope.onURLChange = function () {
+        
+        $scope.displaySettings.uploadNonImage = false; //hide error message if inputting a URL
 
         if($scope.addContentForm.pasteURL.$valid && $scope.contentObject.webURL.length > 0){
-            //send to server to determine type and/or downloading (if necessary)
-            //return serverURL
-            $http.post('/validateURL', {'url':$scope.contentObject.webURL}).
-            success(function(){
-    
-            });
-        } else {
-            // $scope.alerts.push({type: 'danger', msg: "Not a valid URL"});
 
+            $scope.displaySettings.optionSelected = true;  //display cancel button
+            $scope.displaySettings.disableFileSelection = true;
+
+            $http.post('/validateURL', {url: $scope.contentObject.webURL, language: appLanguage.lang}).
+            success(function(response){
+
+                if(response.displayType === "image" || response.displayType === "website"){
+
+                    if(response.displayType === "image"){
+                        $scope.displaySettings.imageURLPresent = true; //display preivew of linked image
+                    }
+
+                    $scope.contentObject.savedAs = response.savedAs;
+                    $scope.contentObject.fileSystemID = response.id;
+
+                } else if(response.displayType === "embed"){
+                    $scope.contentObject.embedSrc = response.embedSrc;
+                }
+
+                $scope.contentObject.displayType = response.displayType;
+
+            });
         }
     };
 
     $scope.reset = function(){
-        $scope.settings = {
+        $scope.displaySettings = {
             fileSelected : false,
             imageURLPresent : false,
             dataUrl : {},
             optionSelected : false,
-            disableFileSelection : false
+            disableFileSelection : false,
+            uploadNonImage : false,
         };
-        $scope.contentObject.webURL = '';
-
+        $scope.contentObject.savedAs = "";
+        $scope.contentObject.fileSystemID = "";
+        $scope.contentObject.displayType = "";
+        $scope.contentObject.displayType = "";
+        $scope.contentObject.webURL = "";
     };
 }).
 

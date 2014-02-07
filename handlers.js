@@ -52,8 +52,7 @@ exports.loggedin = function (request, reply) {
     reply({message: request.session._isAuthenticated()});
 };
 
-//user specific
-
+//new user
 exports.addAccount = function (request, reply) {
 
     console.log("add account here.");
@@ -115,8 +114,19 @@ exports.addAccount = function (request, reply) {
    
 };
 
-//content and terms
+exports.relatedTerms = function (request, reply) {
+    
+    var properties = {props: {} };
+    //var query = 'CREATE (term:init { props } )';
 
+    db.query(query, properties, function (err, results) {
+        if (err) {throw err;}
+        
+        reply({message: "SUCCESS"});
+    });
+};
+
+//new terms
 exports.addTerm = function (request, reply) {
 
     
@@ -140,6 +150,9 @@ exports.addTerm = function (request, reply) {
             },
             "metaProps" : []
         };
+
+    var metaProp = {}; //for storing result of MQL query
+
     var createQuery = "CREATE (newTerm:term:test {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_META {languageCode: props.languageCode}]->(:termMeta:test {name: props.name, dateAdded: props.dateAdded})) WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
     
     var checkProperites = {mid: request.payload.mid};
@@ -171,7 +184,7 @@ exports.addTerm = function (request, reply) {
                     console.log("language: " + result.result.name[ii].lang);
                     console.log("word: " + result.result.name[ii].value);
         
-                    var metaProp = {
+                    metaProp = {
                         languageCode: result.result.name[ii].lang.substr(6,result.result.name[ii].lang.length), //get rid of "/lang/"
                         name: result.result.name[ii].value,
                         dateAdded: new Date()
@@ -200,62 +213,90 @@ exports.addTerm = function (request, reply) {
 
 };
 
-exports.relatedTerms = function (request, reply) {
-    
-    var properties = {props: {} };
-    //var query = 'CREATE (term:init { props } )';
-
-    db.query(query, properties, function (err, results) {
-        if (err) {throw err;}
-        
-        reply({message: "SUCCESS"});
-    });
-};
-
-
-// from orig code:
-// exports.addImage = function (req,res) {
-//     var url = req.query.url;
-//     var fileName = req.query.fileName;
-
-//     console.log(req.query);
-//     request(url).pipe(fs.createWriteStream("./img/submittedContent/" + fileName));
-
-//     //what is res.send doing here...is there a better way of sending confirmation?
-//     res.send();
-// }
+//new content
 exports.validateURL = function (request, reply){  
 
-    //determine type of content
+    console.log(request.payload);
+    var identifier = '-noAccociatedContent-';           // to be removed when associated content is added to db.
+    var ext = request.payload.url.split('.').pop();     // get extension from orignal filename
+    var generatedName = uuid.v1();                      // is uuid the best option for file names?
+    var lang = "_" + request.payload.language + "_";    // allows for adding same content in different languages
 
-    //if image, save to disk
+    var embedURL = ""; // for setting embedded video source urls
 
-    //if webpage or video take a screenshot and save to disk
+    //get response header to determine type of url
     requestModule.head({uri:request.payload.url}, function (error, response) {
-            if(error){console.log("error on head request: " + error);}
-            console.log("made it through request...");
-            // console.log((response));
+        if(error){console.log("error on head request: " + error);}
+
+            console.log("uri: " + JSON.stringify(response.request.uri));
+
+
+        if(response.statusCode !== 200){
+            //TODO: handle non 200 responsee - what is the best way?
+        } else if (response.headers['content-type'].indexOf('image') > -1){
+            //NOTE: is it necessary to wait to make sure the stream was successful? (with req.on('end', function () {}) )
+            //stream image to server
+            requestModule(request.payload.url).pipe(fs.createWriteStream("./img/submittedContent/" + identifier + lang + generatedName + '.' + ext));
+            reply({displayType: "image", savedAs: identifier + lang + generatedName + '.' + ext, id: generatedName});
+        } else {
+            // determine if video and host
+            // NOTE: is this the best way to make the source determination?
+            // TODO: incorporate youtube, vimeo, and TED (when available) apis to get thumbnail images
+            if(response.request.uri.host.indexOf('ted.com') > -1){
+                //embed - //embed.ted.com/talks/:id
+                embedURL = "//embed.ted.com";
+                embedURL += response.request.uri.path;
+                console.log("ted embed: " + embedURL);
+                reply({embedSrc: embedURL, displayType: "embed"});
+            } else if(response.request.uri.host.indexOf('vimeo.com') > -1){
+                //embed - //www.player.vimeo.com/video/:id
+                embedURL = "//player.vimeo.com/video";
+                embedURL += response.request.uri.path;
+                console.log("vimeo embed: " + embedURL);
+                reply({embedSrc: embedURL, displayType: "embed"});
+            } else if(response.request.uri.host.indexOf('youtube.com') > -1){
+                //embed - //www.youtube.com/embed/:id
+                embedURL = "//www.youtube.com/embed/";
+                embedURL += response.request.uri.path.slice(9,-1);
+                //remove extra parameters (e.g. if pasted from playlist url will contain '&LIST=XXX')
+                if(embedURL.indexOf('&') > -1){
+                    var position = embedURL.indexOf('&');
+                    embedURL = embedURL.substring(position, -1);
+                }
+                console.log("vimeo embed: " + embedURL);
+                reply({embedSrc: embedURL, displayType: "embed"});
+            } else {
+                //TODO: send screenshot back to user for preivew
+                //take screenshot of webpage that is not a video
+                webshot(request.payload.url, './img/submittedContent/' + identifier + lang + generatedName + '.png',function(err) {
+                    if(err){console.log("error taking webshot: " + err);}
+                    console.log("screenshot now saved");
+                    reply({displayType: "webpage", savedAs: identifier + lang + generatedName + '.png', id: generatedName});
+
+                });
+            }
+        } 
     });
-
-    //screen shot and stream back to user
-    // webshot('google.com', function(err, renderStream) {
-    //   var file = fs.createWriteStream('google.png', {encoding: 'binary'});
-    
-    //   renderStream.on('data', function(data) {
-    //     file.write(data.toString('binary'), 'binary');
-    //   });
-    // });
-
-};
-
-exports.addContent = function (request, reply){  
 };
 
 exports.addImageFile = function (request, reply){
-    console.log("about to write file");
-    //request.payload.name.split('.').pop();
-    fs.writeFile("./img/submittedContent/" + request.payload.name, request.payload.file, function (err) {
+
+    //TODO: look into saving into S3 buckets?
+    //TODO: validate incoming flie is an image
+    //TODO: look into converting gifs to html5 videos (gfycat...)
+    var identifier = '-noAccociatedContent-';           //to be removed when associated content is added to db.
+    var ext = request.payload.name.split('.').pop();    //get extension from orignal filename
+    var generatedName = uuid.v1();                      //is uuid the best option for file names?
+    var lang = "_" + request.payload.language + "_";    //allows for adding same content in different languages
+
+    fs.writeFile("./img/submittedContent/" + identifier + lang + generatedName + '.' + ext, request.payload.file, function (err) {
         if(err){console.log("error saving: " + err);}
-        reply({test:"saved image"});
+        //return generated name and full name
+        reply({displayType:"image", savedAs:identifier + lang + generatedName + '.' + ext, id: generatedName});
     });
 };
+
+exports.addContent = function (request, reply){
+    // fs.rename(oldPath, newPath, callback) // for deleting identifier
+};
+

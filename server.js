@@ -91,7 +91,7 @@ server.route([
             }
         }
     },
-
+    //TODO fix workaround
     // GET /login is a temporary work around...passport auth failure redirects here automatically.
     { method: 'GET', path: '/login', handler: function(request, reply){
         console.log("get login here. about to reply with a 401...");
