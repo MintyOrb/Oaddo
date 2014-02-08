@@ -103,11 +103,8 @@ exports.addAccount = function (request, reply) {
             console.log('about to save user to db');
             db.query(createQuery, createProperties, function (err, results) {
                 if (err) {throw err;}
-                //perform login here?
-                //ensure they follow through to desired page...?
-                //navigate to introduction page?
                 console.log("created user in db, about to reply wiht success");
-                reply({message: "SUCCESS"});
+                reply({successfulCreation: true});
                 callback(true);
             });
         }

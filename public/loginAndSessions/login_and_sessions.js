@@ -18,12 +18,18 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
     $scope.newUser = {};
     
     $scope.create = function () {
-        // var user = new API.User();
-        // user.data = $scope.newUser;
-        // console.log("user: " + user);
-        // user.$save();
-        $http.post('/user', $scope.newUser);
-        $modalInstance.close();
+        $http.post('/user', $scope.newUser).
+        then(function(response){
+            console.log(response);
+            //if successfull, log user in.
+            if(response.data.successfulCreation === true){
+                $scope.login($scope.newUser.name, $scope.newUser.password);
+            } else {
+                $scope.message = response.data.message;
+            }
+            console.log(response);
+            
+        });
     };
 
     $scope.login = function (username, password) {
