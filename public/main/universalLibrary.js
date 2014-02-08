@@ -15,9 +15,13 @@ var universalLibrary = angular.module('universalLibrary',
         'textAngular',
         'chieffancypants.loadingBar',
     ]).
-    config(function($routeProvider, $locationProvider, $httpProvider) {
 
-        var checkLoggedin = function ($q, $timeout, $http, $location, $window, LoginService) {
+config(function($routeProvider, $locationProvider, $httpProvider) {
+
+    //function for checking login status before a route change
+    //TODO: consider saving value in a cookie?
+    //  this would be easy to fake, but no secure data would be leaked from the server
+    var checkLoggedin = function ($q, $timeout, $http, $location, $window, LoginService) {
         
         console.log("check logged in function here.");
 
@@ -42,6 +46,7 @@ var universalLibrary = angular.module('universalLibrary',
 
         return deferred.promise;
     };
+
 
     $routeProvider
     .when('/home', {templateUrl: 'partials/main/tempMain.html'})

@@ -19,6 +19,7 @@ exports.authUser = function (username, password, done) {
 
     db.query(query, properties, function (err, userInfo) {
         if (err) {console.log("error in db query: " + err);}
+        console.log("returned from db: " + JSON.stringify(userInfo));
         if(userInfo[0] === undefined){
             console.log("bad username: " + JSON.stringify(userInfo));
             return done(null, false, { message : 'Incorrect username.' });
@@ -282,7 +283,7 @@ exports.validateURL = function (request, reply){
 exports.addImageFile = function (request, reply){
 
     //TODO: look into saving into S3 buckets?
-    //TODO: validate incoming flie is an image
+    //TODO: validate incoming file is an image
     //TODO: look into converting gifs to html5 videos (gfycat...)
     var identifier = '-noAccociatedContent-';           //to be removed when associated content is added to db.
     var ext = request.payload.name.split('.').pop();    //get extension from orignal filename
@@ -298,5 +299,13 @@ exports.addImageFile = function (request, reply){
 
 exports.addContent = function (request, reply){
     // fs.rename(oldPath, newPath, callback) // for deleting identifier
+
+    //query for creating the content
+
+    //remove identifier
+
+    //query for adding terms
+
+    //redirect to content page....
 };
 

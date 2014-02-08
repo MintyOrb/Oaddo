@@ -10,7 +10,11 @@ var Hapi = require('hapi'),
 //server config
 var config = {
     hostname: 'localhost',
-    port: 8000
+    port: 8000,
+    urls: {
+        successRedirect:"/success",
+        failureRedirect:"/login"
+    }
 };
 
 var options = { 
@@ -78,24 +82,22 @@ server.route([
 
                 console.log("/login handler here.");
     
-                Passport.authenticate('local')(request, function (err) {
-
-                    console.log("successful authentication?");
-    
-                    if (err && err.isBoom) {
-                        console.log("error and error is boom...");
-                        // This would be a good place to flash error message
-                    }
-                    reply({message: "logged in"});
-                });
+                Passport.authenticate('local', {
+                    successRedirect: config.urls.successRedirect,
+                    failureRedirect: config.urls.failureRedirect,
+                })(request, reply);
             }
         }
     },
-    //TODO fix workaround
-    // GET /login is a temporary work around...passport auth failure redirects here automatically.
+
     { method: 'GET', path: '/login', handler: function(request, reply){
-        console.log("get login here. about to reply with a 401...");
-        reply().code(401);
+        console.log("get login here. about to reply ");
+        reply({message:"Incorrect Username or Password"});
+    }},
+
+    { method: 'GET', path: '/success', handler: function(request, reply){
+        console.log("successful login here. about to reply with a 200...");
+        reply({message:true});
     }},
 
 
