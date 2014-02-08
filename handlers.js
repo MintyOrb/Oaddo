@@ -72,7 +72,7 @@ exports.addAccount = function (request, reply) {
 
         //check if email already exists
         function(callback){
-            console.log('about to check if anem exists in db already');
+            console.log('about to check if name or email exists in db already');
             db.query(checkQuery, checkProperites, function (err, results) {
                 if (err) {console.log("error: " + err);}
                 if (results[0] === undefined){

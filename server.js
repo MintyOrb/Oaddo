@@ -12,8 +12,8 @@ var config = {
     hostname: 'localhost',
     port: 8000,
     urls: {
-        successRedirect:"/success",
-        failureRedirect:"/login"
+        successRedirect:"/loginSuccess",
+        failureRedirect:"/loginFailure"
     }
 };
 
@@ -89,15 +89,18 @@ server.route([
             }
         }
     },
-
-    { method: 'GET', path: '/login', handler: function(request, reply){
-        console.log("get login here. about to reply ");
+    
+    //responding with 200 rather than 401 because http-auth module logs all 401s
+    //and resends the requests after a successful login. ie login failure attempts
+    //would be resent if 401 used.
+    { method: 'GET', path: '/loginFailure', handler: function(request, reply){
+        console.log("get login here. about to reply with a 200 anyway");
         reply({message:"Incorrect Username or Password"});
     }},
-
-    { method: 'GET', path: '/success', handler: function(request, reply){
+    //NOTE: this is probably a terrible security fault.
+    { method: 'GET', path: '/loginSuccess', config: {auth: 'passport'}, handler: function(request, reply){
         console.log("successful login here. about to reply with a 200...");
-        reply({message:true});
+        reply({loginSuccessful:true});
     }},
 
 

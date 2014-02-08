@@ -38,8 +38,8 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
         $http.post("/login", { 'username': username, 'password': password }).
 
         then(function(response) {
-            console.log(response.data.message);
-            if(response.data.message === true){
+            console.log(response.data.loginSuccessful);
+            if(response.data.loginSuccessful === true){
                 console.log("success here");
                 LoginService.modalIsOpen = false;
                 authService.loginConfirmed();
