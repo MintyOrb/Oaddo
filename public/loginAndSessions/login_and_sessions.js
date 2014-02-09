@@ -61,6 +61,19 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
         LoginService.modalIsOpen = false;
     };
 
+    //when modal closes make sure to note it in LoginService
+    $modalInstance.result.then(function () {
+        console.log('Modal success at:' + new Date());
+        authService.loginConfirmed();
+        console.log('Login Confirmed: ' + new Date());
+        LoginService.modalIsOpen = false;
+    }, function (reason) {
+        console.log('Modal dismissed at: ' + new Date());
+        console.log('Reason Closed: ' + reason);
+        authService.loginCancelled();
+        LoginService.modalIsOpen = false;
+    });
+
 }).
 
 factory('LoginService', function ($modal) {

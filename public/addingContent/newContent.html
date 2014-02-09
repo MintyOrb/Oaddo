@@ -1,16 +1,14 @@
 <h1>Add Library Content</h1>
 
-<div ng-controller="addingContentCtrl">
+<div ng-controller="addingContentCtrl" class="container" >
 
     <form name="addContentForm">
         <accordion>
             <accordion-group heading="Identify Your Content">
-    
-                <div ng-controller="fileSelectionCtrl">
-        
-                    <h4>Paste a URL below or choose a file to upload:</h4>
+                <h4>Paste a URL below or choose a file to upload:</h4>
+                <div ng-controller="fileSelectionCtrl" class="f-flexC f-row f-wrap f-m-around">
                     
-                    <div>
+                    <div class="f-flexC f-row f-wrap f-m-around f-c-center">
                         <div  ng-disabled="displaySettings.disableFileSelection" class="fileUpload btn btn-primary">
     
                             <span>Select File</span>
@@ -18,9 +16,9 @@
     
                         </div>
     
-                        <input ng-if="displaySettings.fileSelected" ng-model="displaySettings.fileName" disabled type="text"/>
+                        <input  class="form-control" id='disabledInput' ng-if="displaySettings.fileSelected" ng-model="displaySettings.fileName" disabled type="text"/>
     
-                        <input ng-if="!displaySettings.fileSelected" name="pasteURL" ng-model="contentObject.webURL" type="URL" ng-change="onURLChange()">
+                        <input  class="form-control" ng-if="!displaySettings.fileSelected" name="pasteURL" ng-model="contentObject.webURL" type="URL" ng-change="onURLChange()">
     
                         <button ng-show="displaySettings.optionSelected" class="btn fileUpload" ng-click="reset()">Reset</button>
                     </div>
@@ -51,30 +49,34 @@
             <accordion-group heading="Identify Relevant Terms">
                 <div ng-controller="termSelectionCtrl">
                     <div> 
-                        Base Terms (scale of the universe, humanities, content type)
+                        Search Terms:
+                        <div>
+                            <button class='btn btn-default'>example</button>
+                        </div>
                     </div>
                     <div> 
-                        Relevant terms based off of selected terms (query the database)
+                        Potentially terms:
+                        <div>
+                            <button class='btn btn-default'>example</button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        Selected Terms:
+                        <div>
+                            <button class='btn btn-default'>example</button>
+                        </div>
                     </div>
                     <div>
-                        Selected Terms (tag content with these terms)
+                        Rejected Terms:
+                        <div>
+                            <button class='btn btn-default btn-sm'>example</button>
+                        </div>
                     </div>
-                    <div>
-                        <tabset>
-                            <tab heading="Scale of the Universe">Static content</tab>
-                            <tab heading="Content Type" active="tab.active">
-                                images and charts and graphs and stuff
-                            </tab>
-                            <tab heading="The Humanities">
-                                arts and stuff
-                            </tab>
-                        </tabset>
-                    </div>
+
                     <div> Manual Term Entry (can't find what you're looking for?)
                         <suggest on-select="addToSelected(data)" lang="{{displayLanguage}}"></suggest>
-                        <p>Lang: {{displayLanguage}}</p>
-                        <input type='text' ng-model='displayLanguage'>
-                        <br>
+                        
                         Tag content with the following terms:
                         <div ng-repeat="term in terms">
                             <div class='dropdown'>

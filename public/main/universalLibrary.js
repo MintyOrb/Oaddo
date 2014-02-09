@@ -14,6 +14,7 @@ var universalLibrary = angular.module('universalLibrary',
         'http-auth-interceptor',
         'textAngular',
         'chieffancypants.loadingBar',
+        'mgcrea.ngStrap'
     ]).
 
 config(function($routeProvider, $locationProvider, $httpProvider) {

@@ -5,21 +5,20 @@
 var Hapi = require('hapi'),
 	LocalStrategy = require('passport-local').Strategy,
     handlers = require("./handlers");
-    // Passport = require('Passport');
 
 //server config
 var config = {
     hostname: 'localhost',
     port: 8000,
     urls: {
-        successRedirect:"/loginSuccess",
-        failureRedirect:"/loginFailure"
+        successRedirect:'/loginSuccess',
+        failureRedirect:'/loginFailure'
     }
 };
 
 var options = { 
     payload:{
-        maxBytes:104857600
+        maxBytes:104857600 //100 mb
     }
         
 };
@@ -84,7 +83,7 @@ server.route([
     
                 Passport.authenticate('local', {
                     successRedirect: config.urls.successRedirect,
-                    failureRedirect: config.urls.failureRedirect,
+                    failureRedirect: config.urls.failureRedirect
                 })(request, reply);
             }
         }
@@ -94,7 +93,7 @@ server.route([
     //and resends the requests after a successful login. ie login failure attempts
     //would be resent if 401 used.
     { method: 'GET', path: '/loginFailure', handler: function(request, reply){
-        console.log("get login here. about to reply with a 200 anyway");
+        console.log("login failure. about to reply with a 200 anyway");
         reply({message:"Incorrect Username or Password"});
     }},
     //NOTE: this is probably a terrible security fault.
