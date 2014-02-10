@@ -1,0 +1,134 @@
+<h1 class="page-header">Add Library Content</h1>
+
+<div ng-controller="addingContentCtrl" class="container" >
+
+    <form name="addContentForm">
+        <accordion>
+            <accordion-group heading="Identify Your Content">
+                <h4>Paste a URL below or choose a file to upload:</h4>
+                <div ng-controller="fileSelectionCtrl" class="f-flexC f-row f-wrap f-m-around">
+                    
+                    <div class="f-flexC f-row f-wrap f-m-around f-c-center">
+                        <div  ng-disabled="displaySettings.disableFileSelection" class="fileUpload btn btn-primary">
+    
+                            <span>Select File</span>
+                            <input ng-disabled="displaySettings.disableFileSelection" type="file" class="upload" ng-file-select="onFileSelect($files)"/>
+    
+                        </div>
+    
+                        <input  class="form-control" id='disabledInput' ng-if="displaySettings.fileSelected" ng-model="displaySettings.fileName" disabled type="text"/>
+    
+                        <input  class="form-control" ng-if="!displaySettings.fileSelected" name="pasteURL" ng-model="contentObject.webURL" type="URL" ng-change="onURLChange()">
+    
+                        <button ng-show="displaySettings.optionSelected" class="btn fileUpload" ng-click="reset()">Reset</button>
+                    </div>
+                    
+                    <small class="text-danger" ng-show="displaySettings.uploadNonImage">You may only upload images at this time.</small>
+                    
+                    <!-- support for dropping files, canceling uploads. Good place to show upload progress? -->
+                    <!--  <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class"
+                          ng-show="dropSupported">drop files here</div>
+                    <div ng-file-drop-available="dropSupported=true" 
+                          ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
+                    <button ng-click="upload.abort()">Cancel Upload</button> -->
+                    
+                    <div ng-if="displaySettings.fileSelected">
+                        <label>Preview:</label>
+                        <br>
+                        <img width="200px" ng-src="{{displaySettings.dataUrl.image}}">
+                    </div>
+                    
+                    <div ng-if="displaySettings.imageURLPresent">
+                        <label>Preview:</label>
+                        <br>
+                        <img width="200px" ng-src="{{contentObject.webURL}}">
+                    </div>
+
+                </div>
+          
+            </accordion-group>
+    
+            <accordion-group heading="Identify Relevant Terms">
+                <div ng-controller="termSelectionCtrl" class="f-flexC f-row f-wrap f-m-around f-c-center">
+                
+                    <div class="col-md-6">
+                        <div class="f-flexC f-row f-wrap f-m-around f-c-center margin5">
+                            <div>
+                                <input type="text" class="form-control" ng-model="DBTerm" ng-change="findTerm()" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in typeAhead" placeholder="Type term name here" >
+                            </div>
+            
+                            <div>
+                                <button ng-click="openNewTermModal()" class='btn btn-default btn-lg'>Add A New Term</button>
+                            </div>
+                        </div>
+                        <div> 
+                            <div class='well well-sm'>
+                                <i class='pull-right fa fa-question-circle opacityHalf'></i>
+                                <span ng-hide="search.length > 0" class="text-muted opacityHalf h3">search terms</span>
+                                <button ng-repeat="term in search" class='btn margin5 btn-default'>{{term.name}}</button>
+                            </div>
+                        </div>
+                        <div> 
+                            <div class="btn-group" ng-model="button.checkbox" bs-checkbox-group>
+                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.people">People</button>
+                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.organizations">Organizations</button>
+                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.physicalObjects">Physical Objects</button>
+                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.concepts">Concepts</button>
+                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.jargon">Jargon</button>
+                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.contentTypes">Content Types</button>
+                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.disciplines">Disciplines</button>
+                            </div>
+                            <div class='well well-sm'>
+                                <i class='pull-right fa fa-question-circle opacityHalf'></i>
+                                <span ng-hide="related.length > 0" class="text-muted opacityHalf h3">related terms</span>
+                                <button ng-repeat="term in related" class='btn margin5 btn-default'>{{term.name}}</button>
+                            </div>
+                        </div>                        
+                    </div> 
+
+                    <div class="col-md-5 f-flexC f-column f-m-around f-c-stretch">
+                        <div class="f-grow-2">
+                            
+                            <div class="well well-sm">
+                                <i class='pull-right fa fa-question-circle opacityHalf'></i>
+                                <div class="f-fleC f-row f-m-center">
+                                    <span ng-hide="selected.length > 0"class="text-muted opacityHalf text-align-center h3">selected terms</span>
+                                    <button ng-repeat="term in selected" class='btn margin5 btn-default'>{{term.name}}</button>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div>
+                            <div class="well well-sm">
+                                <i class='pull-right fa fa-question-circle opacityHalf'></i>
+                                <div class="f-fleC f-row f-m-center">
+                                    <span ng-hide="discarded.length > 0" class="text-muted opacityHalf h3">discarded terms</span>
+                                    <button ng-repeat="term in discarded" class='btn margin5 btn-default btn-xs'>{{term.name}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </accordion-group>
+    
+            <accordion-group heading="Add Meta Information">
+                <div>
+                    source, publisher, dates, locations
+                </div>
+
+            </accordion-group>
+    
+            <accordion-group heading="Initialize Content Fields">
+                <div>
+                    Initialize Content (description, why it is valuable, facts...
+                </div>
+                <div>
+                    <text-angular ta-toolbar="[['h1','h2','h3'],['bold','italics']]" ng-model="example"></text-angular>
+                </div>
+            </accordion-group>
+    
+        </accordion>
+    </form>
+    <button class="btn btn-primary btn-large">Add Content</button>
+</div>
