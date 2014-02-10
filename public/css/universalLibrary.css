@@ -3,7 +3,7 @@
 /*Original Bootstrap's CSS depends on empty href attributes to style cursors for several components (pagination, tabs etc.). But in AngularJS adding empty href attributes to link tags will cause unwanted route changes. This is why we need to remove empty href attributes from directive templates and as a result styling is not applied correctly.*/
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
-/**{outline: solid 1px;}*/
+*{outline: solid 1px;}
 
 
 /* override bootstrap 3 css*/
@@ -77,3 +77,7 @@
 
 /*applys to child element*/
 	/*align-self: auto | flex-start | flex-end | center | baseline | stretch*/
+
+.f-grow-1 { flex-grow:1;			-webkit-flex-grow:1;}
+.f-grow-2 { flex-grow:2;			-webkit-flex-grow:2;}
+.f-grow-3 { flex-grow:3;			-webkit-flex-grow:3;}

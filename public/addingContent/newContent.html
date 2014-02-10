@@ -33,12 +33,14 @@
                     <button ng-click="upload.abort()">Cancel Upload</button> -->
                     
                     <div ng-if="displaySettings.fileSelected">
-                        Preview:<br>
+                        <label>Preview:</label>
+                        <br>
                         <img width="200px" ng-src="{{displaySettings.dataUrl.image}}">
                     </div>
                     
                     <div ng-if="displaySettings.imageURLPresent">
-                        Preview:<br>
+                        <label>Preview:</label>
+                        <br>
                         <img width="200px" ng-src="{{contentObject.webURL}}">
                     </div>
 
@@ -47,49 +49,80 @@
             </accordion-group>
     
             <accordion-group heading="Identify Relevant Terms">
-                <div ng-controller="termSelectionCtrl">
-                    <div> 
-                        Search Terms:
-                        <div>
-                            <button class='btn btn-default'>example</button>
-                        </div>
-                    </div>
-                    <div> 
-                        Potentially terms:
-                        <div>
-                            <button class='btn btn-default'>example</button>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        Selected Terms:
-                        <div>
-                            <button class='btn btn-default'>example</button>
-                        </div>
-                    </div>
-                    <div>
-                        Rejected Terms:
-                        <div>
-                            <button class='btn btn-default btn-sm'>example</button>
-                        </div>
-                    </div>
+                <div ng-controller="termSelectionCtrl" class="f-flexC f-row f-wrap f-m-around f-c-center">
 
-                    <div> Manual Term Entry (can't find what you're looking for?)
-                        <suggest on-select="addToSelected(data)" lang="{{displayLanguage}}"></suggest>
-                        
-                        Tag content with the following terms:
-                        <div ng-repeat="term in terms">
-                            <div class='dropdown'>
-                                <a class='dropdown-toggle'>
-                                    <button class='btn'>{{term.name}}</button>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li ng-click="removeFromSelected(term.mid)"><a>Remove</a></li>
-                                    <li><a>Focus Term</a></li>
-                                </ul>
+                    <div class="f-flexC f-column f-m-between">
+                        <div class="f-flexC f-row f-wrap f-m-around f-c-center">
+                            <div>
+                                <label>Manually Search for Terms Here:</label>
+                                <br>
+                                <input class="form-control" type='text' bs-typeahead>
+                            </div>
+                            <div>
+                                <strong>OR</strong>
+                            </div>
+                            <div>
+                                <button class='btn btn-default btn-lg'>Add A New Term</button>
+                            </div>
+                        </div>
+                        <div> 
+                            <label>Search For terms related to the following:</label>
+                            <div class='well'>
+                                <button class='btn btn-default'>example</button>
+                            </div>
+                        </div>
+                        <div> 
+                            <label>Filter the returned terms:</label>
+                            <br>
+                            <div class="btn-group" ng-model="button.checkbox" bs-checkbox-group>
+                              <label class="btn btn-sm btn-default"><input type="checkbox" value="People">People</label>
+                              <label class="btn btn-sm btn-default"><input type="checkbox" value="Organizations">Organizations</label>
+                              <label class="btn btn-sm btn-default"><input type="checkbox" value="PhysicalObjects">Physical Objects</label>
+                              <label class="btn btn-sm btn-default"><input type="checkbox" value="Concepts">Concepts</label>
+                              <label class="btn btn-sm btn-default"><input type="checkbox" value="Jargon">Jargon</label>
+                              <label class="btn btn-sm btn-default"><input type="checkbox" value="ContentTypes">Content Types</label>
+                            </div>
+                            <label>Related terms:</label>
+                            <div class='well'>
+                                <button class='btn btn-default'>example</button>
+                            </div>
+                        </div>
+                    
+
+                        <!-- <div> Manual Term Entry (can't find what you're looking for?)
+                            <suggest on-select="addToSelected(data)" lang="{{displayLanguage}}"></suggest>
+                            
+                            Tag content with the following terms:
+                            <div ng-repeat="term in terms">
+                                <div class='dropdown'>
+                                    <a class='dropdown-toggle'>
+                                        <button class='btn'>{{term.name}}</button>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li ng-click="removeFromSelected(term.mid)"><a>Remove</a></li>
+                                        <li><a>Focus Term</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div> 
+
+                    <div>
+                        <div>
+                            <label>Selected Terms:</label>
+                            <div class="well">
+                                <button class='btn btn-default'>example</button>
+                            </div>
+                        </div>
+                
+                        <div>
+                            <label>Rejected Terms:</label>
+                            <div class="well">
+                                <button class='btn btn-default btn-xs'>example</button>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </accordion-group>
     
@@ -103,14 +136,12 @@
                 <div>
                     Initialize Content (description, why it is valuable, facts...
                 </div>
+                <div>
+                    <text-angular ta-toolbar="[['h1','h2','h3'],['bold','italics']]" ng-model="example"></text-angular>
+                </div>
             </accordion-group>
     
         </accordion>
     </form>
     <button class="btn btn-primary btn-large">Add Content</button>
-</div>
-
-
-<div>
-	<text-angular ta-toolbar="[['h1','h2','h3'],['bold','italics']]" ng-model="example"></text-angular>
 </div>
