@@ -306,3 +306,34 @@ exports.addContent = function (request, reply){
     //redirect to content page....
 };
 
+
+exports.termQuery = function (request, reply){
+    console.log("data: "+ request.query);
+    console.log("data: "+ JSON.stringify(request.query));
+
+    var properties = { 
+        code: request.query.language,
+        match: '(?i).*' + request.query.entered + '.*'
+     };
+     //TODO: use english as default if not found in preferred language
+     //TODO: use users secondary languge choice if first not found?
+ // TODO: don't return already selected terms? Maybe switch to a post to get an array of alredy selected?
+    var query = "MATCH (core:term)-[r:HAS_META {languageCode:{code}}]-(langNode) WHERE langNode.name =~ {match} RETURN core.UUID as UUID, langNode.name as name LIMIT 5";
+    console.log("match: " + properties.match);
+    console.log("lang: " + properties.code);
+
+    db.query(query, properties, function (err, matches) {
+        if (err) {console.log("error in db query: " + err);}
+        console.log("returned from db: " + JSON.stringify(matches));
+        if(matches[0] === undefined){
+            console.log("none found: " + JSON.stringify(matches));
+            reply({ message : 'heh' });
+        } else {
+            reply({matches:matches});
+        }
+
+        
+
+    });    
+};
+
