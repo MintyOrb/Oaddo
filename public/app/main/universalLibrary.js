@@ -50,9 +50,9 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
 
 
     $routeProvider
-    .when('/home', {templateUrl: 'partials/main/tempMain.html'})
-    .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/main/test.html'})
-    .when('/content/new', {resolve: {loggedin: checkLoggedin}, templateUrl: 'partials/addingContent/newContent.html'})
+    .when('/home', {templateUrl: 'app/main/tempMain.html'})
+    .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/main/test.html'})
+    .when('/content/new', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/addingContent/newContent.html'})
     .otherwise({redirectTo: '/home'});
     $locationProvider.html5Mode(true);
 }).

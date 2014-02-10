@@ -67,10 +67,10 @@ server.route([
 
 	//resource routes
     // { method: 'GET', path: '/public/{path*}', handler: { directory: { path: './public/' } } }, 
-    { method: 'GET', path: '/resources/{path*}', handler: { directory: { path: './public/resources' } } }, 
-    { method: 'GET', path: '/img/{path*}', handler: { directory: { path: './public/images' } } },
-    { method: 'GET', path: '/bower_components/{path*}', handler: { directory: { path: './public/bower_components' } } },
-    { method: 'GET', path: '/app/{path*}', handler: { directory: { path: './public/app' } } },
+    { method: 'GET', path: '/bower_components/{path*}', handler: { directory: { path: './public/bower_components/' } } },
+    { method: 'GET', path: '/resources/{path*}', handler: { directory: { path: './public/resources/' } } }, 
+    { method: 'GET', path: '/app/{path*}', handler: { directory: { path: './public/app/' } } },
+    { method: 'GET', path: '/img/{path*}', handler: { directory: { path: './public/images/' } } },
 
     //serve index as entry point into angular app
     { method: 'GET', path: '/{path*}', handler: {file: './public/app/index.html'} },
