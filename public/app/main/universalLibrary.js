@@ -15,6 +15,8 @@ var universalLibrary = angular.module('universalLibrary',
         'http-auth-interceptor',
         'textAngular',
         'chieffancypants.loadingBar',
+        'ngAnimate-animate.css',
+        'ngDragDrop',
     ]).
 
 config(function($routeProvider, $locationProvider, $httpProvider) {

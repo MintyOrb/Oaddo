@@ -14,9 +14,32 @@
 	display:inline;
 	width:auto;
 }
+.well {
+  position: relative;
+  min-height: 70px;
+}
 
-.opacityHalf {opacity:.5;}
-.margin5 { margin:5px;}
+.inWellBtn{margin-left: -5px,margin-top:-5px;}
+
+.background {
+	color:#d1d1d1; 
+	cursor: default; 
+	z-index: 0;
+	position: absolute; 
+ 	top: 0; 
+	left: 10;
+ 	margin-top: 15px;
+}
+
+
+.margin5 {margin:5px;}
+.droppable{background-color:#e0e0e0;}
+.above{z-index: 10;position: relative;}
+
+.height200 {min-height: 200px}
+.width80p {min-width: 80%}
+
+
 
 .ta-editor {
   min-height: 300px;

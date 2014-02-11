@@ -13,6 +13,21 @@ controller('addingContentCtrl', ['$scope', function ($scope) {
 }]).
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appLanguage){
 
     $scope.displaySettings = {
@@ -135,26 +150,27 @@ service('contentTerms', [function () {
     this.related = [];      // return based on search
     this.search = [];       // find terms related to these
 }]).
-  
-
-controller('NewTermModalInstanceCtrl' , function ($scope, $modalInstance) {
-
-    $scope.ok = function () {
-        $modalInstance.close();
-    };
-       
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}).
-
 
 
 controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLanguage, $modal) {
-   
-    $scope.selected = contentTerms.selected;
+
+    $scope.contentTerms = contentTerms;
     $scope.DBTerm = "";
     $scope.typeAhead = [];
+    $scope.displayOptions = {
+        addingNewTerm : false
+    };
+
+    $scope.filter = {
+        people: false,
+        organizations: false,
+        physicalObjects: false,
+        concepts: false,
+        jargon: false,
+        disciplines: false,
+        activities: false,
+        contentTypes: false,
+    };
 
     //typeahead from neo4j
     $scope.findTerm = function()
@@ -168,18 +184,76 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         });        
     };
 
-        $scope.addToSelectedFromDB = function(){
-            contentTerms.selected.push({name:$scope.DBTerm.name,UUID:$scope.DBTerm.UUID});
-            $scope.DBTerm = "";
-            console.log("selected: " + JSON.stringify(contentTerms.selected));
-        };
+    $scope.addToSelectedFromDB = function(){
+        contentTerms.selected.push({name:$scope.DBTerm.name,UUID:$scope.DBTerm.UUID});
+        $scope.DBTerm = "";
+        console.log("selected: " + JSON.stringify(contentTerms.selected));
+    };
 
-   
-    $scope.addToSelectedFromFB = function(termData){
+    $scope.removeFromSelected = function(id){
+        for(var index = 0; index < contentTerms.selected.length; index++){
+            if(contentTerms.selected[index].mid === id){
+                contentTerms.selected.splice(index,1);
+            }
+        }
+    };
+
+    $scope.openNewTermModal = function (termData) {
+        // $scope.newTermMeta.name = termData.name;
+        var test = termData;
+        console.log("termMeta: " + JSON.stringify(termData));
+        var modalInstance = $modal.open({
+            templateUrl: 'app/addingContent/newTermModal.html',
+            controller: 'newTermModalInstanceCtrl',
+            windowClass: "",
+            resolve: {
+                data: function () {
+                    return termData;
+                }
+            }
+        });
+    };
+
+    $scope.dropFromHandler = function(index, termArray){
+        console.log("DROPPING");
+        console.log("termArray: " + termArray);
+        console.log("index: " + index);
+        termArray.splice(index, 1);
+    };
+
+    $scope.recievingHandler = function(data, termArray){
+        console.log("RECIEVING");
+        console.log("data: " + data);
+        console.log("termArray: " + termArray);
+        termArray.push(data);
+    };
+
+}).
+
+
+controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, contentTerms, $http) {
+
+    console.log("data in modal: " + JSON.stringify(data));
+
+    $scope.newTermMeta = {};
+    $scope.newTermMeta.name = data.name;
+    $scope.newTermMeta.mid = data.mid;
+    $scope.newTermMeta.lang = data.lang;
+
+
+    $scope.ok = function () {
+        $modalInstance.close();
+    };
+       
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.addToSelectedFromFB = function(){
         //add to array to prevent visual delay
-        contentTerms.selected.push({mid: termData.mid,name: termData.name,langAddedIn: termData.lang});
+        contentTerms.selected.push({mid: newTermMeta.mid,name: newTermMeta.name,langAddedIn: newTermMeta.lang});
         //add to database (if not already stored) and return UUID
-        $http.post('/term', termData)
+        $http.post('/term', newTermMeta)
         .success(function(returned){
             //add UUID to item in selected
             for(var index = 0; index < contentTerms.selected.length; index++){
@@ -192,29 +266,12 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         console.log("selected: " + JSON.stringify(contentTerms.selected));
 
     };
-
-    $scope.removeFromSelected = function(id){
-        for(var index = 0; index < contentTerms.selected.length; index++){
-            if(contentTerms.selected[index].mid === id){
-                contentTerms.selected.splice(index,1);
-            }
-        }
-    };
-
-    $scope.openNewTermModal = function () {
-        var modalInstance = $modal.open({
-          templateUrl: 'partials/addingContent/newTermModal.html',
-          controller: 'NewTermModalInstanceCtrl',
-          windowClass: "",
-        });
-    };
-
 }).
 
 directive('suggest', function() {
     return {
         restrict: 'E',
-        template: "<input type='text'>",
+        template: "<input style='background: url(img/fbIcon.png); background-position: 140px 6px; background-repeat: no-repeat;' type='text'>",
         replace:true,
         scope:{onSelect:'&'},
         link: function(scope, element, attrs) {

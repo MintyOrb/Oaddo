@@ -89,7 +89,7 @@ factory('LoginService', function ($modal) {
                 this.modalIsOpen = true;
 
                 var modalInstance = $modal.open({
-                    templateUrl: 'partials/loginAndSessions/LoginModal.html',
+                    templateUrl: 'app/loginAndSessions/LoginModal.html',
                     controller: 'LoginModalInstanceCtrl',
                     windowClass: "",
                 });

@@ -35,13 +35,13 @@
                     <div ng-if="displaySettings.fileSelected">
                         <label>Preview:</label>
                         <br>
-                        <img width="200px" ng-src="{{displaySettings.dataUrl.image}}">
+                        <img width="300px" ng-src="{{displaySettings.dataUrl.image}}">
                     </div>
                     
                     <div ng-if="displaySettings.imageURLPresent">
                         <label>Preview:</label>
                         <br>
-                        <img width="200px" ng-src="{{contentObject.webURL}}">
+                        <img width="300px" ng-src="{{contentObject.webURL}}">
                     </div>
 
                 </div>
@@ -49,66 +49,67 @@
             </accordion-group>
     
             <accordion-group heading="Identify Relevant Terms">
-                <div ng-controller="termSelectionCtrl" class="f-flexC f-row f-wrap f-m-around f-c-center">
-                
-                    <div class="col-md-6">
-                        <div class="f-flexC f-row f-wrap f-m-around f-c-center margin5">
-                            <div>
-                                <input type="text" class="form-control" ng-model="DBTerm" ng-change="findTerm()" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in typeAhead" placeholder="Type term name here" >
-                            </div>
-            
-                            <div>
-                                <button ng-click="openNewTermModal()" class='btn btn-default btn-lg'>Add A New Term</button>
-                            </div>
-                        </div>
-                        <div> 
-                            <div class='well well-sm'>
-                                <i class='pull-right fa fa-question-circle opacityHalf'></i>
-                                <span ng-hide="search.length > 0" class="text-muted opacityHalf h3">search terms</span>
-                                <button ng-repeat="term in search" class='btn margin5 btn-default'>{{term.name}}</button>
-                            </div>
-                        </div>
-                        <div> 
-                            <div class="btn-group" ng-model="button.checkbox" bs-checkbox-group>
-                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.people">People</button>
-                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.organizations">Organizations</button>
-                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.physicalObjects">Physical Objects</button>
-                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.concepts">Concepts</button>
-                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.jargon">Jargon</button>
-                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.contentTypes">Content Types</button>
-                                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.disciplines">Disciplines</button>
-                            </div>
-                            <div class='well well-sm'>
-                                <i class='pull-right fa fa-question-circle opacityHalf'></i>
-                                <span ng-hide="related.length > 0" class="text-muted opacityHalf h3">related terms</span>
-                                <button ng-repeat="term in related" class='btn margin5 btn-default'>{{term.name}}</button>
-                            </div>
-                        </div>                        
-                    </div> 
 
-                    <div class="col-md-5 f-flexC f-column f-m-around f-c-stretch">
-                        <div class="f-grow-2">
-                            
-                            <div class="well well-sm">
-                                <i class='pull-right fa fa-question-circle opacityHalf'></i>
-                                <div class="f-fleC f-row f-m-center">
-                                    <span ng-hide="selected.length > 0"class="text-muted opacityHalf text-align-center h3">selected terms</span>
-                                    <button ng-repeat="term in selected" class='btn margin5 btn-default'>{{term.name}}</button>
-                                </div>
-                            </div>
-                        </div>
-                
+            <!-- TODO: set up drop channels that don't except an element coming from its own container -->
+                <div ng-controller="termSelectionCtrl">
+                    <div class="row margin5">
                         <div>
-                            <div class="well well-sm">
-                                <i class='pull-right fa fa-question-circle opacityHalf'></i>
-                                <div class="f-fleC f-row f-m-center">
-                                    <span ng-hide="discarded.length > 0" class="text-muted opacityHalf h3">discarded terms</span>
-                                    <button ng-repeat="term in discarded" class='btn margin5 btn-default btn-xs'>{{term.name}}</button>
-                                </div>
-                            </div>
+                            <suggest ng-show="displayOptions.addingNewTerm" class='form-control' on-select="openNewTermModal(data)" lang="{{displayLanguage}}"></suggest>
+                            <input ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="DBTerm" ng-change="findTerm()" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in typeAhead" placeholder="Type term name here" >
+                            <button ng-click="displayOptions.addingNewTerm = !displayOptions.addingNewTerm" class='btn btn-default btn-sm'>Change Source <i class='text-muted fa fa-question-circle'></i></button>
                         </div>
                     </div>
+                    <div >
+                        <div class="col-sm-6"> 
+                            <div> 
+                            <div ui-on-Drop="recievingHandler($data, contentTerms.search)" drag-enter-class="droppable" class='well well-sm'>
+                                    <i class='pull-right text-muted fa fa-question-circle'></i>
+                                    <span ng-hide="contentTerms.search.length > 0" class="dn-fade text-muted background h3">search terms</span>
+                                    <div class="f-flexC f-row f-m-around f-wrap">
+                                     <button ui-draggable="true" drag-channel="sea" on-drop-success="dropFromHandler($index,contentTerms.search)" drag="term" ng-repeat="term in contentTerms.search" class='dn-bounce above btn margin5 btn-default'>{{term.name}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div> 
+                                <button class='btn btn-default btn-xs' popover-template="app/filterPartial.html" ng-click="popoverOpen = !popoverOpen" popover-placement="right">
+                                    <i class="fa fa-filter"></i> 
+                                    <span ng-show='!popoverOpen'>open filter options</span>
+                                    <span ng-show='popoverOpen'>close filter options</span>
+                                </button>
+                                <div ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm height200'>
+                                    <i class='pull-right text-muted fa fa-question-circle'></i>
+                                    <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">related terms</span>
+                                    <div class="f-flexC f-row f-m-around f-wrap">
+                                        <button ui-draggable="true" drag-channel="rel" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" ng-repeat="term in contentTerms.related" class='dn-bounce above btn margin5 btn-default'>{{term.name}}</button>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </div> 
 
+                       <div class="col-sm-6">
+                           
+                            <div ui-on-Drop="recievingHandler($data, contentTerms.selected)" drag-enter-class="droppable" class="well well-sm height200">
+                                <i class='pull-right text-muted fa fa-question-circle'></i>
+                                <div class="f-fleC f-row f-m-center">
+                                    <span ng-hide="contentTerms.selected.length > 0"class="dn-fade text-muted background h3">selected terms</span>
+                                    <div class="f-flexC f-row f-m-around f-wrap">
+                                        <button ui-draggable="true" drag-channel="sel" on-drop-success="dropFromHandler($index,contentTerms.selected)" drag="term" ng-repeat="term in contentTerms.selected" class='dn-bounce above btn margin5 btn-default'>{{term.name}}</button>
+                                    </div>
+                                </div>
+                            </div>
+        
+                            <div ui-on-Drop="recievingHandler($data, contentTerms.discarded)" drag-enter-class="droppable" class="well well-sm">
+                                <i class='pull-right text-muted fa fa-question-circle'></i>
+                                <div class="f-fleC f-row f-m-center">
+                                    <span ng-hide="contentTerms.discarded.length > 0" class="dn-fade text-muted background h3">discarded terms</span>
+                                    <div class="f-flexC f-row f-m-around f-wrap">
+                                        <button ui-draggable="true" drag-channel="dis" on-drop-success="dropFromHandler($index, contentTerms.discarded)" drag="term" ng-repeat="term in contentTerms.discarded" class='dn-bounce above btn margin5 btn-default btn-xs'>{{term.name}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </accordion-group>
     

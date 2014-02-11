@@ -1,30 +1,32 @@
 
     <div class="modal-header">
-        <h3>Identify Term</h3>  
+        <h1 class="text-center">Add new term</h3>  
     </div>
     <div class="modal-body">
 
-        <form>
-            <label> New Term:
-                <h3>test</h3>
+        <form class="f-flexC f-column f-m-around f-c-center">
+            <label> 
+                <h2>{{newTermMeta.name}}</h2>
             </label>
-            <span>What is this term (check all that apply)?</span>
-            <div class="btn-group" ng-model="button.checkbox" bs-checkbox-group>
-                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.people">People</button>
-                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.organizations">Organizations</button>
-                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.physicalObjects">Physical Objects</button>
-                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.concepts">Concepts</button>
-                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.jargon">Jargon</button>
-                <button btn-checkbox class="btn btn-sm btn-default" type="button" ng-model="filter.contentTypes">Content Types</button>
+            <br>
+            <span>Please set the filter for this term:</span>
+            <br>
+            <div class="well well-sm col-sm-8 f-flexC f-row f-wrap f-m-around f-c-center">
+                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.people">Person</button>
+                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.organizations">Organization</button>
+                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.physicalObjects">Physical Object</button>
+                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.concepts">Concept</button>
+                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.jargon">Jargon</button>
+                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.disciplines">Discipline</button>
+                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.activities">Activity</button>
+                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.contentTypes">Content Type</button>
             </div>
-            <label> Enter a one sentence definition of this term for the definition competition (optional):
-                <input type="text" ng-model="newTerm.termDef">
-            </label>
-            <suggest on-select="addToSelectedFromFB(data)" lang="{{displayLanguage}}"></suggest>
-
+            <br>
+            <label> Enter a concise (at most one sentence) definition for this term:</label>
+            <input class="form-control width80p" type="text" ng-model="newTermMeta.definition">
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-primary" ng-click="addTermToLibrary()">Add Term</button>
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
