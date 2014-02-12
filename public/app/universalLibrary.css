@@ -3,11 +3,12 @@
 /*Original Bootstrap's CSS depends on empty href attributes to style cursors for several components (pagination, tabs etc.). But in AngularJS adding empty href attributes to link tags will cause unwanted route changes. This is why we need to remove empty href attributes from directive templates and as a result styling is not applied correctly.*/
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
-/**{outline: solid 1px;}*/
+*{outline: solid 1px;}
 
 
 
 /* override bootstrap 3 css*/
+.hr{margin:5px; border-top: 1px solid #C0C0C0;}
 .row{margin:0px;}
 .container {width:auto;}
 .form-control{
@@ -18,8 +19,6 @@
   position: relative;
   min-height: 70px;
 }
-
-.inWellBtn{margin-left: -5px,margin-top:-5px;}
 
 .background {
 	color:#d1d1d1; 
@@ -33,11 +32,13 @@
 
 
 .margin5 {margin:5px;}
+.margin20 {margin:20px;}
 .droppable{background-color:#e0e0e0;}
 .above{z-index: 10;position: relative;}
 
 .height200 {min-height: 200px}
 .width80p {min-width: 80%}
+.width100p {min-width: 100%}
 
 
 
@@ -109,3 +110,12 @@
 .f-grow-1 { flex-grow:1;			-webkit-flex-grow:1;}
 .f-grow-2 { flex-grow:2;			-webkit-flex-grow:2;}
 .f-grow-3 { flex-grow:3;			-webkit-flex-grow:3;}
+
+
+/* belongs to child elements */
+.f-self-start { align-self: flex-start; 			-webkit-align-self: flex-start; }
+.f-self-end { align-self: flex-end; 				-webkit-align-self: flex-end; }
+.f-self-center { align-self: center; 				-webkit-align-self: center; }
+.f-self-baseline { align-self: baseline; 			-webkit-align-self: baseline; }
+.f-self-stretch { align-self: stretch; 				-webkit-align-self: stretch; }
+.f-self-auto { align-self: auto; 					-webkit-align-self: auto; }  
