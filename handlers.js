@@ -127,7 +127,7 @@ exports.relatedTerms = function (request, reply) {
 //new terms
 exports.addTerm = function (request, reply) {
 
-// TODO: add users definition to correct meta property
+    // TODO: figure out how to handle def in case en/en-gb - remove region specification (gb)?
     
     console.log("req.payload: " + JSON.stringify(request.payload));
     console.log("req.session: " + JSON.stringify(request.session));
@@ -145,15 +145,16 @@ exports.addTerm = function (request, reply) {
                 "dateAdded": new Date(),
                 "addedBy" : request.user.id,
                 "UUID": uuid.v4(),
-                "languageAddedIn" : request.payload.langAddedIn,
+                "languageAddedIn" : request.payload.lang,
                 "type" : JSON.stringify(request.payload.type)
             },
             "metaProps" : []
         };
 
     var metaProp = {}; //for storing result of MQL query
+    var defMeta = "";  // for adding definition provided in adders language
 
-    var createQuery = "CREATE (newTerm:term:test {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_META {languageCode: props.languageCode}]->(:termMeta:test {name: props.name, dateAdded: props.dateAdded})) WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
+    var createQuery = "CREATE (newTerm:term:test {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_META {languageCode: props.languageCode}]->(:termMeta:test {name: props.name, dateAdded: props.dateAdded, definition: props.definition})) WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
     
     var checkProperites = {mid: request.payload.mid};
     var checkQuery = "MATCH (node:term {MID: {mid} }) RETURN node.UUID as UUID";
@@ -181,16 +182,24 @@ exports.addTerm = function (request, reply) {
         function(callback){
             freebase.mqlread(freebasQuery, {key:"AIzaSyCrHUlKm60rk271WLK58cZJxEnzqNwVCw4"}, function(result){
                 for(var ii = 0; ii<result.result.name.length; ii++){
+                    console.log("submit lang: " + request.payload.lang);
                     console.log("language: " + result.result.name[ii].lang);
                     console.log("word: " + result.result.name[ii].value);
         
+                    // add def in adders language
+                    if(result.result.name[ii].lang.substr(6,result.result.name[ii].lang.length) === request.payload.lang){
+                        console.log("match found: ");
+                        defMeta = request.payload.definition;
+                    }
                     metaProp = {
                         languageCode: result.result.name[ii].lang.substr(6,result.result.name[ii].lang.length), //get rid of "/lang/"
                         name: result.result.name[ii].value,
-                        dateAdded: new Date()
+                        dateAdded: new Date(),
+                        definition: defMeta
                     };
         
                     createProperties.metaProps.push(metaProp);
+                    defMeta = ""; //reset def so it is not added in incorrect languages
                 }
                 console.log(createProperties);
                 console.log("done with freebase");

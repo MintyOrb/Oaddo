@@ -169,7 +169,16 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         jargon: true,
         disciplines: true,
         activities: true,
+        locations: true,
         contentTypes: true,
+    };
+
+    //filter popover function
+    $scope.setAll = function(value){
+        console.log("hi: "+value);
+        for (var term in $scope.filter) {
+            $scope.filter[term] = value;
+        }
     };
 
     //typeahead from neo4j
@@ -245,11 +254,13 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
     $scope.newTermMeta.type.jargon           = false;
     $scope.newTermMeta.type.disciplines      = false;
     $scope.newTermMeta.type.activities       = false;
+    $scope.newTermMeta.type.locations        = false;
     $scope.newTermMeta.type.contentTypes     = false;
 
     $scope.newTermMeta.name = data.name;
     $scope.newTermMeta.mid = data.mid; 
     $scope.newTermMeta.lang = data.lang;
+    console.log("data.lang: " + data.lang);
        
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
@@ -257,6 +268,7 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
 
     $scope.addToSelectedFromFB = function(){
         //add to array to prevent visual delay
+        console.log("lang from newtermmeta: " + $scope.newTermMeta.lang);
         contentTerms.selected.push({
             mid: $scope.newTermMeta.mid,
             name: $scope.newTermMeta.name,

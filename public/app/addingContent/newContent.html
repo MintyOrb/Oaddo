@@ -49,9 +49,8 @@
             </accordion-group>
     
             <accordion-group heading="Identify Relevant Terms">
-            <!-- TODO: add 'select all' and 'select none' to filter options -->
             <!-- TODO: add in other selection options (dropdown menu, popup menu...) -->
-            <!-- TODO: set up drop channels that don't except an element coming from its own container -->
+            <!-- TODO: set up drop channels that don't accept an element coming from its own container -->
                 <div ng-controller="termSelectionCtrl">
                     <div class="row margin5 f-flexC f-m-center margin20">
                         <div>
@@ -64,8 +63,10 @@
                     <div >
                         <div class="col-sm-6"> 
                             <div> 
-                            <!-- TODO: don't allow the same term to be added twice -->
+                            <!-- TODO: help text popovers/tooltips -->
+                            <!-- TODO: don't allow the same term to be added twice - is this necessary? could be handled server side-->
                             <!-- TODO: write in a button to clear all search terms -->
+                            <!-- TODO: find related terms (to be done after some content has been added) -->
                                 <div ui-on-Drop="recievingHandler($data, contentTerms.search)" drag-enter-class="droppable" class='well well-sm'>
                                     <i class='pull-right text-muted fa fa-question-circle'></i>
                                     <span ng-hide="contentTerms.search.length > 0" class="dn-fade text-muted background h3">search terms</span>
