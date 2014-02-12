@@ -248,29 +248,29 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
     $scope.newTermMeta.type.contentTypes     = false;
 
     $scope.newTermMeta.name = data.name;
-    $scope.newTermMeta.mid = data.mid;
+    $scope.newTermMeta.mid = data.mid; 
     $scope.newTermMeta.lang = data.lang;
        
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
 
-    $scope.addToSelectedFromFB = function(newTermMeta){
+    $scope.addToSelectedFromFB = function(){
         //add to array to prevent visual delay
         contentTerms.selected.push({
-            mid: newTermMeta.mid,
-            name: newTermMeta.name,
-            langAddedIn: newTermMeta.lang,
-            definition: newTermMeta.definition
+            mid: $scope.newTermMeta.mid,
+            name: $scope.newTermMeta.name,
+            langAddedIn: $scope.newTermMeta.lang,
+            definition: $scope.newTermMeta.definition
         });
         //add to database (if not already stored) and return UUID
         $modalInstance.close();
 
-        $http.post('/term', newTermMeta)
+        $http.post('/term', $scope.newTermMeta)
         .success(function(returned){
             //add UUID to item in selected
             for(var index = 0; index < contentTerms.selected.length; index++){
-                if(contentTerms.selected[index].mid === newTermMeta.mid){
+                if(contentTerms.selected[index].mid === $scope.newTermMeta.mid){
                     contentTerms.selected.UUID = returned.UUID;
                 }
             }

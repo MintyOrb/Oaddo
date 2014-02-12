@@ -127,6 +127,7 @@ exports.relatedTerms = function (request, reply) {
 //new terms
 exports.addTerm = function (request, reply) {
 
+// TODO: add users definition to correct meta property
     
     console.log("req.payload: " + JSON.stringify(request.payload));
     console.log("req.session: " + JSON.stringify(request.session));
@@ -144,7 +145,8 @@ exports.addTerm = function (request, reply) {
                 "dateAdded": new Date(),
                 "addedBy" : request.user.id,
                 "UUID": uuid.v4(),
-                "languageAddedIn" : request.payload.langAddedIn
+                "languageAddedIn" : request.payload.langAddedIn,
+                "type" : JSON.stringify(request.payload.type)
             },
             "metaProps" : []
         };
