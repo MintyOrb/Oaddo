@@ -3,16 +3,36 @@
 
 angular.module('adding_content', ['angularFileUpload']).
 
-controller('addingContentCtrl', ['$scope', function ($scope) {
+controller('addingContentCtrl', ['$scope', 'contentTerms', 'appLanguage', '$http', function ($scope, contentTerms, appLanguage, $http) {
 
-    $scope.contentObject = {};
+    $scope.contentObject = {
+        language: appLanguage.lang,
+        source: {
+            link: "",
+            description: "",
+            text: ""
+        },
+        publisher: {
+            link: "",
+            description: "",
+            text: ""
+        },
+        links: [], //array of objects with url, description
+        description: "",
+        assignedTerms: contentTerms.selected
+    };
 
     $scope.submitNewContent = function(){
     };
     
 }]).
 
-
+service('contentTerms', [function () {
+    this.selected = [];     // tag content with
+    this.discarded = [];    // remove from suggested
+    this.related = [];      // return based on search
+    this.search = [];       // find terms related to these
+}]).
 
 
 
@@ -89,7 +109,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
             $scope.displaySettings.optionSelected = true;  //display cancel button
             $scope.displaySettings.disableFileSelection = true;
 
-            $http.post('/validateURL', {url: $scope.contentObject.webURL, language: appLanguage.lang}).
+            $http.post('/addContentFromURL', {url: $scope.contentObject.webURL, language: appLanguage.lang}).
             success(function(response){
 
                 if(response.displayType === "image" || response.displayType === "website"){
@@ -144,12 +164,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
 
 
 
-service('contentTerms', [function () {
-    this.selected = [];     // tag content with
-    this.discarded = [];    // remove from suggested
-    this.related = [];      // return based on search
-    this.search = [];       // find terms related to these
-}]).
+
 
 
 controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLanguage, $modal) {
@@ -184,7 +199,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
     //typeahead from neo4j
     $scope.findTerm = function()
     {   
-        $http.get('/termQuery', { params: { entered: $scope.DBTerm, language: appLanguage.lang } }).
+        $http.get('/termTypeAhead', { params: { entered: $scope.DBTerm, language: appLanguage.lang } }).
         success(function(response){
             $scope.typeAhead = response.matches;
         }).
@@ -300,6 +315,8 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
     });
 }).
 
+
+// TODO: add ng-model support for suggest input (bind it to other input and clear after a term has been added)
 directive('suggest', function() {
     return {
         restrict: 'E',

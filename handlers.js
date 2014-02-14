@@ -148,13 +148,16 @@ exports.addTerm = function (request, reply) {
                 "languageAddedIn" : request.payload.lang,
                 "type" : JSON.stringify(request.payload.type)
             },
-            "metaProps" : []
+            "metaProps" : [], //array of objects (created below)
         };
 
-    var metaProp = {}; //for storing result of MQL query
+    var metaProp = {}; //for storing result of MQL query (will be pushed to createProperties.metaProps)
     var defMeta = "";  // for adding definition provided in adders language
 
-    var createQuery = "CREATE (newTerm:term:test {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_META {languageCode: props.languageCode}]->(:termMeta:test {name: props.name, dateAdded: props.dateAdded, definition: props.definition})) WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
+    // TODO: add connections to termType nodes (:termType:typeTest)-[:IS_TYPE]-
+    // privdided an array of the types to be tagged:
+    // FOREACH (type IN {types} | MATCH (typeNode:termType {name: {type.name} }) CREATE newTerm-[:IS_TYPE]-(typeNode) )
+    var createQuery = "CREATE (newTerm:term:test {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_LANGUAGE {languageCode: props.languageCode}]->(:termMeta:test {name: props.name, dateAdded: props.dateAdded, definition: props.definition}) )"; // use if returning data from query: WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
     
     var checkProperites = {mid: request.payload.mid};
     var checkQuery = "MATCH (node:term {MID: {mid} }) RETURN node.UUID as UUID";
@@ -173,7 +176,7 @@ exports.addTerm = function (request, reply) {
                     console.log("results: " + JSON.stringify(results));
 
                     reply({newTerm: false, UUID: results[0].UUID});
-                    callback(true);
+                    callback(true); //if already found, stop execution of functions
                 }
             });
         },
@@ -181,15 +184,16 @@ exports.addTerm = function (request, reply) {
         //MQL query for termMeta, build meta from results
         function(callback){
             freebase.mqlread(freebasQuery, {key:"AIzaSyCrHUlKm60rk271WLK58cZJxEnzqNwVCw4"}, function(result){
+                // for each language found, add name to metaProp
                 for(var ii = 0; ii<result.result.name.length; ii++){
                     console.log("submit lang: " + request.payload.lang);
                     console.log("language: " + result.result.name[ii].lang);
                     console.log("word: " + result.result.name[ii].value);
         
-                    // add def in adders language
+                    // add def to termMeta of correct language
                     if(result.result.name[ii].lang.substr(6,result.result.name[ii].lang.length) === request.payload.lang){
                         console.log("match found: ");
-                        defMeta = request.payload.definition;
+                        defMeta = request.payload.definition || "";
                     }
                     metaProp = {
                         languageCode: result.result.name[ii].lang.substr(6,result.result.name[ii].lang.length), //get rid of "/lang/"
@@ -207,10 +211,10 @@ exports.addTerm = function (request, reply) {
             });
         },
         
-        //add term AND respective term meta in all avaialble languages on freebase
+        //add term and respective term meta in all avaialble languages on freebase to graph, return UUID
         function(callback){
             db.query(createQuery, createProperties, function (err, results) {
-                if (err) {console.log("error: " + err);}
+                if (err) {console.log("neo4j error: " + err);}
                 console.log("results: " + results);
                 reply({newTerm: true, UUID: createProperties.coreProps.UUID});
                 console.log("done with noe4j");
@@ -223,7 +227,7 @@ exports.addTerm = function (request, reply) {
 };
 
 //new content
-exports.validateURL = function (request, reply){  
+exports.addContentFromURL = function (request, reply){  
 
     console.log(request.payload);
     var identifier = '-noAccociatedContent-';           // to be removed when associated content is added to db.
@@ -295,8 +299,8 @@ exports.addImageFile = function (request, reply){
     //TODO: look into converting gifs to html5 videos (gfycat...)
     var identifier = '-noAccociatedContent-';           //to be removed when associated content is added to db.
     var ext = request.payload.name.split('.').pop();    //get extension from orignal filename
-    var generatedName = uuid.v1();                      //is uuid the best option for file names?
-    var lang = "_" + request.payload.language + "_";    //allows for adding same content in different languages
+    var generatedName = uuid.v1();                      //NOTE: is uuid the best option for unique file names?
+    var lang = "_" + request.payload.language + "_";    //allows for adding same content in different languages (keep same UUID)
 
     fs.writeFile("./img/submittedContent/" + identifier + lang + generatedName + '.' + ext, request.payload.file, function (err) {
         if(err){console.log("error saving: " + err);}
@@ -318,7 +322,7 @@ exports.addContent = function (request, reply){
 };
 
 
-exports.termQuery = function (request, reply){
+exports.termTypeAhead = function (request, reply){
     console.log("data: "+ request.query);
     console.log("data: "+ JSON.stringify(request.query));
 
@@ -326,9 +330,8 @@ exports.termQuery = function (request, reply){
         code: request.query.language,
         match: '(?i).*' + request.query.entered + '.*'
      };
-     //TODO: use english as default if not found in preferred language
-     //TODO: use users secondary languge choice if first not found?
- // TODO: don't return already selected terms? Maybe switch to a post to get an array of alredy selected?
+    //TODO: use english as default if not found in preferred language
+    //TODO: use users secondary languge choice if first not found?
     var query = "MATCH (core:term)-[r:HAS_META {languageCode:{code}}]-(langNode) WHERE langNode.name =~ {match} RETURN core.UUID as UUID, langNode.name as name LIMIT 5";
     console.log("match: " + properties.match);
     console.log("lang: " + properties.code);
