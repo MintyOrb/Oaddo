@@ -61,7 +61,9 @@
                             <i class='text-muted fa fa-question-circle'></i>
                         </div>
                     </div>
+
                     <div >
+
                         <div class="col-sm-6"> 
                             <div> 
                             <!-- TODO: help text popovers/tooltips -->
@@ -93,8 +95,7 @@
                             </div>                        
                         </div> 
 
-                       <div class="col-sm-6">
-                           
+                       <div class="col-sm-6">     
                             <div ui-on-Drop="recievingHandler($data, contentTerms.selected)" drag-enter-class="droppable" class="well well-sm height200">
                                 <i class='pull-right text-muted fa fa-question-circle'></i>
                                 <div class="f-fleC f-row f-m-center">
@@ -120,9 +121,9 @@
                 </div>
             </accordion-group>
     
-            <accordion-group heading="Add Meta Information">
+            <!-- <accordion-group heading="Add Meta Information">
                 <div>
-                    source, publisher, dates, relevant links
+                    source, publisher, dates, relevant links, description
                 </div>
                 <div>
                     <label>Add source:</label>
@@ -131,12 +132,20 @@
                 </div>
 
                 <div>
-                    <text-angular ta-toolbar="[['h1','h2','h3'],['bold','italics']]" ng-model="example"></text-angular>
+                    <Button class="btn btn-default" ng-model="">Add relevant link</Button>
+                    <label>URL</label>
+                    <input type='text' class='form-control'>
                 </div>
-            </accordion-group>
+
+                <div>
+                    <label>Description</label>
+                    <text-angular class='ta-editor' ta-toolbar="[['h1','h2','h3'],['bold','italics']]" ng-model="example"></text-angular>
+                </div>   
+            </accordion-group> -->
 
         </accordion>
+                
     </form>
     <br>
-    <button class="btn btn-primary btn-large">Add Content</button>
+    <button ng-click="submitNewContent()"class="btn btn-primary btn-large">Add Content</button>
 </div>

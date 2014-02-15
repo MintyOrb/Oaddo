@@ -121,7 +121,9 @@ server.route([
 
     { method: 'POST', path: '/newImage', config: {auth: 'passport'}, handler: handlers.addImageFile},
 
-    { method: 'POST', path: '/content', config: {auth: 'passport'}, handler: handlers.addContentFromURL},
+    { method: 'POST', path: '/addContentFromURL', config: {auth: 'passport'}, handler: handlers.addContentFromURL},
+
+    { method: 'POST', path: '/newContent', config: {auth: 'passport'}, handler: handlers.addNewContent},
 
     { method: 'GET', path: '/termTypeAhead', handler: handlers.termTypeAhead},
 

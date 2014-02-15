@@ -242,7 +242,7 @@ exports.addTerm = function (request, reply) {
             db.query(connectTypesQuery, termTypeProperties, function (err, results) {
                 if (err) {console.log("neo4j error: " + err);}
                 console.log("results: " + results);
-                console.log("done with neo4j connect type");
+                console.log("done with connecting term types");
                 reply({newTerm: true, UUID: UUID});
                 callback();
                 
@@ -335,16 +335,46 @@ exports.addImageFile = function (request, reply){
     });
 };
 
-exports.addContent = function (request, reply){
-    // fs.rename(oldPath, newPath, callback) // for deleting identifier
+exports.addNewContent = function (request, reply){
 
-    //query for creating the content
+    var genUUID = uuid.v4();
+    var modifiedName = "";
 
-    //remove identifier
+    if(request.payload.displayType !== "embed"){
+        modifiedName = request.payload.savedAs.slice(21); // name without identifier
+        
+    }
+    
+    //query for creating the content and relationships to tagged terms
+    var query = "CREATE (contentNode:content:testContent {contentParams}) WITH contentNode MATCH (termNode:term) WHERE termNode.UUID IN {taggedTermsUUID} CREATE (contentNode)-[:TAGGED_WITH]->(termNode)";
 
-    //query for adding terms
+    var params = {
+        contentParams: {
+            UUID: genUUID,
+            dateAdded: new Date(),
+            languageAddedIn: request.payload.language,
+            displayType: request.payload.displayType,
+            fileSystemID: request.payload.fileSystemID, 
+            embedSrc: request.payload.embedSrc, 
+            webURL: request.payload.webURL,
+            savedAs: modifiedName, 
+        },
+        taggedTermsUUID: []
+    };
 
-    //redirect to content page....
+    //populate term UUID array
+    for (var i = 0; i < request.payload.assignedTerms.length; i++) {
+        params.taggedTermsUUID.push(request.payload.assignedTerms[i].UUID);
+    }
+
+    //remove identifier from file name
+    fs.rename("./img/submittedContent/" + request.payload.savedAs, "./img/submittedContent/" + modifiedName, function(){
+        db.query(query, params, function (err, results) {
+            if (err) {console.log("neo4j error: " + err);}
+            console.log("finished adding content query");
+            reply({UUID:genUUID}); 
+        });
+    });
 };
 
 
@@ -358,7 +388,7 @@ exports.termTypeAhead = function (request, reply){
      };
     //TODO: use english as default if not found in preferred language
     //TODO: use users secondary languge choice if first not found?
-    var query = "MATCH (core:term)-[r:HAS_META {languageCode:{code}}]-(langNode) WHERE langNode.name =~ {match} RETURN core.UUID as UUID, langNode.name as name LIMIT 5";
+    var query = "MATCH (core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) WHERE langNode.name =~ {match} RETURN core.UUID as UUID, langNode.name as name LIMIT 5";
     console.log("match: " + properties.match);
     console.log("lang: " + properties.code);
 

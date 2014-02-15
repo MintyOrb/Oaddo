@@ -7,22 +7,33 @@ controller('addingContentCtrl', ['$scope', 'contentTerms', 'appLanguage', '$http
 
     $scope.contentObject = {
         language: appLanguage.lang,
-        source: {
-            link: "",
-            description: "",
-            text: ""
-        },
-        publisher: {
-            link: "",
-            description: "",
-            text: ""
-        },
-        links: [], //array of objects with url, description
-        description: "",
+        // source: {
+        //     link: "",
+        //     description: "",
+        //     text: ""
+        // },
+        // publisher: {
+        //     link: "",
+        //     description: "",
+        //     text: ""
+        // },
+        // links: [], //array of objects with url, description
+        // description: "",
+        savedAs: "",
+        fileSystemID: "",
+        displayType: "",
+        embedSrc: "",
+        webURL: "",
         assignedTerms: contentTerms.selected
     };
 
     $scope.submitNewContent = function(){
+        // TODO: validate that necessary fields are filled out before POSTing
+        $http.post('/newContent', $scope.contentObject).
+        success(function(response){
+            console.log(response);
+            // redirect to content page
+        });
     };
     
 }]).
@@ -91,11 +102,12 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
                 //TODO show upload progress to user
                     console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
                 }
-            }).then(function(data, status, headers, config) {
-                $scope.contentObject.savedAs = data.savedAs;
-                $scope.contentObject.fileSystemID = data.id;
-                $scope.contentObject.displayType = data.displayType;
-                console.log("it worked: " + data);
+            }).then(function(response, status, headers, config) {
+                $scope.contentObject.savedAs = response.data.savedAs;
+                $scope.contentObject.fileSystemID = response.data.id;
+                $scope.contentObject.displayType = response.data.displayType;
+                console.log("$scope.contentObject: " + JSON.stringify($scope.contentObject));
+                console.log("it worked: " + JSON.stringify(response));
             }); 
         }
     };
@@ -143,7 +155,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
         $scope.contentObject.savedAs = "";
         $scope.contentObject.fileSystemID = "";
         $scope.contentObject.displayType = "";
-        $scope.contentObject.displayType = "";
+        $scope.contentObject.embedSrc = "";
         $scope.contentObject.webURL = "";
     };
 }).
@@ -319,7 +331,7 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
             //add UUID to item in selected
             for(var index = 0; index < contentTerms.selected.length; index++){
                 if(contentTerms.selected[index].mid === $scope.newTermMeta.mid){
-                    contentTerms.selected.UUID = returned.UUID;
+                    contentTerms.selected[index].UUID = returned.UUID;
                 }
             }
             console.log("data: " + JSON.stringify(returned));
