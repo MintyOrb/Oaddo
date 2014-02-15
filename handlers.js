@@ -115,7 +115,7 @@ exports.addAccount = function (request, reply) {
 exports.relatedTerms = function (request, reply) {
     
     var properties = {props: {} };
-    //var query = 'CREATE (term:init { props } )';
+    // var query = 'CREATE (term:init { props } )';
 
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
@@ -133,6 +133,9 @@ exports.addTerm = function (request, reply) {
     console.log("req.session: " + JSON.stringify(request.session));
     console.log("req.user: " + JSON.stringify(request.user));
     
+    var UUID = uuid.v4(); // Unique ID for term being added
+
+    // used to get term name in as many languages as possible
     var freebasQuery={
           "mid": request.payload.mid,
           "type": "/common/topic",
@@ -144,29 +147,44 @@ exports.addTerm = function (request, reply) {
                 "MID": request.payload.mid,
                 "dateAdded": new Date(),
                 "addedBy" : request.user.id,
-                "UUID": uuid.v4(),
+                "UUID": UUID,
                 "languageAddedIn" : request.payload.lang,
-                "type" : JSON.stringify(request.payload.type)
             },
-            "metaProps" : [], //array of objects (created below)
+            "metaProps" : [], // array of objects (created below)
         };
 
-    var metaProp = {}; //for storing result of MQL query (will be pushed to createProperties.metaProps)
+    var termTypeProperties = { 
+        termUUID: UUID,
+        types: [] 
+    };
+
+
+    // generate array of term type names
+    for (var type in request.payload.type) {
+        if(request.payload.type[type].included) {
+            termTypeProperties.types.push(request.payload.type[type].name);
+        }
+    }
+    console.log("types: " + JSON.stringify(termTypeProperties.types));
+
+
+    var metaProp = {}; // for storing result of MQL query (will be pushed to createProperties.metaProps)
     var defMeta = "";  // for adding definition provided in adders language
 
-    // TODO: add connections to termType nodes (:termType:typeTest)-[:IS_TYPE]-
-    // privdided an array of the types to be tagged:
-    // FOREACH (type IN {types} | MATCH (typeNode:termType {name: {type.name} }) CREATE newTerm-[:IS_TYPE]-(typeNode) )
-    var createQuery = "CREATE (newTerm:term:test {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_LANGUAGE {languageCode: props.languageCode}]->(:termMeta:test {name: props.name, dateAdded: props.dateAdded, definition: props.definition}) )"; // use if returning data from query: WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
+    var createQuery = "CREATE (newTerm:term:testTerm {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_LANGUAGE {languageCode: props.languageCode}]->(:termMeta:testMeta {name: props.name, dateAdded: props.dateAdded, definition: props.definition}) )"; // use if returning data from query: WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
     
-    var checkProperites = {mid: request.payload.mid};
+    var connectTypesQuery = "MATCH (typeNode:termType), (termNode:term {UUID: {termUUID} }) WHERE typeNode.name IN {types} CREATE (typeNode)<-[:IS_TYPE]-(termNode) RETURN typeNode, termNode";
+
+    var checkProperties = {mid: request.payload.mid};
+
+    // used to see if term is already in the database
     var checkQuery = "MATCH (node:term {MID: {mid} }) RETURN node.UUID as UUID";
     
     async.series([
         
-        //check if term is already in database (search by MID)
+        // check if term is already in database (search by MID)
         function(callback){
-            db.query(checkQuery, checkProperites, function (err, results) {
+            db.query(checkQuery, checkProperties, function (err, results) {
                 if (err) {console.log("error performing db query: " + err);}
                 if (results[0] === undefined){
                     console.log("not in DB");
@@ -176,12 +194,12 @@ exports.addTerm = function (request, reply) {
                     console.log("results: " + JSON.stringify(results));
 
                     reply({newTerm: false, UUID: results[0].UUID});
-                    callback(true); //if already found, stop execution of functions
+                    callback(true); // if already found, stop execution of functions
                 }
             });
         },
 
-        //MQL query for termMeta, build meta from results
+        // MQL query for termMeta, build meta from results
         function(callback){
             freebase.mqlread(freebasQuery, {key:"AIzaSyCrHUlKm60rk271WLK58cZJxEnzqNwVCw4"}, function(result){
                 // for each language found, add name to metaProp
@@ -203,7 +221,7 @@ exports.addTerm = function (request, reply) {
                     };
         
                     createProperties.metaProps.push(metaProp);
-                    defMeta = ""; //reset def so it is not added in incorrect languages
+                    defMeta = ""; // reset def so it is not added in incorrect languages
                 }
                 console.log(createProperties);
                 console.log("done with freebase");
@@ -215,13 +233,21 @@ exports.addTerm = function (request, reply) {
         function(callback){
             db.query(createQuery, createProperties, function (err, results) {
                 if (err) {console.log("neo4j error: " + err);}
-                console.log("results: " + results);
-                reply({newTerm: true, UUID: createProperties.coreProps.UUID});
-                console.log("done with noe4j");
+                console.log("create results: " + results);
                 callback();
             });
+        },
+        //add relationships to relevant term types
+        function(callback){
+            db.query(connectTypesQuery, termTypeProperties, function (err, results) {
+                if (err) {console.log("neo4j error: " + err);}
+                console.log("results: " + results);
+                console.log("done with neo4j connect type");
+                reply({newTerm: true, UUID: UUID});
+                callback();
+                
+            });
         }
-
     ]);
 
 };

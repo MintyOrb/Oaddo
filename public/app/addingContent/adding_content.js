@@ -261,16 +261,37 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
 
     $scope.newTermMeta = {};
 
-    $scope.newTermMeta.type = {};
-    $scope.newTermMeta.type.people           = false;
-    $scope.newTermMeta.type.organizations    = false;
-    $scope.newTermMeta.type.physicalObjects  = false;
-    $scope.newTermMeta.type.concepts         = false;
-    $scope.newTermMeta.type.jargon           = false;
-    $scope.newTermMeta.type.disciplines      = false;
-    $scope.newTermMeta.type.activities       = false;
-    $scope.newTermMeta.type.locations        = false;
-    $scope.newTermMeta.type.contentTypes     = false;
+    $scope.newTermMeta.type = {
+        people: {},
+        organizations: {},
+        physicalObjects: {},
+        concepts: {},
+        jargon: {},
+        disciplines: {},
+        activities: {},
+        locations: {},
+        contentTypes: {},
+    };
+
+    $scope.newTermMeta.type.people.name = 'person';
+    $scope.newTermMeta.type.organizations.name = 'organization';
+    $scope.newTermMeta.type.physicalObjects.name = 'physical object';
+    $scope.newTermMeta.type.concepts.name = 'concept';
+    $scope.newTermMeta.type.jargon.name = 'jargon';
+    $scope.newTermMeta.type.disciplines.name = 'discipline';
+    $scope.newTermMeta.type.activities.name = 'activity';
+    $scope.newTermMeta.type.locations.name = 'location';
+    $scope.newTermMeta.type.contentTypes.name = 'content type';
+
+    $scope.newTermMeta.type.people.included           = false;
+    $scope.newTermMeta.type.organizations.included    = false;
+    $scope.newTermMeta.type.physicalObjects.included  = false;
+    $scope.newTermMeta.type.concepts.included         = false;
+    $scope.newTermMeta.type.jargon.included           = false;
+    $scope.newTermMeta.type.disciplines.included      = false;
+    $scope.newTermMeta.type.activities.included       = false;
+    $scope.newTermMeta.type.locations.included        = false;
+    $scope.newTermMeta.type.contentTypes.included     = false;
 
     $scope.newTermMeta.name = data.name;
     $scope.newTermMeta.mid = data.mid; 
