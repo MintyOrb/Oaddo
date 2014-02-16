@@ -9,9 +9,7 @@ var universalLibrary = angular.module('universalLibrary',
         'ngResource',
         'ngCookies',
         'ngAnimate',
-        'adding_content',
-        'loginAndSessions',
-        'language_universality',
+        'angularFileUpload',
         'http-auth-interceptor',
         'textAngular',
         'chieffancypants.loadingBar',
@@ -53,6 +51,7 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
 
     $routeProvider
     .when('/home', {templateUrl: 'app/main/tempMain.html'})
+    .when('/explore', {templateUrl: 'app/exploreContent/explore.html'})
     .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/main/test.html'})
     .when('/content/new', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/addingContent/newContent.html'})
     .otherwise({redirectTo: '/home'});

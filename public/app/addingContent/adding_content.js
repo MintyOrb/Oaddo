@@ -1,7 +1,7 @@
 /*global console, angular, setTimeout, window, FileReader, $ */
 'use strict';
 
-angular.module('adding_content', ['angularFileUpload']).
+angular.module('universalLibrary').
 
 controller('addingContentCtrl', ['$scope', 'contentTerms', 'appLanguage', '$http', function ($scope, contentTerms, appLanguage, $http) {
 

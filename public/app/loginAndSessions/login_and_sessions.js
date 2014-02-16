@@ -1,7 +1,7 @@
 /*global console, angular, setTimeout, alert*/
 'use strict';
 
-angular.module('loginAndSessions', []).
+angular.module('universalLibrary').
 
 
 controller('LoginModalCtrl', function ($scope, LoginService) {

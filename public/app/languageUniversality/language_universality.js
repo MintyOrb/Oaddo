@@ -1,7 +1,7 @@
 /*globals window, angular, console*/
 'use strict';
 
-angular.module('language_universality', []);
+angular.module('universalLibrary');
 
 // run(function ($cookieStore, appLanguage) {
 

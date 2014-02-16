@@ -346,6 +346,7 @@ exports.addNewContent = function (request, reply){
     }
     
     //query for creating the content and relationships to tagged terms
+        // NOTE: will this query be too slow with a large number of terms?
     var query = "CREATE (contentNode:content:testContent {contentParams}) WITH contentNode MATCH (termNode:term) WHERE termNode.UUID IN {taggedTermsUUID} CREATE (contentNode)-[:TAGGED_WITH]->(termNode)";
 
     var params = {
@@ -369,6 +370,7 @@ exports.addNewContent = function (request, reply){
 
     //remove identifier from file name
     fs.rename("./img/submittedContent/" + request.payload.savedAs, "./img/submittedContent/" + modifiedName, function(){
+        // add content node and connect to terms
         db.query(query, params, function (err, results) {
             if (err) {console.log("neo4j error: " + err);}
             console.log("finished adding content query");
@@ -388,7 +390,7 @@ exports.termTypeAhead = function (request, reply){
      };
     //TODO: use english as default if not found in preferred language
     //TODO: use users secondary languge choice if first not found?
-    var query = "MATCH (core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) WHERE langNode.name =~ {match} RETURN core.UUID as UUID, langNode.name as name LIMIT 5";
+    var query = "MATCH (core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) WHERE langNode.name =~ {match} RETURN core.UUID as UUID, langNode.name as name LIMIT 8";
     console.log("match: " + properties.match);
     console.log("lang: " + properties.code);
 
