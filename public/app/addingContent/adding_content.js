@@ -45,6 +45,51 @@ service('contentTerms', [function () {
     this.search = [];       // find terms related to these
 }]).
 
+factory('filterFactory', [function () {
+    
+    
+    return {
+
+        people: {
+            included: false,
+            name: 'person',
+        },
+        organizations: {
+            included: false,
+            name: 'organization',
+        },
+        physicalObjects: {
+            included: false,
+            name: 'physical object',
+        },
+        concepts: {
+            included: false,
+            name: 'concept',
+        },
+        jargon: {
+            included: false,
+            name: 'jargon',
+        },
+        disciplines: {
+            included: false,
+            name: 'discipline',
+        },
+        activities: {
+            included: false,
+            name: 'activity',
+        },
+        locations: {
+            included: false,
+            name: 'location',
+        },
+        contentTypes: {
+            included: false,
+            name: 'content type',
+        }
+        
+    };
+}]).
+
 
 
 
@@ -179,7 +224,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
 
 
 
-controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLanguage, $modal) {
+controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLanguage, $modal, filterFactory) {
 
     $scope.contentTerms = contentTerms;
     $scope.DBTerm = "";
@@ -188,17 +233,17 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         addingNewTerm : false
     };
 
-    $scope.filter = {
-        people: true,
-        organizations: true,
-        physicalObjects: true,
-        concepts: true,
-        jargon: true,
-        disciplines: true,
-        activities: true,
-        locations: true,
-        contentTypes: true,
+    $scope.filter = filterFactory;
+
+    //filter popover function
+    $scope.setAll = function(value){
+        for (var term in filterFactory) {
+            filterFactory[term].included = value;
+        }
     };
+
+    // initialize filter values to true (include all types)
+    $scope.setAll(true);
 
     // fetch terms related to search terms on array change
     $scope.$watchCollection("contentTerms.search", function(searchTerms){
@@ -223,13 +268,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
 
     });
 
-    //filter popover function
-    $scope.setAll = function(value){
-        console.log("hi: "+value);
-        for (var term in $scope.filter) {
-            $scope.filter[term] = value;
-        }
-    };
+    
 
     //typeahead from neo4j
     $scope.findTerm = function()
@@ -282,43 +321,13 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
 }).
 
 
-controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, contentTerms, $http) {
+controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, contentTerms, filterFactory, $http) {
 
     console.log("data in modal: " + JSON.stringify(data));
 
     $scope.newTermMeta = {};
 
-    $scope.newTermMeta.type = {
-        people: {},
-        organizations: {},
-        physicalObjects: {},
-        concepts: {},
-        jargon: {},
-        disciplines: {},
-        activities: {},
-        locations: {},
-        contentTypes: {},
-    };
-
-    $scope.newTermMeta.type.people.name = 'person';
-    $scope.newTermMeta.type.organizations.name = 'organization';
-    $scope.newTermMeta.type.physicalObjects.name = 'physical object';
-    $scope.newTermMeta.type.concepts.name = 'concept';
-    $scope.newTermMeta.type.jargon.name = 'jargon';
-    $scope.newTermMeta.type.disciplines.name = 'discipline';
-    $scope.newTermMeta.type.activities.name = 'activity';
-    $scope.newTermMeta.type.locations.name = 'location';
-    $scope.newTermMeta.type.contentTypes.name = 'content type';
-
-    $scope.newTermMeta.type.people.included           = false;
-    $scope.newTermMeta.type.organizations.included    = false;
-    $scope.newTermMeta.type.physicalObjects.included  = false;
-    $scope.newTermMeta.type.concepts.included         = false;
-    $scope.newTermMeta.type.jargon.included           = false;
-    $scope.newTermMeta.type.disciplines.included      = false;
-    $scope.newTermMeta.type.activities.included       = false;
-    $scope.newTermMeta.type.locations.included        = false;
-    $scope.newTermMeta.type.contentTypes.included     = false;
+    $scope.newTermMeta.type = filterFactory;
 
     $scope.newTermMeta.name = data.name;
     $scope.newTermMeta.mid = data.mid; 
