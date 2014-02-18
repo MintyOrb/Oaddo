@@ -112,22 +112,11 @@ exports.addAccount = function (request, reply) {
    
 };
 
-exports.relatedTerms = function (request, reply) {
-    
-    var properties = {props: {} };
-    // var query = 'CREATE (term:init { props } )';
-
-    db.query(query, properties, function (err, results) {
-        if (err) {throw err;}
-        
-        reply({message: "SUCCESS"});
-    });
-};
 
 //new terms
 exports.addTerm = function (request, reply) {
 
-    // TODO: figure out how to handle def in case en/en-gb - remove region specification (gb)?
+    // TODO: determine how to handle def in case en/en-gb - remove region specification (gb)?
     
     console.log("req.payload: " + JSON.stringify(request.payload));
     console.log("req.session: " + JSON.stringify(request.session));
@@ -399,13 +388,64 @@ exports.termTypeAhead = function (request, reply){
         console.log("returned from db: " + JSON.stringify(matches));
         if(matches[0] === undefined){
             console.log("none found: " + JSON.stringify(matches));
-            reply({ message : 'heh' });
+            reply({ message : 'no content found' });
         } else {
             reply({matches:matches});
         }
-
-        
-
     });    
 };
+
+exports.relatedTerms = function (request, reply) {
+    
+    // TODO: take into account type filtering
+    // TODO: compare other term type methods (as labels, as properties)
+    console.log("payload: \n");
+    console.log(request.payload);
+
+    var properties = {
+        language: request.payload.language ,
+        ignoreTerms: [],
+        searchTerms: [],
+        terms: []
+
+    };
+
+    // add UUIDs from search terms to ignore and search term arrays
+    for (var i = 0; i < request.payload.searchTerms.length; i++) {
+        properties.ignoreTerms.push(request.payload.searchTerms[i].UUID);
+        properties.searchTerms.push(request.payload.searchTerms[i].UUID);
+    }
+    
+    // add UUIDs from discarded terms to ignore array
+    for (var x = 0; x < request.payload.discardedTerms.length; x++) {
+        properties.ignoreTerms.push(request.payload.discardedTerms[x].UUID);
+    }
+
+    // add UUIDs from selected terms to ignore array
+    for (var y = 0; y < request.payload.selectedTerms.length; y++) {
+        properties.ignoreTerms.push(request.payload.selectedTerms[y].UUID);
+    }
+    
+    console.log("props: " + JSON.stringify(properties));
+   
+    var query = 'MATCH (typeNode:termType)<-[:IS_TYPE]-(newTermNode:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(searchTerms:term), (newTermNode)-[:HAS_LANGUAGE {languageCode: {language} }]-(newTermMeta:termMeta) WHERE searchTerms.UUID IN {searchTerms} AND NOT newTermNode.UUID IN {ignoreTerms} RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections ORDER BY newTermNode.contentConnections DESC LIMIT 10';
+
+    db.query(query, properties, function (err, results) {
+        if (err) {throw err;}
+        console.log("done with query: ");
+        console.log(results);
+        reply({results: results});
+    });
+};
+
+
+exports.findRelatedContent = function (request, reply){
+
+    // string build query as necessary
+
+    //perform query
+
+    //return results
+};
+
 

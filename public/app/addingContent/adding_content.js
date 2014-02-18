@@ -200,6 +200,29 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         contentTypes: true,
     };
 
+    // fetch terms related to search terms on array change
+    $scope.$watchCollection("contentTerms.search", function(searchTerms){
+        // clear current related
+        // TODO: only remove terms that are not again returned? (prevent term from vanishing only to re-appear)
+        $scope.contentTerms.related = [];
+
+        // NOTE: dropping term from search into search leads to multiple instances of terms being returned
+        // this should be fixed with correct term drop logic (restricting drop zones)
+        $http.post('/relatedTerms', { 
+            selectedTerms: $scope.contentTerms.selected,
+            discardedTerms: $scope.contentTerms.discarded, 
+            searchTerms: searchTerms, 
+            language: appLanguage.lang }).
+        success(function(data){
+            console.log("data: " + JSON.stringify(data));
+            for (var i = 0; i < data.results.length; i++) {
+                $scope.contentTerms.related.push(data.results[i]);
+            }
+        });
+        console.log("search terms: " + JSON.stringify(searchTerms));
+
+    });
+
     //filter popover function
     $scope.setAll = function(value){
         console.log("hi: "+value);
@@ -224,14 +247,6 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         contentTerms.selected.push({name:$scope.DBTerm.name,UUID:$scope.DBTerm.UUID});
         $scope.DBTerm = "";
         console.log("selected: " + JSON.stringify(contentTerms.selected));
-    };
-
-    $scope.removeFromSelected = function(id){
-        for(var index = 0; index < contentTerms.selected.length; index++){
-            if(contentTerms.selected[index].mid === id){
-                contentTerms.selected.splice(index,1);
-            }
-        }
     };
 
     $scope.openNewTermModal = function (termData) {

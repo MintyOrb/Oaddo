@@ -1,3 +1,67 @@
-<div>
-Hello There.
+
+
+ <div ng-controller="exploreCtrl">
+	<div class="row f-flexC f-m-center margin20">
+	    <input ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="DBTerm" ng-change="findTerm()" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in typeAhead" placeholder="Type term name here">
+	</div>
+
+	<div>
+
+	    <div class="col-sm-6"> 
+	        <div> 
+	        <!-- TODO: help text popovers/tooltips -->
+	        <!-- TODO: write in a button to clear all search terms -->
+	        <!-- TODO: return related terms (to be done after some content has been added) -->
+	            <div ui-on-Drop="recievingHandler($data, contentTerms.search)" drag-enter-class="droppable" class='well well-sm'>
+	                <i class='pull-right text-muted fa fa-question-circle'></i>
+	                <span ng-hide="contentTerms.search.length > 0" class="dn-fade text-muted background h3">search terms</span>
+	                <div class="f-flexC f-row f-m-around f-wrap">
+	                 <button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.search)" drag="term" ng-repeat="term in contentTerms.search" class='dn-bounce above btn margin5 btn-default'>{{term.name}}</button>
+	                </div>
+	            </div>
+	        </div>
+	        <div> 
+	        <!-- TODO: fix initial placement mismatch of filter popover -->
+	        <!-- TODO: fix display for mobile devices -->
+	            <button class='btn btn-default btn-xs' popover-template="app/filterPartial.html" ng-click="popoverOpen = !popoverOpen" popover-placement="right">
+	                <i class="fa fa-filter"></i> 
+	                <span ng-show='!popoverOpen'>open filter options</span>
+	                <span class='text-danger' ng-show='popoverOpen'>close filter options</span>
+	            </button>
+	            <div ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm height200'>
+	                <i class='pull-right text-muted fa fa-question-circle'></i>
+	                <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">related terms</span>
+	                <div class="f-flexC f-row f-m-around f-wrap">
+	                    <button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" ng-repeat="term in contentTerms.related" class='dn-bounce above btn margin5 btn-default'>{{term.name}}</button>
+	                </div>
+	            </div>
+	        </div>                        
+	    </div> 
+
+	   <div class="col-sm-6">     
+	        <div ui-on-Drop="recievingHandler($data, contentTerms.selected)" drag-enter-class="droppable" class="well well-sm height200">
+	            <i class='pull-right text-muted fa fa-question-circle'></i>
+	            <div class="f-fleC f-row f-m-center">
+	                <span ng-hide="contentTerms.selected.length > 0"class="dn-fade text-muted background h3">selected terms</span>
+	                <div class="f-flexC f-row f-m-around f-wrap">
+	                    <button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.selected)" drag="term" ng-repeat="term in contentTerms.selected" class='dn-bounce above btn margin5 btn-default'>{{term.name}}</button>
+	                </div>
+	            </div>
+	        </div>
+        
+	        <div ui-on-Drop="recievingHandler($data, contentTerms.discarded)" drag-enter-class="droppable" class="well well-sm">
+	            <i class='pull-right text-muted fa fa-question-circle'></i>
+	            <div class="f-fleC f-row f-m-center">
+	                <span ng-hide="contentTerms.discarded.length > 0" class="dn-fade text-muted background h3">discarded terms</span>
+	                <div class="f-flexC f-row f-m-around f-wrap">
+	                    <button ui-draggable="true" on-drop-success="dropFromHandler($index, contentTerms.discarded)" drag="term" ng-repeat="term in contentTerms.discarded" class='dn-bounce above btn margin5 btn-default btn-xs'>{{term.name}}</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<div>
+		<button ng-click="findRelatedContent()" class="btn btn-default">Load content</button>
+	</div>
+
 </div>

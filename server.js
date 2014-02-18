@@ -96,12 +96,16 @@ server.route([
         console.log("login failure. about to reply with a 200 anyway");
         reply({message:"Incorrect Username or Password"});
     }},
-    //NOTE: this is probably a terrible security fault.
+    //NOTE: is this a security fault?
     { method: 'GET', path: '/loginSuccess', config: {auth: 'passport'}, handler: function(request, reply){
         console.log("successful login here. about to reply with a 200...");
         reply({loginSuccessful:true});
     }},
 
+    { method: 'GET', path: '/test', config: {auth: 'passport'} , handler: function(request, reply){
+        console.log("user must be logged on for you to see this...");
+        reply({message: 'Oh, hey! You must be logged in.'});
+    }},
 
     //api routes
     { method: 'POST', path: '/user', handler: handlers.addAccount },
@@ -110,14 +114,9 @@ server.route([
 
     { method: 'POST', path: '/logout', handler: handlers.logout},
 
-    { method: 'GET', path: '/test', config: {auth: 'passport'} , handler: function(request, reply){
-        console.log("user must be logged on for you to see this...");
-        reply({message: 'Oh, hey! You must be logged in.'});
-    }},
-
     { method: 'POST', path: '/term', config: {auth: 'passport'}, handler: handlers.addTerm},
 
-    { method: 'GET', path: '/explore/term', config: {auth: 'passport'}, handler: handlers.relatedTerms},
+    { method: 'POST', path: '/relatedTerms', handler: handlers.relatedTerms},
 
     { method: 'POST', path: '/newImage', config: {auth: 'passport'}, handler: handlers.addImageFile},
 
@@ -126,6 +125,8 @@ server.route([
     { method: 'POST', path: '/newContent', config: {auth: 'passport'}, handler: handlers.addNewContent},
 
     { method: 'GET', path: '/termTypeAhead', handler: handlers.termTypeAhead},
+
+    { method: 'GET', path: '/explore', handler: handlers.findRelatedContent},
 
 ]);     
 
