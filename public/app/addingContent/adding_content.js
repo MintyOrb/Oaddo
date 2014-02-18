@@ -38,66 +38,6 @@ controller('addingContentCtrl', ['$scope', 'contentTerms', 'appLanguage', '$http
     
 }]).
 
-service('contentTerms', [function () {
-    this.selected = [];     // tag content with
-    this.discarded = [];    // remove from suggested
-    this.related = [];      // return based on search
-    this.search = [];       // find terms related to these
-}]).
-
-factory('filterFactory', [function () {
-    
-    
-    return {
-
-        setAll : function(value){
-            for (var term in this) {
-                this[term].included = value;
-            }
-        },
-
-        people: {
-            included: false,
-            name: 'person',
-        },
-        organizations: {
-            included: false,
-            name: 'organization',
-        },
-        physicalObjects: {
-            included: false,
-            name: 'physical object',
-        },
-        concepts: {
-            included: false,
-            name: 'concept',
-        },
-        jargon: {
-            included: false,
-            name: 'jargon',
-        },
-        disciplines: {
-            included: false,
-            name: 'discipline',
-        },
-        activities: {
-            included: false,
-            name: 'activity',
-        },
-        locations: {
-            included: false,
-            name: 'location',
-        },
-        contentTypes: {
-            included: false,
-            name: 'content type',
-        }
-        
-    };
-}]).
-
-
-
 
 
 
@@ -236,7 +176,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
     $scope.DBTerm = "";
     $scope.typeAhead = [];
     $scope.displayOptions = {
-        addingNewTerm : false
+        addingNewTerm : false // display freebase input or dbinput depending
     };
 
     $scope.filter = filterFactory;
@@ -252,7 +192,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         $http.post('/relatedTerms', { 
             selectedTerms: $scope.contentTerms.selected,
             discardedTerms: $scope.contentTerms.discarded, 
-            searchTerms: $scope.contentTerms.search,
+            keyTerms: $scope.contentTerms.search,
             type: $scope.filter,
             language: appLanguage.lang }).
         success(function(data){

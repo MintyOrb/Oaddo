@@ -160,9 +160,18 @@ exports.addTerm = function (request, reply) {
     var metaProp = {}; // for storing result of MQL query (will be pushed to createProperties.metaProps)
     var defMeta = "";  // for adding definition provided in adders language
 
-    var createQuery = "CREATE (newTerm:term:testTerm {coreProps}) FOREACH ( props IN {metaProps} | CREATE newTerm-[:HAS_LANGUAGE {languageCode: props.languageCode}]->(:termMeta:testMeta {name: props.name, dateAdded: props.dateAdded, definition: props.definition}) )"; // use if returning data from query: WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
+    var createQuery = [
+        "CREATE (newTerm:term:testTerm {coreProps}) ",
+        "FOREACH ( props IN {metaProps} | ",
+        "CREATE newTerm-[:HAS_LANGUAGE {languageCode: props.languageCode}]->(:termMeta:testMeta {name: props.name, dateAdded: props.dateAdded, definition: props.definition}) )"
+    ].join("\n"); //  if returning data from query use: WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
     
-    var connectTypesQuery = "MATCH (typeNode:termType), (termNode:term {UUID: {termUUID} }) WHERE typeNode.name IN {types} CREATE (typeNode)<-[:IS_TYPE]-(termNode) RETURN typeNode, termNode";
+    var connectTypesQuery = [
+        "MATCH (typeNode:termType), (termNode:term {UUID: {termUUID} }) ",
+        "WHERE typeNode.name IN {types} ",
+        "CREATE (typeNode)<-[:IS_TYPE]-(termNode) ",
+        "RETURN typeNode, termNode"
+    ].join("\n");
 
     var checkProperties = {mid: request.payload.mid};
 
@@ -336,7 +345,12 @@ exports.addNewContent = function (request, reply){
     
     //query for creating the content and relationships to tagged terms
         // NOTE: will this query be too slow with a large number of terms?
-    var query = "CREATE (contentNode:content:testContent {contentParams}) WITH contentNode MATCH (termNode:term) WHERE termNode.UUID IN {taggedTermsUUID} CREATE (contentNode)-[:TAGGED_WITH]->(termNode)";
+    var query = [
+        "CREATE (contentNode:content:testContent {contentParams}) ",
+        "WITH contentNode MATCH (termNode:term) ",
+        "WHERE termNode.UUID IN {taggedTermsUUID} ",
+        "CREATE (contentNode)-[:TAGGED_WITH]->(termNode)"
+    ].join('\n');
 
     var params = {
         contentParams: {
@@ -379,7 +393,15 @@ exports.termTypeAhead = function (request, reply){
      };
     //TODO: use english as default if not found in preferred language
     //TODO: use users secondary languge choice if first not found?
-    var query = "MATCH (core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) WHERE langNode.name =~ {match} RETURN core.UUID as UUID, langNode.name as name LIMIT 8";
+    var query = [
+        "MATCH (core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) ",
+        "WHERE langNode.name =~ {match} ",
+        "RETURN core.UUID as UUID, langNode.name as name LIMIT 8"
+    ].join('\n');
+    
+
+
+
     console.log("match: " + properties.match);
     console.log("lang: " + properties.code);
 
@@ -404,15 +426,15 @@ exports.relatedTerms = function (request, reply) {
     var properties = {
         language: request.payload.language ,
         ignoreTerms: [],
-        searchTerms: [],
+        keyTerms: [],
         types: []
 
     };
 
     // add UUIDs from search terms to ignore and search term arrays
-    for (var i = 0; i < request.payload.searchTerms.length; i++) {
-        properties.ignoreTerms.push(request.payload.searchTerms[i].UUID);
-        properties.searchTerms.push(request.payload.searchTerms[i].UUID);
+    for (var i = 0; i < request.payload.keyTerms.length; i++) {
+        properties.ignoreTerms.push(request.payload.keyTerms[i].UUID);
+        properties.keyTerms.push(request.payload.keyTerms[i].UUID);
     }
     
     // add UUIDs from discarded terms to ignore array
@@ -430,7 +452,17 @@ exports.relatedTerms = function (request, reply) {
     
     console.log("props: " + JSON.stringify(properties));
    
-    var query = 'MATCH (typeNode:termType)<-[:IS_TYPE]-(newTermNode:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(searchTerms:term), (newTermNode)-[:HAS_LANGUAGE {languageCode: {language} }]-(newTermMeta:termMeta) WHERE typeNode.name IN {types} AND searchTerms.UUID IN {searchTerms} AND NOT newTermNode.UUID IN {ignoreTerms} RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections ORDER BY newTermNode.contentConnections DESC LIMIT 10';
+    var query = [
+        'MATCH (typeNode:termType)<-[:IS_TYPE]-(newTermNode:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
+            '(newTermNode)-[:HAS_LANGUAGE {languageCode: {language} }]-(newTermMeta:termMeta) ',
+        'WHERE',
+            'typeNode.name IN {types} ',
+            'AND keyTerms.UUID IN {keyTerms} ',
+            'AND NOT newTermNode.UUID IN {ignoreTerms} ',
+        'RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections ',
+        'ORDER BY newTermNode.contentConnections DESC LIMIT 10'
+    ].join('\n');
+
 
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
@@ -442,6 +474,38 @@ exports.relatedTerms = function (request, reply) {
 
 
 exports.findRelatedContent = function (request, reply){
+
+    console.log("payload: \n");
+    console.log(request.payload);
+
+    console.log("user info: ");
+    console.log(request.user );
+    var properties = {
+        language: request.payload.language,
+        includedTerms: [],
+        excludedTerms: [],
+        userID: request.user[0].id
+    };
+
+    console.log("props: " + JSON.stringify(properties));
+
+    // // add UUIDs from search terms to ignore and search term arrays
+    // for (var i = 0; i < request.payload.searchTerms.length; i++) {
+    //     properties.ignoreTerms.push(request.payload.searchTerms[i].UUID);
+    //     properties.searchTerms.push(request.payload.searchTerms[i].UUID);
+    // }
+    
+    // // add UUIDs from discarded terms to ignore array
+    // for (i = 0; i < request.payload.discardedTerms.length; i++) {
+    //     properties.ignoreTerms.push(request.payload.discardedTerms[i].UUID);
+    // }
+
+    // // add filters to type array
+    // for (var type in request.payload.type) {
+    //     if(request.payload.type[type].included){
+    //         properties.types.push(request.payload.type[type].name);
+    //     }
+    // }
 
     // string build query as necessary
 
