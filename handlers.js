@@ -397,8 +397,7 @@ exports.termTypeAhead = function (request, reply){
 
 exports.relatedTerms = function (request, reply) {
     
-    // TODO: take into account type filtering
-    // TODO: compare other term type methods (as labels, as properties)
+    // TODO: compare query speed of other term type methods (as labels, as properties)
     console.log("payload: \n");
     console.log(request.payload);
 

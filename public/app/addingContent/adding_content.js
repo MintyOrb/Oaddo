@@ -240,8 +240,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
     };
 
     $scope.filter = filterFactory;
-    // initialize filter values to true (include all types)
-    $scope.filter.setAll(true);
+    $scope.filter.setAll(true);  // initialize filter values to true (include all types)
 
     var getRelatedTerms = function(){
         // clear current related
@@ -264,7 +263,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         });
     };
 
-    // fetch terms related when search term array  or filter options change
+    // fetch terms related when search term array or filter options change
     $scope.$watchCollection("contentTerms.search", function(){
         getRelatedTerms();
     });
