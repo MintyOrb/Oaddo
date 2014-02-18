@@ -50,6 +50,12 @@ factory('filterFactory', [function () {
     
     return {
 
+        setAll : function(value){
+            for (var term in this) {
+                this[term].included = value;
+            }
+        },
+
         people: {
             included: false,
             name: 'person',
@@ -235,17 +241,10 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
 
     $scope.filter = filterFactory;
 
-    //filter popover function
-    $scope.setAll = function(value){
-        for (var term in filterFactory) {
-            filterFactory[term].included = value;
-        }
-    };
-
     // initialize filter values to true (include all types)
-    $scope.setAll(true);
+    $scope.filter.setAll(true);
 
-    // fetch terms related to search terms on array change
+    // fetch terms related to search terms on search term array change
     $scope.$watchCollection("contentTerms.search", function(searchTerms){
         // clear current related
         // TODO: only remove terms that are not again returned? (prevent term from vanishing only to re-appear)
@@ -256,7 +255,8 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         $http.post('/relatedTerms', { 
             selectedTerms: $scope.contentTerms.selected,
             discardedTerms: $scope.contentTerms.discarded, 
-            searchTerms: searchTerms, 
+            searchTerms: searchTerms,
+            type: $scope.filter,
             language: appLanguage.lang }).
         success(function(data){
             console.log("data: " + JSON.stringify(data));
@@ -321,13 +321,50 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
 }).
 
 
-controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, contentTerms, filterFactory, $http) {
+controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, contentTerms, $http) {
 
     console.log("data in modal: " + JSON.stringify(data));
 
     $scope.newTermMeta = {};
 
-    $scope.newTermMeta.type = filterFactory;
+    $scope.newTermMeta.type = {
+        people: {
+            included: false,
+            name: 'person',
+        },
+        organizations: {
+            included: false,
+            name: 'organization',
+        },
+        physicalObjects: {
+            included: false,
+            name: 'physical object',
+        },
+        concepts: {
+            included: false,
+            name: 'concept',
+        },
+        jargon: {
+            included: false,
+            name: 'jargon',
+        },
+        disciplines: {
+            included: false,
+            name: 'discipline',
+        },
+        activities: {
+            included: false,
+            name: 'activity',
+        },
+        locations: {
+            included: false,
+            name: 'location',
+        },
+        contentTypes: {
+            included: false,
+            name: 'content type',
+        }
+    };
 
     $scope.newTermMeta.name = data.name;
     $scope.newTermMeta.mid = data.mid; 
