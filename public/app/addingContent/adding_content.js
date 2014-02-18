@@ -240,12 +240,10 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
     };
 
     $scope.filter = filterFactory;
-
     // initialize filter values to true (include all types)
     $scope.filter.setAll(true);
 
-    // fetch terms related to search terms on search term array change
-    $scope.$watchCollection("contentTerms.search", function(searchTerms){
+    var getRelatedTerms = function(){
         // clear current related
         // TODO: only remove terms that are not again returned? (prevent term from vanishing only to re-appear)
         $scope.contentTerms.related = [];
@@ -255,7 +253,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         $http.post('/relatedTerms', { 
             selectedTerms: $scope.contentTerms.selected,
             discardedTerms: $scope.contentTerms.discarded, 
-            searchTerms: searchTerms,
+            searchTerms: $scope.contentTerms.search,
             type: $scope.filter,
             language: appLanguage.lang }).
         success(function(data){
@@ -264,11 +262,19 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
                 $scope.contentTerms.related.push(data.results[i]);
             }
         });
-        console.log("search terms: " + JSON.stringify(searchTerms));
+    };
 
+    // fetch terms related when search term array  or filter options change
+    $scope.$watchCollection("contentTerms.search", function(){
+        getRelatedTerms();
     });
 
-    
+    // NOTE: is there a better solution to getting terms on filter change?
+    //  maybe keep an array of all the values and watch that instead?
+    $scope.$watchCollection("[filter.people.included,filter.organizations.included,filter.physicalObjects.included,filter.concepts.included,filter.jargon.included,filter.disciplines.included,filter.activities.included,filter.locations.included,filter.contentTypes.included,filter.people.included]", function(){
+        console.log("triggered: ");
+        getRelatedTerms();
+    });
 
     //typeahead from neo4j
     $scope.findTerm = function()

@@ -406,7 +406,7 @@ exports.relatedTerms = function (request, reply) {
         language: request.payload.language ,
         ignoreTerms: [],
         searchTerms: [],
-        terms: []
+        types: []
 
     };
 
@@ -417,18 +417,21 @@ exports.relatedTerms = function (request, reply) {
     }
     
     // add UUIDs from discarded terms to ignore array
-    for (var x = 0; x < request.payload.discardedTerms.length; x++) {
-        properties.ignoreTerms.push(request.payload.discardedTerms[x].UUID);
+    for (i = 0; i < request.payload.discardedTerms.length; i++) {
+        properties.ignoreTerms.push(request.payload.discardedTerms[i].UUID);
     }
 
-    // add UUIDs from selected terms to ignore array
-    for (var y = 0; y < request.payload.selectedTerms.length; y++) {
-        properties.ignoreTerms.push(request.payload.selectedTerms[y].UUID);
+    // add filters to type array
+    for (var type in request.payload.type) {
+        if(request.payload.type[type].included){
+            properties.types.push(request.payload.type[type].name);
+        }
     }
+
     
     console.log("props: " + JSON.stringify(properties));
    
-    var query = 'MATCH (typeNode:termType)<-[:IS_TYPE]-(newTermNode:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(searchTerms:term), (newTermNode)-[:HAS_LANGUAGE {languageCode: {language} }]-(newTermMeta:termMeta) WHERE searchTerms.UUID IN {searchTerms} AND NOT newTermNode.UUID IN {ignoreTerms} RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections ORDER BY newTermNode.contentConnections DESC LIMIT 10';
+    var query = 'MATCH (typeNode:termType)<-[:IS_TYPE]-(newTermNode:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(searchTerms:term), (newTermNode)-[:HAS_LANGUAGE {languageCode: {language} }]-(newTermMeta:termMeta) WHERE typeNode.name IN {types} AND searchTerms.UUID IN {searchTerms} AND NOT newTermNode.UUID IN {ignoreTerms} RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections ORDER BY newTermNode.contentConnections DESC LIMIT 10';
 
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
