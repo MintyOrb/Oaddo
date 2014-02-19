@@ -10,6 +10,7 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
 	$scope.contentTerms = contentTerms;
     $scope.DBTerm = "";
     $scope.typeAhead = [];
+    $scope.returnedContent = [];
     
     $scope.filter = filterFactory;
     $scope.filter.setAll(true);  // initialize filter values to true (include all types)
@@ -78,13 +79,13 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
 
     $scope.findRelatedContent = function(){
 		$http.post('/explore', { 
-            // selectedTerms: $scope.contentTerms.selected,
-            // discardedTerms: $scope.contentTerms.discarded, 
-            // keyTerms: $scope.contentTerms.search,
-            // type: $scope.filter,
+            includedTerms: $scope.contentTerms.selected,
+            excludedTerms: $scope.contentTerms.discarded, 
             language: appLanguage.lang }).
         success(function(data){
             console.log("data: " + JSON.stringify(data));
+            $scope.returnedContent = data;
+
             
         });
 	};

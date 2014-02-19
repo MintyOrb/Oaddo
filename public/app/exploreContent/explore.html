@@ -46,5 +46,11 @@
 	<div>
 		<button ng-click="findRelatedContent()" class="btn btn-default">Load content</button>
 	</div>
+	<div class="well">
+		<div ng-repeat="content in returnedContent">
+			<img ng-if="contnet.displayType === image" ng-src="img/{{content.savedAs}}">
+			ContentHere! {{content.displayType}} {{content.savedAs}}
+		</div>
+	</div>
 
 </div>

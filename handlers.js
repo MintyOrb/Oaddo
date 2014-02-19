@@ -273,7 +273,7 @@ exports.addContentFromURL = function (request, reply){
         } else if (response.headers['content-type'].indexOf('image') > -1){
             //NOTE: is it necessary to wait to make sure the stream was successful? (with req.on('end', function () {}) )
             //stream image to server
-            requestModule(request.payload.url).pipe(fs.createWriteStream("./img/submittedContent/" + identifier + lang + generatedName + '.' + ext));
+            requestModule(request.payload.url).pipe(fs.createWriteStream("./public/img/submittedContent/" + identifier + lang + generatedName + '.' + ext));
             reply({displayType: "image", savedAs: identifier + lang + generatedName + '.' + ext, id: generatedName});
         } else {
             // determine if video and host
@@ -305,7 +305,7 @@ exports.addContentFromURL = function (request, reply){
             } else {
                 //TODO: send screenshot back to user for preivew
                 //take screenshot of webpage that is not a video
-                webshot(request.payload.url, './img/submittedContent/' + identifier + lang + generatedName + '.png',function(err) {
+                webshot(request.payload.url, './public/img/submittedContent/' + identifier + lang + generatedName + '.png',function(err) {
                     if(err){console.log("error taking webshot: " + err);}
                     console.log("screenshot now saved");
                     reply({displayType: "webpage", savedAs: identifier + lang + generatedName + '.png', id: generatedName});
@@ -326,7 +326,7 @@ exports.addImageFile = function (request, reply){
     var generatedName = uuid.v1();                      //NOTE: is uuid the best option for unique file names?
     var lang = "_" + request.payload.language + "_";    //allows for adding same content in different languages (keep same UUID)
 
-    fs.writeFile("./img/submittedContent/" + identifier + lang + generatedName + '.' + ext, request.payload.file, function (err) {
+    fs.writeFile("./public/img/submittedContent/" + identifier + lang + generatedName + '.' + ext, request.payload.file, function (err) {
         if(err){console.log("error saving: " + err);}
         //return generated name and full name
         reply({displayType:"image", savedAs:identifier + lang + generatedName + '.' + ext, id: generatedName});
@@ -372,7 +372,7 @@ exports.addNewContent = function (request, reply){
     }
 
     //remove identifier from file name
-    fs.rename("./img/submittedContent/" + request.payload.savedAs, "./img/submittedContent/" + modifiedName, function(){
+    fs.rename("./public/img/submittedContent/" + request.payload.savedAs, "./public/img/submittedContent/" + modifiedName, function(){
         // add content node and connect to terms
         db.query(query, params, function (err, results) {
             if (err) {console.log("neo4j error: " + err);}
@@ -420,6 +420,7 @@ exports.termTypeAhead = function (request, reply){
 exports.relatedTerms = function (request, reply) {
     
     // TODO: compare query speed of other term type methods (as labels, as properties)
+    // TODO: verify query is working properly - new terms should relate to all key terms
     console.log("payload: \n");
     console.log(request.payload);
 
@@ -475,43 +476,72 @@ exports.relatedTerms = function (request, reply) {
 
 exports.findRelatedContent = function (request, reply){
 
+    // TODO: handle searches in other languages
     console.log("payload: \n");
     console.log(request.payload);
 
     console.log("user info: ");
     console.log(request.user );
+
+
+    var query = '';
+    var id = null;
+    var member = false;
+
+    if(request.user !== undefined){
+        id = request.user[0].id;
+        member = true;
+    }
+
+    // build query
+    query += "MATCH";
+
+    if(member){
+        query += "(user:member {UUID: {ID} }), ";
+    }
+    // TODO: add content meta ASAP
+    // (contentMeta)-[:HAS_LANGUAGE {languageCode: {language} }]-
+    query += "(content:content)-[:TAGGED_WITH]-(term:term) WHERE ";
+
+    if(member){
+        query += "NOT (user)-[:BLOCKED]-(content) AND ";
+    }
+
+    // TODO: consider merging filesystemID, weburl, and embedSrc into one property
+    query += [
+        'term.UUID IN {includedTerms} ',
+        'AND NOT term.UUID IN {excludedTerms} ',
+        'RETURN content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc', // contentMeta.whatever',
+        // 'ORDER BY'
+        'LIMIT 20'
+    ].join('\n');
+
     var properties = {
         language: request.payload.language,
         includedTerms: [],
         excludedTerms: [],
-        userID: request.user[0].id
+        userID: id
     };
 
     console.log("props: " + JSON.stringify(properties));
 
-    // // add UUIDs from search terms to ignore and search term arrays
-    // for (var i = 0; i < request.payload.searchTerms.length; i++) {
-    //     properties.ignoreTerms.push(request.payload.searchTerms[i].UUID);
-    //     properties.searchTerms.push(request.payload.searchTerms[i].UUID);
-    // }
+    // add UUIDs from included terms to inclucde array
+    for (var i = 0; i < request.payload.includedTerms.length; i++) {
+        properties.includedTerms.push(request.payload.includedTerms[i].UUID);
+    }
     
-    // // add UUIDs from discarded terms to ignore array
-    // for (i = 0; i < request.payload.discardedTerms.length; i++) {
-    //     properties.ignoreTerms.push(request.payload.discardedTerms[i].UUID);
-    // }
+    // add UUIDs from excluded terms to eclude array
+    for (i = 0; i < request.payload.excludedTerms.length; i++) {
+        properties.excludedTerms.push(request.payload.excludedTerms[i].UUID);
+    }
 
-    // // add filters to type array
-    // for (var type in request.payload.type) {
-    //     if(request.payload.type[type].included){
-    //         properties.types.push(request.payload.type[type].name);
-    //     }
-    // }
+    db.query(query, properties, function (err, results) {
+        if (err) {throw err;}
+        console.log("done with query: ");
+        console.log(results);
+        reply(results);
+    });
 
-    // string build query as necessary
-
-    //perform query
-
-    //return results
 };
 
 
