@@ -191,7 +191,6 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         // this should be fixed with correct term drop logic (restricting drop zones)
         $http.post('/relatedTerms', { 
             selectedTerms: $scope.contentTerms.selected,
-            discardedTerms: $scope.contentTerms.discarded, 
             keyTerms: $scope.contentTerms.search,
             type: $scope.filter,
             language: appLanguage.lang }).

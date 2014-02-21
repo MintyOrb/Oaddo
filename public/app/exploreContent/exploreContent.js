@@ -21,7 +21,6 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
         $scope.contentTerms.related = [];
 
         $http.post('/relatedTerms', { 
-            discardedTerms: $scope.contentTerms.discarded, 
             keyTerms: $scope.contentTerms.selected,
             type: $scope.filter,
             language: appLanguage.lang }).
@@ -38,8 +37,7 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
         if(contentTerms.selected.length > 0){
 			getRelatedTerms();
 			console.log("triggered selected: " );
-        }
-        
+        }  
     });
 
     // NOTE: is there a better solution to getting terms on filter change?

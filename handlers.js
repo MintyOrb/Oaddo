@@ -465,12 +465,6 @@ exports.relatedTerms = function (request, reply) {
             properties.keyTerms.push(request.payload.keyTerms[i].UUID);
         }
     }
-    
-    
-    // add UUIDs from discarded terms to ignore array
-    for (var x = 0; x < request.payload.discardedTerms.length; x++) {
-        properties.ignoreTerms.push(request.payload.discardedTerms[x].UUID);
-    }
 
     // add filters to type array
     for (var type in request.payload.type) {
@@ -504,7 +498,8 @@ exports.findRelatedContent = function (request, reply){
 
     var query = '';
     var id = null;
-    var member = false;
+    var member = false;    
+    var count = 0;
 
     if(request.user !== undefined){
         console.log("logged in: "  );
@@ -512,6 +507,13 @@ exports.findRelatedContent = function (request, reply){
         id = request.user[0].id;
         member = true;
     }
+
+    var properties = {
+        language: request.payload.language,
+        includedTerms: [],
+        userID: id,
+        numberOfIncluded: count
+    };
 
     // TODO: add content meta ASAP
     // (contentMeta)-[:HAS_LANGUAGE {languageCode: {language} }]-
@@ -522,7 +524,6 @@ exports.findRelatedContent = function (request, reply){
             "WHERE ",
                 "NOT (user)-[:BLOCKED]-(content) ",
                 'AND term.UUID IN {includedTerms} ',
-                'AND NOT term.UUID IN {excludedTerms} ',
             'RETURN DISTINCT content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc', // contentMeta.whatever',
             // 'ORDER BY'
             'LIMIT 20'
@@ -530,35 +531,23 @@ exports.findRelatedContent = function (request, reply){
 
     } else {
         query = [
-        "MATCH (content:content)-[:TAGGED_WITH]-(term:term) ",
+            "MATCH (content:content)-[:TAGGED_WITH]-(term:term) ",
             "WHERE ",
                 'term.UUID IN {includedTerms} ',
-                'AND NOT term.UUID IN {excludedTerms} ',
+            "WITH content, count(*) AS connected ",
+            "WHERE connected = {numberOfIncluded} ",
             'RETURN DISTINCT content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc', // contentMeta.whatever',
             // 'ORDER BY'
             'LIMIT 20'
         ].join('\n');
     }
- 
-
-    var properties = {
-        language: request.payload.language,
-        includedTerms: [],
-        excludedTerms: [],
-        userID: id
-    };
-
-    console.log("props: " + JSON.stringify(properties));
-
+    
     // add UUIDs from included terms to inclucde array
     for (var i = 0; i < request.payload.includedTerms.length; i++) {
         properties.includedTerms.push(request.payload.includedTerms[i].UUID);
+        count += 1;
     }
-    
-    // add UUIDs from excluded terms to eclude array
-    for (i = 0; i < request.payload.excludedTerms.length; i++) {
-        properties.excludedTerms.push(request.payload.excludedTerms[i].UUID);
-    }
+    properties.numberOfIncluded = count;
 
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
