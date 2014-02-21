@@ -424,6 +424,8 @@ exports.relatedTerms = function (request, reply) {
     console.log("payload: \n");
     console.log(request.payload);
 
+    var query = "";
+
     var properties = {
         language: request.payload.language ,
         ignoreTerms: [],
@@ -432,15 +434,42 @@ exports.relatedTerms = function (request, reply) {
 
     };
 
-    // add UUIDs from search terms to ignore and search term arrays
-    for (var i = 0; i < request.payload.keyTerms.length; i++) {
-        properties.ignoreTerms.push(request.payload.keyTerms[i].UUID);
-        properties.keyTerms.push(request.payload.keyTerms[i].UUID);
+    
+    if(request.payload.keyTerms.length === 0){
+        //return most connected terms if no key terms selected
+        query = [
+            'MATCH (typeNode:termType)<-[:IS_TYPE]-(newTermNode:term)<-[:TAGGED_WITH]-(contentNode:content), ',
+                '(newTermNode)-[:HAS_LANGUAGE {languageCode: {language} }]-(newTermMeta:termMeta) ',
+            'WHERE',
+                'typeNode.name IN {types} ',
+                'AND NOT newTermNode.UUID IN {ignoreTerms} ',
+            'RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections ',
+            'ORDER BY newTermNode.contentConnections DESC LIMIT 10'
+        ].join('\n');
+
+    } else {
+        query = [
+            'MATCH (typeNode:termType)<-[:IS_TYPE]-(newTermNode:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
+                '(newTermNode)-[:HAS_LANGUAGE {languageCode: {language} }]-(newTermMeta:termMeta) ',
+            'WHERE',
+                'typeNode.name IN {types} ',
+                'AND keyTerms.UUID IN {keyTerms} ',
+                'AND NOT newTermNode.UUID IN {ignoreTerms} ',
+            'RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections ',
+            'ORDER BY newTermNode.contentConnections DESC LIMIT 10'
+        ].join('\n');
+
+        // add UUIDs from key terms to ignore and key term arrays
+        for (var i = 0; i < request.payload.keyTerms.length; i++) {
+            properties.ignoreTerms.push(request.payload.keyTerms[i].UUID);
+            properties.keyTerms.push(request.payload.keyTerms[i].UUID);
+        }
     }
     
+    
     // add UUIDs from discarded terms to ignore array
-    for (i = 0; i < request.payload.discardedTerms.length; i++) {
-        properties.ignoreTerms.push(request.payload.discardedTerms[i].UUID);
+    for (var x = 0; x < request.payload.discardedTerms.length; x++) {
+        properties.ignoreTerms.push(request.payload.discardedTerms[x].UUID);
     }
 
     // add filters to type array
@@ -452,17 +481,6 @@ exports.relatedTerms = function (request, reply) {
 
     
     console.log("props: " + JSON.stringify(properties));
-   
-    var query = [
-        'MATCH (typeNode:termType)<-[:IS_TYPE]-(newTermNode:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
-            '(newTermNode)-[:HAS_LANGUAGE {languageCode: {language} }]-(newTermMeta:termMeta) ',
-        'WHERE',
-            'typeNode.name IN {types} ',
-            'AND keyTerms.UUID IN {keyTerms} ',
-            'AND NOT newTermNode.UUID IN {ignoreTerms} ',
-        'RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections ',
-        'ORDER BY newTermNode.contentConnections DESC LIMIT 10'
-    ].join('\n');
 
 
     db.query(query, properties, function (err, results) {
@@ -489,32 +507,39 @@ exports.findRelatedContent = function (request, reply){
     var member = false;
 
     if(request.user !== undefined){
+        console.log("logged in: "  );
+        console.log(request.user[0].id);
         id = request.user[0].id;
         member = true;
     }
 
-    // build query
-    query += "MATCH";
-
-    if(member){
-        query += "(user:member {UUID: {ID} }), ";
-    }
     // TODO: add content meta ASAP
     // (contentMeta)-[:HAS_LANGUAGE {languageCode: {language} }]-
-    query += "(content:content)-[:TAGGED_WITH]-(term:term) WHERE ";
-
-    if(member){
-        query += "NOT (user)-[:BLOCKED]-(content) AND ";
-    }
-
     // TODO: consider merging filesystemID, weburl, and embedSrc into one property
-    query += [
-        'term.UUID IN {includedTerms} ',
-        'AND NOT term.UUID IN {excludedTerms} ',
-        'RETURN content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc', // contentMeta.whatever',
-        // 'ORDER BY'
-        'LIMIT 20'
-    ].join('\n');
+    if(member){
+        query = [
+            "MATCH (user:member {UUID: {userID} }), (content:content)-[:TAGGED_WITH]-(term:term) ",
+            "WHERE ",
+                "NOT (user)-[:BLOCKED]-(content) ",
+                'AND term.UUID IN {includedTerms} ',
+                'AND NOT term.UUID IN {excludedTerms} ',
+            'RETURN DISTINCT content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc', // contentMeta.whatever',
+            // 'ORDER BY'
+            'LIMIT 20'
+        ].join('\n');
+
+    } else {
+        query = [
+        "MATCH (content:content)-[:TAGGED_WITH]-(term:term) ",
+            "WHERE ",
+                'term.UUID IN {includedTerms} ',
+                'AND NOT term.UUID IN {excludedTerms} ',
+            'RETURN DISTINCT content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc', // contentMeta.whatever',
+            // 'ORDER BY'
+            'LIMIT 20'
+        ].join('\n');
+    }
+ 
 
     var properties = {
         language: request.payload.language,

@@ -35,8 +35,11 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
 
 	// fetch terms related when search term array or filter options change
     $scope.$watchCollection("contentTerms.selected", function(){
-        getRelatedTerms();
-        console.log("triggered selected: " );
+        if(contentTerms.selected.length > 0){
+			getRelatedTerms();
+			console.log("triggered selected: " );
+        }
+        
     });
 
     // NOTE: is there a better solution to getting terms on filter change?
