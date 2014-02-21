@@ -21,6 +21,8 @@ factory('filterFactory', [function () {
             }
         },
 
+        isCollapsed: false,
+
         people: {
             included: false,
             name: 'person',

@@ -524,6 +524,8 @@ exports.findRelatedContent = function (request, reply){
             "WHERE ",
                 "NOT (user)-[:BLOCKED]-(content) ",
                 'AND term.UUID IN {includedTerms} ',
+            "WITH content, count(*) AS connected ",
+            "WHERE connected = {numberOfIncluded} ",
             'RETURN DISTINCT content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc', // contentMeta.whatever',
             // 'ORDER BY'
             'LIMIT 20'

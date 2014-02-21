@@ -20,6 +20,15 @@
   min-height: 70px;
 }
 
+.noOutline:focus {
+	background-color: white;
+	 outline: 0;}
+
+.contentPane {
+	height: 300px;
+	width: 300px;
+}
+
 .background {
 	color:#d1d1d1; 
 	cursor: default; 
@@ -30,12 +39,17 @@
  	margin-top: 15px;
 }
 
-
+.marginBottom0 {margin-bottom: 0px;}
 .margin5 {margin:5px;}
 .margin20 {margin:20px;}
 .height200 {min-height: 200px}
 .width80p {min-width: 80%}
 .width100p {min-width: 100%}
+
+.filterSel {
+	width:240px;
+	border-right: solid 1px;
+}
 
 .droppable{background-color:#e0e0e0;}
 .above{z-index: 2;position: relative;}

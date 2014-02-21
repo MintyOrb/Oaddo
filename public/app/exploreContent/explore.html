@@ -1,30 +1,58 @@
 
 
  <div class="container" ng-controller="exploreCtrl">
-	<div class="row f-flexC f-m-center margin20">
+	<!-- <div class="row f-flexC f-m-center margin20">
 	    <input ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="DBTerm" ng-change="findTerm()" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in typeAhead" placeholder="Type term name here">
-	</div>
+	</div> -->
 
-	<div>
+	<div class="col-sm-12">
 	 
-	    <button class='btn btn-default btn-xs' popover-template="app/filterPartial.html" ng-click="popoverOpen = !popoverOpen" popover-placement="right">
+	    <!-- <button class='btn btn-default btn-xs' popover-template="app/filterPartial.html" ng-click="popoverOpen = !popoverOpen" popover-placement="right">
 	        <i class="fa fa-filter"></i> 
 	        <span ng-show='!popoverOpen'>open filter options</span>
 	        <span class='text-danger' ng-show='popoverOpen'>close filter options</span>
-	    </button>
+	    </button> -->
 
-	    <div ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm height200'>
+	   	<!-- TODO: make collapasable (ui-bootstarp) -->
+	   	<!-- TODO: ng-class for background color on selection -->
+
+	   	<button ng-hide="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i> Hide Filter</button>
+	   	<button ng-show="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i> Show Filter</button>
+
+	    <div collapse="filter.isCollapsed">
+	    	<div  class="f-flexC f-row f-m-between f-c-center panel panel-default marginBottom0 col-sm-8 col-sm-offset-2">
+	    		<div class="filterSel f-flexC f-column f-m-center f-c-center">
+	    			<span class="h5">Term filter:</span>
+	    			<div>
+						<button ng-click="filter.setAll(true)" class="margin5 btn btn-xs btn-primary">Select All</button>
+						<button ng-click="filter.setAll(false)" class="margin5 btn btn-xs btn-primary">Clear All</button>
+	    			</div>
+	    		</div>
+	    		<div class="f-flexC f-row f-wrap f-m-center f-c-center">
+	    			<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.people.included">People</button>
+					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.organizations.included">Organizations</button>
+					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.physicalObjects.included">Physical Objects</button>
+					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.concepts.included">Concepts</button>
+					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.jargon.included">Jargon</button>
+					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.disciplines.included">Disciplines</button>
+					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.activities.included">Activities</button>
+					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.locations.included">Locations</button>
+					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.contentTypes.included">Content Types</button>
+	    		</div>
+	    	</div>
+	    </div>
+	    <div ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm col-sm-8 col-sm-offset-2 height200'>
 	        <i class='pull-right text-muted fa fa-question-circle'></i>
 	        <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">related terms</span>
 	        <div class="f-flexC f-row f-m-around f-wrap">
 	            <button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" ng-repeat="term in contentTerms.related" class='dn-bounce above btn margin5 btn-default'>{{term.name}}</button>
 	        </div>
 	    </div>   
-	  
-    
-	    <div ui-on-Drop="recievingHandler($data, contentTerms.selected)" drag-enter-class="droppable" class="well well-sm col-sm-6">
+	  	<br>
+	    <div ui-on-Drop="recievingHandler($data, contentTerms.selected)" drag-enter-class="droppable" class="well well-sm col-sm-8 col-sm-offset-2">
+	        <button class="btn btn-sm btn-default">Add Term</button>
 	        <i class='pull-right text-muted fa fa-question-circle'></i>
-	        <div class="f-fleC f-row f-m-center">
+	        <div class="f-flexC f-row f-m-center">
 	            <span ng-hide="contentTerms.selected.length > 0"class="dn-fade text-muted background h3">included terms</span>
 	            <div class="f-flexC f-row f-m-around f-wrap">
 	                <button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.selected)" drag="term" ng-repeat="term in contentTerms.selected" class='dn-bounce above btn margin5 btn-default'>{{term.name}}</button>
@@ -32,23 +60,23 @@
 	        </div>
 	    </div>
     
-	    <div ui-on-Drop="recievingHandler($data, contentTerms.discarded)" drag-enter-class="droppable" class="well well-sm col-sm-6">
+	   <!--  <div ui-on-Drop="recievingHandler($data, contentTerms.discarded)" drag-enter-class="droppable" class="well well-sm col-sm-4">
 	        <i class='pull-right text-muted fa fa-question-circle'></i>
-	        <div class="f-fleC f-row f-m-center">
+	        <div class="f-flexC f-row f-m-center">
 	            <span ng-hide="contentTerms.discarded.length > 0" class="dn-fade text-muted background h3">excluded terms</span>
 	            <div class="f-flexC f-row f-m-around f-wrap">
 	                <button ui-draggable="true" on-drop-success="dropFromHandler($index, contentTerms.discarded)" drag="term" ng-repeat="term in contentTerms.discarded" class='dn-bounce above btn margin5 btn-default btn-xs'>{{term.name}}</button>
 	            </div>
 	        </div>
-	    </div>
+	    </div> -->
 	   
 	</div>
-	<div>
-		<button ng-click="findRelatedContent()" class="btn btn-default">Load content</button>
-	</div>
-	<div class="well">
-		<div ng-repeat="content in returnedContent">
-			<img ng-if="contnet.displayType === image" ng-src="img/{{content.savedAs}}">
+
+	<br>
+
+	<div class="well f-flexC f-row f-wrap f-m-around">
+		<div class="contentPane panel panel-default" ng-repeat="content in returnedContent">
+			<img width="300px" ng-if="contnet.displayType === image" ng-src="img/submittedContent/{{content.savedAs}}">
 			ContentHere! {{content.displayType}} {{content.savedAs}}
 		</div>
 	</div>

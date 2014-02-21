@@ -14,6 +14,20 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
     
     $scope.filter = filterFactory;
     $scope.filter.setAll(true);  // initialize filter values to true (include all types)
+    console.log("filter is collapsed: " + $scope.filter.isCollapsed);
+
+    var getRelatedContent = function(){
+		$http.post('/explore', { 
+            includedTerms: $scope.contentTerms.selected,
+            excludedTerms: $scope.contentTerms.discarded, 
+            language: appLanguage.lang }).
+        success(function(data){
+            console.log("data: " + JSON.stringify(data));
+            $scope.returnedContent = data;
+
+            
+        });
+	};
 
 	var getRelatedTerms = function(){
         // clear current related
@@ -32,19 +46,20 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
         });
     };
 
-	// fetch terms related when search term array or filter options change
+	// fetch related terms and content when search term array or filter options change
     $scope.$watchCollection("contentTerms.selected", function(){
-        if(contentTerms.selected.length > 0){
-			getRelatedTerms();
-			console.log("triggered selected: " );
-        }  
+		getRelatedTerms();
+		getRelatedContent();
+		console.log("selected triggered: " );
     });
 
     // NOTE: is there a better solution to getting terms on filter change?
     //  maybe keep an array of all the values and watch that instead?
     $scope.$watchCollection("[filter.people.included,filter.organizations.included,filter.physicalObjects.included,filter.concepts.included,filter.jargon.included,filter.disciplines.included,filter.activities.included,filter.locations.included,filter.contentTypes.included,filter.people.included]", function(){
         console.log("triggered filter: ");
-        getRelatedTerms();
+        if(contentTerms.selected.length > 0){
+			getRelatedTerms();
+		}
     });
 
 	$scope.findTerm = function()
@@ -77,17 +92,4 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
         console.log("termArray: " + termArray);
         termArray.push(data);
     };
-
-    $scope.findRelatedContent = function(){
-		$http.post('/explore', { 
-            includedTerms: $scope.contentTerms.selected,
-            excludedTerms: $scope.contentTerms.discarded, 
-            language: appLanguage.lang }).
-        success(function(data){
-            console.log("data: " + JSON.stringify(data));
-            $scope.returnedContent = data;
-
-            
-        });
-	};
 });
