@@ -14,9 +14,9 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
     
     $scope.filter = filterFactory;
     $scope.filter.setAll(true);  // initialize filter values to true (include all types)
-    console.log("filter is collapsed: " + $scope.filter.isCollapsed);
+    console.log("filter.isCollapsed: " + $scope.filter.isCollapsed);
 
-    var getRelatedContent = function(){
+    $scope.getRelatedContent = function(){
 		$http.post('/explore', { 
             includedTerms: $scope.contentTerms.selected,
             excludedTerms: $scope.contentTerms.discarded, 
@@ -29,7 +29,7 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
         });
 	};
 
-	var getRelatedTerms = function(){
+	$scope.getRelatedTerms = function(){
         // clear current related
         // TODO: only remove terms that are not again returned? (prevent term from vanishing only to re-appear)
         $scope.contentTerms.related = [];
@@ -46,20 +46,21 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
         });
     };
 
-	// fetch related terms and content when search term array or filter options change
-    $scope.$watchCollection("contentTerms.selected", function(){
-		getRelatedTerms();
-		getRelatedContent();
-		console.log("selected triggered: " );
-    });
 
     // NOTE: is there a better solution to getting terms on filter change?
     //  maybe keep an array of all the values and watch that instead?
-    $scope.$watchCollection("[filter.people.included,filter.organizations.included,filter.physicalObjects.included,filter.concepts.included,filter.jargon.included,filter.disciplines.included,filter.activities.included,filter.locations.included,filter.contentTypes.included,filter.people.included]", function(){
-        console.log("triggered filter: ");
-        if(contentTerms.selected.length > 0){
-			getRelatedTerms();
+    $scope.$watch("filter", function(newValue, oldValue){
+		if (newValue !== oldValue) {
+			console.log("triggered filter: ");
+			$scope.getRelatedTerms();
 		}
+    }, true); // true as second parameter sets up deep watch
+
+    // fetch related terms and content when search term array or filter options change
+    $scope.$watchCollection("contentTerms.selected", function(newValue, oldValue){
+		$scope.getRelatedTerms();
+		$scope.getRelatedContent();
+		console.log("selected triggered: " );
     });
 
 	$scope.findTerm = function()

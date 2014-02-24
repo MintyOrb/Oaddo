@@ -20,14 +20,22 @@
   min-height: 70px;
 }
 
+
+
+.searchContainer {
+	width:300px;
+}
+.previewImage {
+  width: auto;
+  max-width: 280px;
+  height: auto;
+  max-height: 200px;
+}
+
 .noOutline:focus {
 	background-color: white;
 	 outline: 0;}
 
-.contentPane {
-	height: 300px;
-	width: 300px;
-}
 
 .background {
 	color:#d1d1d1; 

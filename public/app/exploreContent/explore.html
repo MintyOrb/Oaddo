@@ -5,7 +5,7 @@
 	    <input ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="DBTerm" ng-change="findTerm()" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in typeAhead" placeholder="Type term name here">
 	</div> -->
 
-	<div class="col-sm-12">
+	<div ui-on-Drop="" class="col-sm-12">
 	 
 	    <!-- <button class='btn btn-default btn-xs' popover-template="app/filterPartial.html" ng-click="popoverOpen = !popoverOpen" popover-placement="right">
 	        <i class="fa fa-filter"></i> 
@@ -60,24 +60,25 @@
 	        </div>
 	    </div>
     
-	   <!--  <div ui-on-Drop="recievingHandler($data, contentTerms.discarded)" drag-enter-class="droppable" class="well well-sm col-sm-4">
+	    <div ui-on-Drop="recievingHandler($data, contentTerms.discarded)" drag-enter-class="droppable" class="well well-sm col-sm-8 col-sm-offset-2">
 	        <i class='pull-right text-muted fa fa-question-circle'></i>
 	        <div class="f-flexC f-row f-m-center">
-	            <span ng-hide="contentTerms.discarded.length > 0" class="dn-fade text-muted background h3">excluded terms</span>
+	            <span ng-hide="contentTerms.discarded.length > 0" class="dn-fade text-muted background h3">discarded terms</span>
 	            <div class="f-flexC f-row f-m-around f-wrap">
 	                <button ui-draggable="true" on-drop-success="dropFromHandler($index, contentTerms.discarded)" drag="term" ng-repeat="term in contentTerms.discarded" class='dn-bounce above btn margin5 btn-default btn-xs'>{{term.name}}</button>
 	            </div>
 	        </div>
-	    </div> -->
+	    </div>
 	   
 	</div>
 
 	<br>
 
 	<div class="well f-flexC f-row f-wrap f-m-around">
-		<div class="contentPane panel panel-default" ng-repeat="content in returnedContent">
-			<img width="300px" ng-if="contnet.displayType === image" ng-src="img/submittedContent/{{content.savedAs}}">
-			ContentHere! {{content.displayType}} {{content.savedAs}}
+		<div class="searchContainer panel panel-default f-flexC f-column f-m-between f-c-center" ng-repeat="content in returnedContent">
+			{{content.displayType}}
+			<br>
+			<img class="previewImage" ng-if="content.displayType === 'image'" ng-src="img/submittedContent/{{content.savedAs}}">
 		</div>
 	</div>
 
