@@ -337,7 +337,7 @@ exports.addImageFile = function (request, reply){
 exports.addNewContent = function (request, reply){
 
     var genUUID = uuid.v4();
-    var modifiedName = "";
+    var modifiedName = request.payload.savedAs; // will be changed unless displaytype is embed
 
     if(request.payload.displayType !== "embed"){
         modifiedName = request.payload.savedAs.slice(21); // name without identifier
