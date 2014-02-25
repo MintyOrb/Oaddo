@@ -126,6 +126,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
 
                 } else if(response.displayType === "embed"){
                     $scope.contentObject.embedSrc = response.embedSrc;
+                    $scope.contentObject.savedAs = response.savedAs;
                 }
 
                 $scope.contentObject.displayType = response.displayType;

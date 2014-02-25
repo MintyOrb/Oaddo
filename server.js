@@ -127,7 +127,8 @@ server.route([
     { method: 'GET', path: '/termTypeAhead', handler: handlers.termTypeAhead},
 
     { method: 'POST', path: '/explore', handler: handlers.findRelatedContent},
-
+   
+    { method: 'GET', path: '/content', handler: handlers.getContent},
 ]);     
 
 // Start the server

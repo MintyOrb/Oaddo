@@ -279,29 +279,30 @@ exports.addContentFromURL = function (request, reply){
             // determine if video and host
             // NOTE: is this the best way to make the source determination?
             // TODO: incorporate youtube, vimeo, and TED (when available) apis to get thumbnail images
+            // 
             if(response.request.uri.host.indexOf('ted.com') > -1){
                 //embed - //embed.ted.com/talks/:id
                 embedURL = "//embed.ted.com";
                 embedURL += response.request.uri.path;
                 console.log("ted embed: " + embedURL);
-                reply({embedSrc: embedURL, displayType: "embed"});
+                reply({savedAs:'videoIcon.png',embedSrc: embedURL, displayType: "embed"});
             } else if(response.request.uri.host.indexOf('vimeo.com') > -1){
                 //embed - //www.player.vimeo.com/video/:id
                 embedURL = "//player.vimeo.com/video";
                 embedURL += response.request.uri.path;
                 console.log("vimeo embed: " + embedURL);
-                reply({embedSrc: embedURL, displayType: "embed"});
+                reply({savedAs:'videoIcon.png',embedSrc: embedURL, displayType: "embed"});
             } else if(response.request.uri.host.indexOf('youtube.com') > -1){
                 //embed - //www.youtube.com/embed/:id
                 embedURL = "//www.youtube.com/embed/";
-                embedURL += response.request.uri.path.slice(9,-1);
+                embedURL += response.request.uri.path.slice(9);
                 //remove extra parameters (e.g. if pasted from playlist url will contain '&LIST=XXX')
                 if(embedURL.indexOf('&') > -1){
                     var position = embedURL.indexOf('&');
                     embedURL = embedURL.substring(position, -1);
                 }
                 console.log("vimeo embed: " + embedURL);
-                reply({embedSrc: embedURL, displayType: "embed"});
+                reply({savedAs:'videoIcon.png',embedSrc: embedURL, displayType: "embed"});
             } else {
                 //TODO: send screenshot back to user for preivew
                 //take screenshot of webpage that is not a video
@@ -399,9 +400,6 @@ exports.termTypeAhead = function (request, reply){
         "RETURN core.UUID as UUID, langNode.name as name LIMIT 8"
     ].join('\n');
     
-
-
-
     console.log("match: " + properties.match);
     console.log("lang: " + properties.code);
 
@@ -560,4 +558,23 @@ exports.findRelatedContent = function (request, reply){
 
 };
 
+exports.getContent = function (request, reply){
+    console.log("data: "+ request.query);
+    console.log("data: "+ JSON.stringify(request.query));
 
+    var query = "MATCH (contentNode:content {UUID: {id} }) RETURN contentNode.displayType AS displayType, contentNode.savedAs AS savedAs, contentNode.webURL AS webURL, contentNode.embedSrc AS embedSrc";
+    var properties = { 
+        id: request.query.uuid
+    };
+
+    db.query(query, properties, function (err, content) {
+        if (err) {console.log("error in db query: " + err);}
+        console.log("returned from db: " + JSON.stringify(content));
+        if(content[0] === undefined){
+            console.log("none found: " + JSON.stringify(content));
+            reply({ message : 'content not found' });
+        } else {
+            reply(content);
+        }
+    });   
+};

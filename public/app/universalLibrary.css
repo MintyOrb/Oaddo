@@ -3,7 +3,7 @@
 /*Original Bootstrap's CSS depends on empty href attributes to style cursors for several components (pagination, tabs etc.). But in AngularJS adding empty href attributes to link tags will cause unwanted route changes. This is why we need to remove empty href attributes from directive templates and as a result styling is not applied correctly.*/
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
-*{outline: solid 1px;}
+/**{outline: solid 1px;}*/
 
 
 
@@ -21,20 +21,29 @@
 }
 
 
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .searchContainer {
 	width:300px;
 }
 .previewImage {
-  width: auto;
-  max-width: 280px;
-  height: auto;
-  max-height: 200px;
+	display: block;
+    width: auto;
+    max-width: 280px;
+    height: auto;
+    max-height: 200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .noOutline:focus {
 	background-color: white;
-	 outline: 0;}
+	outline: 0;
+}
 
 
 .background {

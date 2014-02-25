@@ -1,8 +1,6 @@
 
-<div>
-	<zui ng-if="content.displayType === 'image'" url="img/submittedContent/{{content.savedAs}}"></zui>
+<div class='center'>
+	<zui  ng-if="content.displayType === 'image'" url="img/submittedContent/{{content.savedAs}}"></zui>
 
-	<div ng-if="content.displayType === 'embed'">
-		Hi there.
-	</div>
+	<iframe class="center" ng-if="content.displayType === 'embed'" width="853" height="480" ng-src="{{content.embedSrc}}" allowfullscreen></iframe>
 </div>

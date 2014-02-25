@@ -120,11 +120,23 @@ service('viewContent', [function () {
 
 
 
-controller('contentPageCtrl', ['$scope', "viewContent", function ($scope, viewContent) {
+controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewContent", function ($sce, $http, $routeParams, $scope, viewContent) {
 	
-    $scope.content = viewContent.selected;
-    console.log("scope.content: " );
-    console.log($scope.content.savedAs );
+    console.log("location id: " + $routeParams.id);
+    console.log($routeParams);
+
+
+    $http.get('/content', {params: {uuid: $routeParams.id}})
+    .success(function(data){
+        console.log("data: " );
+        console.log(data);
+        viewContent.selected = data[0];  
+        $scope.content = viewContent.selected;
+        $scope.content.embedSrc = $sce.trustAsResourceUrl($scope.content.embedSrc);
+
+    });
+
+
 	
 }]).
 
@@ -141,7 +153,7 @@ directive('zui', [function () {
 			console.log("url: " );
             console.log(scope.url);
             scope.imageURL = scope.url;
-
+            // TODO: find alternative to doc.getbyID for zui initilization
 			var zui = new ZUI53.Viewport( document.getElementById('zui') );
             zui.addSurface( new ZUI53.Surfaces.CSS( document.getElementById('viewport') ) );
             
