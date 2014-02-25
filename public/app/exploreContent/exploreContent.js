@@ -3,7 +3,7 @@
 
 angular.module('universalLibrary').
 
-controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, filterFactory) {
+controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location, $http, appLanguage, filterFactory) {
 	
 	// NOTE: this controller contains largly identical functionality to the termSelection controller
 		// consider refactoring to be more DRY
@@ -23,9 +23,7 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
             language: appLanguage.lang }).
         success(function(data){
             console.log("data: " + JSON.stringify(data));
-            $scope.returnedContent = data;
-
-            
+            $scope.returnedContent = data;            
         });
 	};
 
@@ -93,4 +91,64 @@ controller("exploreCtrl", function ($scope, contentTerms, $http, appLanguage, fi
         console.log("termArray: " + termArray);
         termArray.push(data);
     };
-});
+
+    $scope.navigateToContentPage = function(content){
+        viewContent.selected = content;
+        console.log("viewContent.selected: ");
+        console.log(content);
+        $location.url('content/' + content.UUID);
+    };
+}).
+
+
+
+
+
+
+service('viewContent', [function () {
+    this.selected = {};
+}]).
+
+
+
+
+
+
+
+
+
+
+
+
+controller('contentPageCtrl', ['$scope', "viewContent", function ($scope, viewContent) {
+	
+    $scope.content = viewContent.selected;
+    console.log("scope.content: " );
+    console.log($scope.content.savedAs );
+	
+}]).
+
+
+directive('zui', [function () {
+    console.log("in directive: " );
+	return {
+		restrict: 'E',
+		scope: { url: "@"},
+        // NOTE: changed overlay style of .zui div to visible and added 'left':'0', 'right':'0' to viewport div in prototype in zui53.js
+        // TODO: find better solution for centering displayed content - this method allows the user to zoom on the magin 'wings' used for initial centering
+		template: '<div id="zui" style="z-index:-1;" ><div id="viewport" ><img src="{{imageURL}}" style="display:block; margin-left: auto; margin-right: auto; max-height: 400px;"></div></div>',
+		link: function (scope, element, attrs) {
+			console.log("url: " );
+            console.log(scope.url);
+            scope.imageURL = scope.url;
+
+			var zui = new ZUI53.Viewport( document.getElementById('zui') );
+            zui.addSurface( new ZUI53.Surfaces.CSS( document.getElementById('viewport') ) );
+            
+            var pan_tool = new ZUI53.Tools.Pan(zui);
+            zui.toolset.add( pan_tool );
+            pan_tool.attach();
+		}
+	};
+}]);
+

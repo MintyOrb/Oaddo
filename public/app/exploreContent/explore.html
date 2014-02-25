@@ -76,9 +76,16 @@
 
 	<div class="well f-flexC f-row f-wrap f-m-around">
 		<div class="searchContainer panel panel-default f-flexC f-column f-m-between f-c-center" ng-repeat="content in returnedContent">
+			<div class="panel-heading">
+			    <h3 class="panel-title">Panel title</h3>
+			</div>
 			{{content.displayType}}
 			<br>
-			<img class="previewImage" ng-if="content.displayType === 'image'" ng-src="img/submittedContent/{{content.savedAs}}">
+			<!-- TODO: choose between <a> and ng-click to navigate
+			<a> tag has benefit of changing the users cursor -->
+			<a href="">
+				<img class="previewImage" ng-click="navigateToContentPage(content)" ng-if="content.displayType === 'image'" ng-src="img/submittedContent/{{content.savedAs}}">
+			</a>
 		</div>
 	</div>
 
