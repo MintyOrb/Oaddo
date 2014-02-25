@@ -44,9 +44,6 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
         });
     };
 
-
-    // NOTE: is there a better solution to getting terms on filter change?
-    //  maybe keep an array of all the values and watch that instead?
     $scope.$watch("filter", function(newValue, oldValue){
 		if (newValue !== oldValue) {
 			console.log("triggered filter: ");
@@ -125,7 +122,7 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     console.log("location id: " + $routeParams.id);
     console.log($routeParams);
 
-
+    // TODO: handle error - if content with UUID not found, display error
     $http.get('/content', {params: {uuid: $routeParams.id}})
     .success(function(data){
         console.log("data: " );
@@ -133,6 +130,7 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
         viewContent.selected = data[0];  
         $scope.content = viewContent.selected;
         $scope.content.embedSrc = $sce.trustAsResourceUrl($scope.content.embedSrc);
+        $scope.content.webURL = $sce.trustAsResourceUrl($scope.content.webURL);
 
     });
 

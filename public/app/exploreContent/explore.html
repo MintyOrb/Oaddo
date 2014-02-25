@@ -83,7 +83,7 @@
 			<br>
 			<a ng-href="content/{{content.UUID}}">
 				<img class="previewImage" ng-if="content.displayType === 'embed'" ng-src="img/{{content.savedAs}}">			
-				<img class="previewImage" ng-if="content.displayType === 'image'" ng-src="img/submittedContent/{{content.savedAs}}">
+				<img class="previewImage" ng-if="content.displayType === 'image' || content.displayType === 'webpage'" ng-src="img/submittedContent/{{content.savedAs}}">
 			</a>
 		</div>
 	</div>

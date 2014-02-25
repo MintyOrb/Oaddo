@@ -33,7 +33,25 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
         success(function(response){
             console.log(response);
             $location.path('/content/' + response.UUID);
+            $scope.reset();
         });
+    };
+
+    $scope.reset = function(){
+        $scope.displaySettings = {
+            fileSelected : false,
+            imageURLPresent : false,
+            dataUrl : {},
+            optionSelected : false,
+            disableFileSelection : false,
+            uploadNonImage : false,
+        };
+        $scope.contentObject.savedAs = "";
+        $scope.contentObject.fileSystemID = "";
+        $scope.contentObject.displayType = "";
+        $scope.contentObject.embedSrc = "";
+        $scope.contentObject.webURL = "";
+        $scope.contentObject.assignedTerms = [];
     };
     
 }]).
@@ -128,21 +146,6 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
         }
     };
 
-    $scope.reset = function(){
-        $scope.displaySettings = {
-            fileSelected : false,
-            imageURLPresent : false,
-            dataUrl : {},
-            optionSelected : false,
-            disableFileSelection : false,
-            uploadNonImage : false,
-        };
-        $scope.contentObject.savedAs = "";
-        $scope.contentObject.fileSystemID = "";
-        $scope.contentObject.displayType = "";
-        $scope.contentObject.embedSrc = "";
-        $scope.contentObject.webURL = "";
-    };
 }).
 
 
