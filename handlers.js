@@ -274,7 +274,7 @@ exports.addContentFromURL = function (request, reply){
             //NOTE: is it necessary to wait to make sure the stream was successful? (with req.on('end', function () {}) )
             //stream image to server
             requestModule(request.payload.url).pipe(fs.createWriteStream("./public/img/submittedContent/" + identifier + lang + generatedName + '.' + ext));
-            reply({displayType: "image", savedAs: identifier + lang + generatedName + '.' + ext, id: generatedName});
+            reply({savedAs: identifier + lang + generatedName + '.' + ext, embedSrc: "", id: generatedName, displayType: "image"});
         } else {
             // determine if video and host
             // NOTE: is this the best way to make the source determination?
@@ -285,13 +285,13 @@ exports.addContentFromURL = function (request, reply){
                 embedURL = "//embed.ted.com";
                 embedURL += response.request.uri.path;
                 console.log("ted embed: " + embedURL);
-                reply({savedAs:'videoIcon.png',embedSrc: embedURL, displayType: "embed"});
+                reply({savedAs:'videoIcon.png',embedSrc: embedURL, id: "", displayType: "embed"});
             } else if(response.request.uri.host.indexOf('vimeo.com') > -1){
                 //embed - //www.player.vimeo.com/video/:id
                 embedURL = "//player.vimeo.com/video";
                 embedURL += response.request.uri.path;
                 console.log("vimeo embed: " + embedURL);
-                reply({savedAs:'videoIcon.png',embedSrc: embedURL, displayType: "embed"});
+                reply({savedAs:'videoIcon.png',embedSrc: embedURL, id: "", displayType: "embed"});
             } else if(response.request.uri.host.indexOf('youtube.com') > -1){
                 //embed - //www.youtube.com/embed/:id
                 embedURL = "//www.youtube.com/embed/";
@@ -302,14 +302,14 @@ exports.addContentFromURL = function (request, reply){
                     embedURL = embedURL.substring(position, -1);
                 }
                 console.log("vimeo embed: " + embedURL);
-                reply({savedAs:'videoIcon.png',embedSrc: embedURL, displayType: "embed"});
+                reply({savedAs:'videoIcon.png',embedSrc: embedURL, id: "", displayType: "embed"});
             } else {
                 //TODO: send screenshot back to user for preivew
                 //take screenshot of webpage that is not a video
                 webshot(request.payload.url, './public/img/submittedContent/' + identifier + lang + generatedName + '.png',function(err) {
                     if(err){console.log("error taking webshot: " + err);}
                     console.log("screenshot now saved");
-                    reply({displayType: "webpage", savedAs: identifier + lang + generatedName + '.png', id: generatedName});
+                    reply({savedAs: identifier + lang + generatedName + '.png', embedSrc: "",id: generatedName, displayType: "webpage"});
 
                 });
             }

@@ -3,7 +3,7 @@
 
 angular.module('universalLibrary').
 
-controller('addingContentCtrl', ['$scope', 'contentTerms', 'appLanguage', '$http', function ($scope, contentTerms, appLanguage, $http) {
+controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLanguage', '$http', function ($location, $scope, contentTerms, appLanguage, $http) {
 
     $scope.contentObject = {
         language: appLanguage.lang,
@@ -32,7 +32,7 @@ controller('addingContentCtrl', ['$scope', 'contentTerms', 'appLanguage', '$http
         $http.post('/newContent', $scope.contentObject).
         success(function(response){
             console.log(response);
-            // redirect to content page
+            $location.path('/content/' + response.UUID);
         });
     };
     
@@ -115,20 +115,13 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
             $http.post('/addContentFromURL', {url: $scope.contentObject.webURL, language: appLanguage.lang}).
             success(function(response){
 
-                if(response.displayType === "image" || response.displayType === "website"){
-
-                    if(response.displayType === "image"){
-                        $scope.displaySettings.imageURLPresent = true; //display preivew of linked image
-                    }
-
-                    $scope.contentObject.savedAs = response.savedAs;
-                    $scope.contentObject.fileSystemID = response.id;
-
-                } else if(response.displayType === "embed"){
-                    $scope.contentObject.embedSrc = response.embedSrc;
-                    $scope.contentObject.savedAs = response.savedAs;
+                if(response.displayType === "image"){
+                    $scope.displaySettings.imageURLPresent = true; //display preivew of linked image
                 }
-
+                
+                $scope.contentObject.savedAs = response.savedAs;
+                $scope.contentObject.embedSrc = response.embedSrc;
+                $scope.contentObject.fileSystemID = response.id;
                 $scope.contentObject.displayType = response.displayType;
 
             });
