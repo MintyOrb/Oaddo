@@ -43,6 +43,6 @@
     </div>
     <div class="modal-footer">
         <button ng-hide="display.returningUser" class="btn btn-primary" ng-click="create()">Join</button>
-        <button ng-show="display.returningUser" class="btn btn-primary" ng-click="login(user.emailAddress, user.password)">Login</button>
+        <button ng-show="display.returningUser" class="btn btn-primary" ng-click="login(user.email, user.password)">Login</button>
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>

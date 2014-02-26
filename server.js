@@ -38,7 +38,6 @@ var plugins = {
 var server = new Hapi.Server(config.hostname, config.port, options);
 
 server.pack.require(plugins, function (err) { 
-
     if (err) {
         throw err;
     }
@@ -94,7 +93,7 @@ server.route([
     //would be resent if 401 used.
     { method: 'GET', path: '/loginFailure', handler: function(request, reply){
         console.log("login failure. about to reply with a 200 anyway");
-        reply({message:"Incorrect Username or Password"});
+        reply({message:"Incorrect username or password"});
     }},
     //NOTE: is this a security fault?
     { method: 'GET', path: '/loginSuccess', config: {auth: 'passport'}, handler: function(request, reply){

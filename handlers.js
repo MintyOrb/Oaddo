@@ -15,7 +15,7 @@ exports.authUser = function (email, password, done) {
 
     console.log("authUser function here.");
     var properties = { primaryEmail: email };
-    var query = 'MATCH (memberNode:member {primaryEmail: {email} }) RETURN memberNode.passwordHash AS pass, memberNode.UUID AS id';
+    var query = 'MATCH (memberNode:member {primaryEmail: {primaryEmail} }) RETURN memberNode.passwordHash AS pass, memberNode.UUID AS id';
 
     db.query(query, properties, function (err, userInfo) {
         if (err) {console.log("error in db query: " + err);}
@@ -80,7 +80,7 @@ exports.addAccount = function (request, reply) {
                     callback();
                 } else{
                     console.log('name found already...');
-                    reply({message: "Email/name address already registered."});
+                    reply({message: "email address already registered."});
                     callback(true); //passing 'true' stops async series execution
                 }
             });
@@ -103,7 +103,7 @@ exports.addAccount = function (request, reply) {
             console.log('about to save user to db');
             db.query(createQuery, createProperties, function (err, results) {
                 if (err) {throw err;}
-                console.log("created user in db, about to reply wiht success");
+                console.log("created user in db, about to reply with success");
                 reply({successfulCreation: true});
                 callback(true);
             });
