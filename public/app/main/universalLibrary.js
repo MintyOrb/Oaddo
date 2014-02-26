@@ -53,7 +53,7 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
     .when('/home', {templateUrl: 'app/main/tempMain.html'})
     .when('/search', {templateUrl: 'app/exploreContent/explore.html'})
     .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/main/test.html'})
-    .when('/content/new', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/addingContent/newContent.html'})
+    .when('/addContent', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/addingContent/newContent.html'})
     .when('/content/:id', {templateUrl: 'app/exploreContent/contentPage.html', controller:'contentPageCtrl'})
     .otherwise({redirectTo: '/home'});
     $locationProvider.html5Mode(true);
@@ -119,7 +119,7 @@ controller('buttonCtrl', function($scope, API, $location, $http) {
 
     $scope.navigateToAddContent = function(){
         console.log("lets add new content");
-        $location.path('/content/new');
+        $location.path('/addContent');
     };
 
     $scope.addTerm = function(){

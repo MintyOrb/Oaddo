@@ -14,8 +14,11 @@ var bcrypt = require('bcrypt'),
 exports.authUser = function (email, password, done) {
 
     console.log("authUser function here.");
-    var properties = { primaryEmail: email };
-    var query = 'MATCH (memberNode:member {primaryEmail: {primaryEmail} }) RETURN memberNode.passwordHash AS pass, memberNode.UUID AS id';
+    console.log(email);
+    console.log(password);
+    
+    var properties = { email: email };
+    var query = 'MATCH (memberNode:member {primaryEmail: {email} }) RETURN memberNode.passwordHash AS pass, memberNode.UUID AS id';
 
     db.query(query, properties, function (err, userInfo) {
         if (err) {console.log("error in db query: " + err);}

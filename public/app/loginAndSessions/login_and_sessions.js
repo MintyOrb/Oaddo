@@ -59,13 +59,10 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
     };
 
     $scope.login = function (email, password) {
-        console.log("email: " +  email);
-        console.log("password: " +  password);
         
         if($scope.display.validEmail){
-            $http.post("/login", { 'email': email, 'password': password }).
+            $http.post("/login", { 'username': email, 'password': password }).
             then(function(response) {
-                console.log("were bakc. resonse: ");                
                 if(response.data.loginSuccessful === true){
                     console.log("success here");
                     LoginService.modalIsOpen = false;
