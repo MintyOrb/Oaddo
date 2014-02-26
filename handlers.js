@@ -11,18 +11,18 @@ var bcrypt = require('bcrypt'),
 
 //auth and sessions
 
-exports.authUser = function (username, password, done) {
+exports.authUser = function (email, password, done) {
 
     console.log("authUser function here.");
-    var properties = { username: username };
-    var query = 'MATCH (memberNode:member {primaryEmail: {username} }) RETURN memberNode.passwordHash AS pass, memberNode.UUID AS id';
+    var properties = { primaryEmail: email };
+    var query = 'MATCH (memberNode:member {primaryEmail: {email} }) RETURN memberNode.passwordHash AS pass, memberNode.UUID AS id';
 
     db.query(query, properties, function (err, userInfo) {
         if (err) {console.log("error in db query: " + err);}
         console.log("returned from db: " + JSON.stringify(userInfo));
         if(userInfo[0] === undefined){
-            console.log("bad username: " + JSON.stringify(userInfo));
-            return done(null, false, { message : 'Incorrect username.' });
+            console.log("bad email: " + JSON.stringify(userInfo));
+            return done(null, false, { message : 'Incorrect email.' });
         }
 
         console.log("User info: " + JSON.stringify(userInfo[0]));
@@ -59,12 +59,12 @@ exports.addAccount = function (request, reply) {
     console.log("add account here.");
 
     var createProperties = {props: {} };
-    createProperties.props.primaryEmail = request.payload.name;
+    createProperties.props.primaryEmail = request.payload.email;
     createProperties.props.dateJoined = new Date();
     createProperties.props.UUID = uuid.v4();
     var createQuery = 'CREATE (memberNode:member:temp { props } )';
     
-    var checkProperites = {email: request.payload.name};
+    var checkProperites = {email: request.payload.email};
     var checkQuery = 'MATCH (memberNode:member:temp { primaryEmail: {email} } ) RETURN memberNode.primaryEmail as email';
 
 

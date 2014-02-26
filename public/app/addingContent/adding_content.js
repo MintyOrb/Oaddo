@@ -51,7 +51,10 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
         $scope.contentObject.displayType = "";
         $scope.contentObject.embedSrc = "";
         $scope.contentObject.webURL = "";
-        $scope.contentObject.assignedTerms = [];
+        contentTerms.selected = [];
+        contentTerms.discarded = [];    
+        contentTerms.related = [];      
+        contentTerms.search = [];       
     };
     
 }]).

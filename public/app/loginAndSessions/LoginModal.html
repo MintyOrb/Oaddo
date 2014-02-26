@@ -1,34 +1,48 @@
 
     <div class="modal-header">
-        <h3>Login or Sign up!</h3>  
+        <h3 ng-hide="display.returningUser">Join</h3> 
+        <h3 ng-show="display.returningUser">Login</h3> 
     </div>
-    <div class="modal-body">
+    <div class="modal-body row">
 
-        <h4> Sign In</h4>
-        <form>
-            <label> User Name
-                <input type="text" ng-model="username">{{username}}
-            </label>
-            <label> Password
-                <input type="password" ng-model="password">{{password}}
-            </label>
-            {{message}}
+        <form name="form.loginForm">   
+            <div class="f-flexC f-column f-m-center f-c-center col-sm-6">
+                <h4 ng-hide="display.returningUser">Sign Up</h4>
+                <h4 ng-show="display.returningUser">Sign In</h4>
+                <br>
+                <div class="form-group" ng-class="{ 'has-error' : form.loginForm.email.$invalid && !form.loginForm.email.$pristine }">
+                    <label>email</label>
+                    <br>
+                    <input type="email" ng-blur="checkEmail()" name="email" class="form-control" ng-model="user.email">
+                </div>
+                <div> 
+                    <label>password
+                        <br>
+                        <input class="form-control" type="password" ng-model="user.password">
+                    </label>
+                </div>
+                <div>
+                    <label ng-hide="display.returningUser">re-type password
+                        <br>
+                        <input class="form-control" ng-blur="checkPass()" type="password" ng-model="user.checkPassword">
+                    </label>
+                </div>
+            </div>
+            <div class="f-flexC f-column f-m-center f-c-center col-sm-6">
+                <h4>Don't have an account?</h4> 
+                <br>
+                <button ng-show="display.returningUser" ng-click="display.returningUser = false;" class="btn btn-primary">Click here to sign up</button>
+                <button ng-hide="display.returningUser" ng-click="display.returningUser = true;" class="btn btn-primary">I have an account</button>
+                <br>
+                <p class="text-danger">{{message}}</p>
+                <p class="text-danger" ng-hide="display.validEmail">invalid email address</p>
+                <p class="text-danger" ng-hide="display.validPass">passwords do not match</p>
+            </div>
         </form>
-        <h4> Sign Up</h4>
-        <form>
-            <label> User Name
-                <input type="text" ng-model="newUser.name">
-            </label>
-            <label> Password
-                <input type="password" ng-model="newUser.checkPassword">
-            </label>
-            <label> Re-Type Password
-                <input type="password" ng-model="newUser.password">
-            </label>
-        </form>
+
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="create()">Join</button>
-        <button class="btn btn-primary" ng-click="login(username, password)">Login</button>
+        <button ng-hide="display.returningUser" class="btn btn-primary" ng-click="create()">Join</button>
+        <button ng-show="display.returningUser" class="btn btn-primary" ng-click="login(user.emailAddress, user.password)">Login</button>
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>

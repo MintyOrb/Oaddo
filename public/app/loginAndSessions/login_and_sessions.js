@@ -13,49 +13,79 @@ controller('LoginModalCtrl', function ($scope, LoginService) {
     
 controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, LoginService, authService, $http) {
     console.log("instance ctrl here");
-    
-    $scope.message = "";
-    $scope.newUser = {};
-    
-    $scope.create = function () {
-        $http.post('/user', $scope.newUser).
-        then(function(response){
-            console.log(response);
-            //if successfull, log user in.
-            if(response.data.successfulCreation === true){
-                $scope.login($scope.newUser.name, $scope.newUser.password);
-            } else {
-                $scope.message = response.data.message;
-            }
-            console.log(response);
-            
-        });
+    $scope.form = {};
+    $scope.display = {
+        validEmail: true,
+        validPass: true,
+        returningUser: true
+    };
+    $scope.user = {
+        email : "",
+        password : "",
+        checkPassword: ""
     };
 
-    $scope.login = function (username, password) {
-        console.log("username: " +  username);
-        console.log("password: " +  password);
-        $http.post("/login", { 'username': username, 'password': password }).
+    $scope.checkEmail = function(){
+        if($scope.form.loginForm.email.$invalid || $scope.user.email.length === 0){
+            $scope.display.validEmail = false;
+        } else {
+            $scope.display.validEmail = true;
+        }
+    };
+    $scope.checkPass = function() {
+        if($scope.user.password !== $scope.user.checkPassword){
+            $scope.display.validPass = false;
+        } else {
+            $scope.display.validPass = true;
+        }
+    };
 
-        then(function(response) {
-            console.log(response.data.loginSuccessful);
-            if(response.data.loginSuccessful === true){
-                console.log("success here");
-                LoginService.modalIsOpen = false;
-                authService.loginConfirmed();
-                $modalInstance.close();
-            } else {
-                $scope.message = response.data.message;
-            }
-            console.log(response);
-            
-        });
+    $scope.create = function () {
+        if($scope.display.validEmail && $scope.display.validPass){
+            $http.post('/user', $scope.user).
+            then(function(response){
+                console.log(response);
+                //if successfull, log user in.
+                if(response.data.successfulCreation === true){
+                    $scope.login($scope.user.name, $scope.user.password);
+                } else {
+                    $scope.message = response.data.message;
+                }
+                console.log(response);
+                
+            });
+        }
+    };
+
+    $scope.login = function (email, password) {
+        console.log("email: " +  email);
+        console.log("password: " +  password);
+        
+        if($scope.display.validEmail){
+            $http.post("/login", { 'email': email, 'password': password }).
+
+            then(function(response) {
+                console.log(response.data.loginSuccessful);
+                if(response.data.loginSuccessful === true){
+                    console.log("success here");
+                    LoginService.modalIsOpen = false;
+                    authService.loginConfirmed();
+                    $modalInstance.close();
+                } else {
+                    $scope.message = response.data.message;
+                }
+                console.log(response);
+                
+            });
+        }
     };
     
     $scope.cancel = function () {
-        $scope.newUser = {};
-        $scope.username = "";
-        $scope.password = "";
+        $scope.user = {
+            email : "",
+            password : "",
+            checkPassword: ""
+        };
         authService.loginCancelled();
         $modalInstance.dismiss('cancel');
         LoginService.modalIsOpen = false;
