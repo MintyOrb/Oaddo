@@ -88,13 +88,6 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
         console.log("termArray: " + termArray);
         termArray.push(data);
     };
-
-    $scope.navigateToContentPage = function(content){
-        viewContent.selected = content;
-        console.log("viewContent.selected: ");
-        console.log(content);
-        $location.url('content/' + content.UUID);
-    };
 }).
 
 

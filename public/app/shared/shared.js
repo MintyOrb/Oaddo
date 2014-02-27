@@ -61,4 +61,45 @@ factory('filterFactory', [function () {
         }
         
     };
-}]);
+}]).
+
+factory('modalService', function ($modal) {
+    
+    return {
+
+        openLogin: function(){
+            this.templateUrl = 'app/loginAndSessions/LoginModal.html';
+            this.instanceController = 'LoginModalInstanceCtrl';
+            this.open();
+        },
+
+        templateUrl: null,
+        instanceController: null,
+        windowClass: null,
+        resolve: null,
+
+        modalIsOpen: false,
+
+        modalInstance: null,
+
+        close: function(){
+            this.modalIsOpen = false;
+            this.modalInstance.close();
+        },
+
+        open: function () {
+            console.log(this.modalIsOpen);
+            if(!this.modalIsOpen){
+
+                this.modalIsOpen = true;
+
+                this.modalInstance = $modal.open({
+                    templateUrl: this.templateUrl,
+                    controller: this.instanceController,
+                    windowClass: this.windowClass,
+                    resolve: this.resolve
+                });
+            }
+        }
+    };
+});

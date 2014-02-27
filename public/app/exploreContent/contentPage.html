@@ -2,8 +2,10 @@
 <div class='center'>
 	<zui  ng-if="content.displayType === 'image'" url="img/submittedContent/{{content.savedAs}}"></zui>
 
-	<iframe class="center" ng-if="content.displayType === 'embed'" width="853" height="480" ng-src="{{content.embedSrc}}" allowfullscreen></iframe>
-	
+	<div ng-if="content.displayType === 'embed'" class="videoWrapper">
+		<iframe class="center" ng-src="{{content.embedSrc}}" allowfullscreen></iframe>
+	</div>
+
 	<div ng-if="content.displayType === 'webpage'" class="webHolder">
 		<iframe ng-src="{{content.webURL}}"></iframe>
 	</div>

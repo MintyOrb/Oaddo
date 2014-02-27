@@ -4,14 +4,12 @@
 angular.module('universalLibrary').
 
 
-controller('LoginModalCtrl', function ($scope, LoginService) {
-
+controller('LoginModalCtrl', function ($scope, modalService) {
     console.log("loginModalCtrl here.");
-    $scope.Login = LoginService;
-    
+    $scope.Login = modalService;
 }).
     
-controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, LoginService, authService, $http) {
+controller('LoginModalInstanceCtrl' , function ($scope, API, modalService, authService, $http) {
     console.log("instance ctrl here");
     $scope.form = {};
     $scope.display = {
@@ -65,9 +63,8 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
             then(function(response) {
                 if(response.data.loginSuccessful === true){
                     console.log("success here");
-                    LoginService.modalIsOpen = false;
                     authService.loginConfirmed();
-                    $modalInstance.close();
+                    modalService.close();
                 } else {
                     $scope.message = response.data.message;
                 }
@@ -84,43 +81,22 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
             checkPassword: ""
         };
         authService.loginCancelled();
-        $modalInstance.dismiss('cancel');
-        LoginService.modalIsOpen = false;
+        modalService.close();
+        
     };
 
-    //when modal closes make sure to note it in LoginService
-    $modalInstance.result.then(function () {
+    //when modal closes make sure to note it in modalService
+    modalService.modalInstance.result.then(function () {
         console.log('Modal success at:' + new Date());
         authService.loginConfirmed();
         console.log('Login Confirmed: ' + new Date());
-        LoginService.modalIsOpen = false;
+        modalService.modalIsOpen = false;
     }, function (reason) {
         console.log('Modal dismissed at: ' + new Date());
         console.log('Reason Closed: ' + reason);
         authService.loginCancelled();
-        LoginService.modalIsOpen = false;
+        modalService.modalIsOpen = false;
     });
 
-}).
-
-factory('LoginService', function ($modal) {
-    
-    return {
-
-        modalIsOpen: false,
-
-        open: function () {
-            console.log(this.modalIsOpen);
-            if(!this.modalIsOpen){
-
-                this.modalIsOpen = true;
-
-                var modalInstance = $modal.open({
-                    templateUrl: 'app/loginAndSessions/LoginModal.html',
-                    controller: 'LoginModalInstanceCtrl',
-                    windowClass: "",
-                });
-            }
-        }
-    };
 });
+
