@@ -4,12 +4,14 @@
 angular.module('universalLibrary').
 
 
-controller('LoginModalCtrl', function ($scope, modalService) {
+controller('LoginModalCtrl', function ($scope, LoginService) {
+
     console.log("loginModalCtrl here.");
-    $scope.Login = modalService;
+    $scope.Login = LoginService;
+    
 }).
     
-controller('LoginModalInstanceCtrl' , function ($scope, API, modalService, authService, $http) {
+controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, LoginService, authService, $http) {
     console.log("instance ctrl here");
     $scope.form = {};
     $scope.display = {
@@ -22,6 +24,12 @@ controller('LoginModalInstanceCtrl' , function ($scope, API, modalService, authS
         password : "",
         checkPassword: ""
     };
+
+    $scope.$on('$routeChangeStart', function() {
+        console.log("closing modal");
+        LoginService.modalIsOpen = false;
+        $modalInstance.close();
+    });
 
     $scope.checkEmail = function(){
         if($scope.form.loginForm.email.$invalid || $scope.user.email.length === 0){
@@ -63,8 +71,9 @@ controller('LoginModalInstanceCtrl' , function ($scope, API, modalService, authS
             then(function(response) {
                 if(response.data.loginSuccessful === true){
                     console.log("success here");
+                    LoginService.modalIsOpen = false;
                     authService.loginConfirmed();
-                    modalService.close();
+                    $modalInstance.close();
                 } else {
                     $scope.message = response.data.message;
                 }
@@ -81,22 +90,43 @@ controller('LoginModalInstanceCtrl' , function ($scope, API, modalService, authS
             checkPassword: ""
         };
         authService.loginCancelled();
-        modalService.close();
-        
+        $modalInstance.dismiss('cancel');
+        LoginService.modalIsOpen = false;
     };
 
-    //when modal closes make sure to note it in modalService
-    modalService.modalInstance.result.then(function () {
+    //when modal closes make sure to note it in LoginService
+    $modalInstance.result.then(function () {
         console.log('Modal success at:' + new Date());
         authService.loginConfirmed();
         console.log('Login Confirmed: ' + new Date());
-        modalService.modalIsOpen = false;
+        LoginService.modalIsOpen = false;
     }, function (reason) {
         console.log('Modal dismissed at: ' + new Date());
         console.log('Reason Closed: ' + reason);
         authService.loginCancelled();
-        modalService.modalIsOpen = false;
+        LoginService.modalIsOpen = false;
     });
 
-});
+}).
 
+factory('LoginService', function ($modal) {
+    
+    return {
+
+        modalIsOpen: false,
+
+        open: function () {
+            console.log(this.modalIsOpen);
+            if(!this.modalIsOpen){
+
+                this.modalIsOpen = true;
+
+                var modalInstance = $modal.open({
+                    templateUrl: 'app/loginAndSessions/LoginModal.html',
+                    controller: 'LoginModalInstanceCtrl',
+                    windowClass: "",
+                });
+            }
+        }
+    };
+});

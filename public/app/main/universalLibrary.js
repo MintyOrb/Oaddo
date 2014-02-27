@@ -22,7 +22,7 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
     //function for checking login status before a route change
     //TODO: consider saving value in a cookie?
     //  this would be easy to fake, but no secure data would be leaked from the server
-    var checkLoggedin = function ($q, $timeout, $http, $location, $window, modalService) {
+    var checkLoggedin = function ($q, $timeout, $http, $location, $window, LoginService) {
         
         console.log("check logged in function here.");
 
@@ -41,7 +41,7 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
                 $window.history.back();
                 console.log("location: " + $location.path());
                 deferred.reject();
-                modalService.openLogin();
+                LoginService.open();
             }
         });
 
@@ -59,12 +59,12 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
 }).
 
-run(function ($rootScope, modalService, $cookieStore, appLanguage) {
+run(function ($rootScope, LoginService, $cookieStore, appLanguage) {
 
     //respond to 401s by opening login modal
     $rootScope.$on('event:auth-loginRequired', function() {
         console.log("auth event fired");
-        modalService.open();
+        LoginService.open();
     });
 
     //set language for session based on saved value or value from window

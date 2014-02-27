@@ -170,7 +170,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
 
 
 
-controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLanguage, modalService, filterFactory) {
+controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLanguage, $modal, filterFactory) {
 
     $scope.contentTerms = contentTerms;
     $scope.DBTerm = "";
@@ -181,10 +181,6 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
 
     $scope.filter = filterFactory;
     $scope.filter.setAll(true);  // initialize filter values to true (include all types)
-
-    $scope.termModal = modalService;
-    $scope.termModal.templateUrl = 'app/addingContent/newTermModal.html';
-    $scope.termModal.controller = 'newTermModalInstanceCtrl';
 
     var getRelatedTerms = function(){
         // clear current related
@@ -243,12 +239,16 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         // $scope.newTermMeta.name = termData.name;
         var test = termData;
         console.log("termMeta: " + JSON.stringify(termData));
-        $scope.termModal.resolve = {
-            data: function () {
-                return termData;
+        var modalInstance = $modal.open({
+            templateUrl: 'app/addingContent/newTermModal.html',
+            controller: 'newTermModalInstanceCtrl',
+            windowClass: "",
+            resolve: {
+                data: function () {
+                    return termData;
+                }
             }
-        };
-        $scope.termModal.open();
+        });
     };
 
     $scope.dropFromHandler = function(index, termArray){
@@ -268,7 +268,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
 }).
 
 
-controller('newTermModalInstanceCtrl' , function ($scope, modalService, data, contentTerms, $http) {
+controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, contentTerms, $http) {
 
     console.log("data in modal: " + JSON.stringify(data));
 
@@ -317,9 +317,14 @@ controller('newTermModalInstanceCtrl' , function ($scope, modalService, data, co
     $scope.newTermMeta.mid = data.mid; 
     $scope.newTermMeta.lang = data.lang;
     console.log("data.lang: " + data.lang);
-       
+    
+    $scope.$on('$routeChangeStart', function() {
+        console.log("closing modal");
+        $modalInstance.close();
+    });
+
     $scope.cancel = function () {
-        modalService.close();
+        $modalInstance.dismiss('cancel');
     };
 
     $scope.addToSelectedFromFB = function(){
@@ -332,7 +337,7 @@ controller('newTermModalInstanceCtrl' , function ($scope, modalService, data, co
             definition: $scope.newTermMeta.definition
         });
         //add to database (if not already stored) and return UUID
-        modalService.close();
+        $modalInstance.close();
 
         $http.post('/term', $scope.newTermMeta)
         .success(function(returned){
@@ -347,6 +352,13 @@ controller('newTermModalInstanceCtrl' , function ($scope, modalService, data, co
         console.log("selected: " + JSON.stringify(contentTerms.selected));
     };  
 
+    //modal close
+    $modalInstance.result.then(function () {
+        console.log('Modal success at:' + new Date());
+    }, function (reason) {
+        console.log('Modal dismissed at: ' + new Date());
+        console.log('Reason Closed: ' + reason);
+    });
 }).
 
 
