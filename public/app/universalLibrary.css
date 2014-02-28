@@ -36,11 +36,12 @@
   margin-right: auto;
 }
 
-.panelContainer {
+.cardsContainer {
 	width:90%;
 }
-.searchContainer {
+.cardContainer {
 	width:300px;
+	height: 500px;
 }
 .imgContainer {
 	overflow: hidden;
@@ -53,11 +54,23 @@
 	margin-left: auto;
 	margin-right: auto;
 }
+.tab-content{
+	height: 160px;
+	overflow: scroll;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
 
 .noOutline:focus {
 	background-color: white;
 	outline: 0;
 }
+
+
 .videoWrapper {
 	position: relative;
 	padding-bottom: 56.25%; /* 16:9 */

@@ -65,19 +65,28 @@
 
 	<br>
 
-	<div class="panelContainer f-flexC f-row f-wrap f-m-around">
-		<div class="searchContainer panel panel-default margin5" ng-repeat="content in returnedContent">
+	<div class="cardsContainer f-flexC f-row f-wrap f-m-around">
+		<div class="cardContainer panel panel-default margin5" ng-repeat="content in returnedContent">
 			<div class="panel-heading">
 			    <h3 class="panel-title"></h3>
 			</div>
 			<br>
-			<div class="imgContainer">
+			<div class="f-flexC f-column f-m-center f-c-center imgContainer">
 				<a ng-href="content/{{content.UUID}}">
 					<img  ng-if="content.displayType === 'embed'" ng-src="img/{{content.savedAs}}">			
 					<img  ng-if="content.displayType === 'image' || content.displayType === 'webpage'" ng-src="img/submittedContent/{{content.savedAs}}">
 				</a>
-				<button ng-repeat="term in content.terms"class="btn btn-default btn-sm margin5">{{term}}</button>
 			</div>
+			<tabset class='margin5'>
+				<tab heading="Terms">
+					<div class="f-flexC f-row f-wrap f-m-center ">
+						<button ng-repeat="term in content.terms"class="btn btn-default btn-sm margin5">{{term}}</button>
+					</div>
+				</tab>
+				<tab heading="Description">
+					Nothing here yet.
+				</tab>
+			</tabset>			
 		</div>
 	</div>
 
