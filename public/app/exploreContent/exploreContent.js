@@ -14,7 +14,6 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
     
     $scope.filter = filterFactory;
     $scope.filter.setAll(true);  // initialize filter values to true (include all types)
-    console.log("filter.isCollapsed: " + $scope.filter.isCollapsed);
 
     $scope.getRelatedContent = function(){
 		$http.post('/explore', { 
@@ -22,8 +21,8 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
             excludedTerms: $scope.contentTerms.discarded, 
             language: appLanguage.lang }).
         success(function(data){
-            console.log("data: " + JSON.stringify(data));
-            $scope.returnedContent = data;            
+            $scope.returnedContent = data; 
+            console.log(data);           
         });
 	};
 
@@ -37,7 +36,6 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
             type: $scope.filter,
             language: appLanguage.lang }).
         success(function(data){
-            console.log("data: " + JSON.stringify(data));
             for (var i = 0; i < data.results.length; i++) {
                 $scope.contentTerms.related.push(data.results[i]);
             }
@@ -46,7 +44,6 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
 
     $scope.$watch("filter", function(newValue, oldValue){
 		if (newValue !== oldValue) {
-			console.log("triggered filter: ");
 			$scope.getRelatedTerms();
 		}
     }, true); // true as second parameter sets up deep watch
@@ -55,7 +52,6 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
     $scope.$watchCollection("contentTerms.selected", function(newValue, oldValue){
 		$scope.getRelatedTerms();
 		$scope.getRelatedContent();
-		console.log("selected triggered: " );
     });
 
 	$scope.findTerm = function()
@@ -72,20 +68,13 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
 	$scope.addToSelectedFromDB = function(){
         contentTerms.selected.push({name:$scope.DBTerm.name,UUID:$scope.DBTerm.UUID});
         $scope.DBTerm = "";
-        console.log("selected: " + JSON.stringify(contentTerms.selected));
     };
 
 	$scope.dropFromHandler = function(index, termArray){
-        console.log("DROPPING");
-        console.log("termArray: " + termArray);
-        console.log("index: " + index);
         termArray.splice(index, 1);
     };
 
     $scope.recievingHandler = function(data, termArray){
-        console.log("RECIEVING");
-        console.log("data: " + data);
-        console.log("termArray: " + termArray);
         termArray.push(data);
     };
 }).

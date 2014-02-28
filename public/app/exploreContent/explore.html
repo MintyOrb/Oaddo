@@ -36,7 +36,7 @@
 	        <i class='pull-right text-muted fa fa-question-circle'></i>
 	        <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">related terms</span>
 	        <div class="f-flexC f-row f-m-around f-wrap">
-	            <button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" ng-repeat="term in contentTerms.related" class='dn-bounce above btn margin5 btn-default'>{{term.name}}</button>
+	            <button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" ng-repeat="term in contentTerms.related" class='dn-bounce above btn margin5 btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
 	        </div>
 	    </div>   
 	  	<br>
@@ -76,6 +76,7 @@
 					<img  ng-if="content.displayType === 'embed'" ng-src="img/{{content.savedAs}}">			
 					<img  ng-if="content.displayType === 'image' || content.displayType === 'webpage'" ng-src="img/submittedContent/{{content.savedAs}}">
 				</a>
+				<button ng-repeat="term in content.terms"class="btn btn-default btn-sm margin5">{{term}}</button>
 			</div>
 		</div>
 	</div>

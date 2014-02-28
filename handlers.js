@@ -435,7 +435,6 @@ exports.relatedTerms = function (request, reply) {
 
     };
 
-    
     if(request.payload.keyTerms.length === 0){
         //return most connected terms if no key terms selected
         query = [
@@ -444,8 +443,8 @@ exports.relatedTerms = function (request, reply) {
             'WHERE',
                 'typeNode.name IN {types} ',
                 'AND NOT newTermNode.UUID IN {ignoreTerms} ',
-            'RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections ',
-            'ORDER BY newTermNode.contentConnections DESC LIMIT 10'
+            'RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections AS connections',
+            'ORDER BY connections DESC LIMIT 10'
         ].join('\n');
 
     } else {
@@ -456,8 +455,8 @@ exports.relatedTerms = function (request, reply) {
                 'typeNode.name IN {types} ',
                 'AND keyTerms.UUID IN {keyTerms} ',
                 'AND NOT newTermNode.UUID IN {ignoreTerms} ',
-            'RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections ',
-            'ORDER BY newTermNode.contentConnections DESC LIMIT 10'
+            'RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections AS connections ',
+            'ORDER BY connections DESC LIMIT 10'
         ].join('\n');
 
         // add UUIDs from key terms to ignore and key term arrays
@@ -521,25 +520,27 @@ exports.findRelatedContent = function (request, reply){
     // TODO: consider merging filesystemID, weburl, and embedSrc into one property
     if(member){
         query = [
-            "MATCH (user:member {UUID: {userID} }), (content:content)-[:TAGGED_WITH]-(term:term) ",
+            "MATCH (user:member {UUID: {userID} }), (content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",
                 "NOT (user)-[:BLOCKED]-(content) ",
-                'AND term.UUID IN {includedTerms} ',
+                'AND termNode.UUID IN {includedTerms} ',
             "WITH content, count(*) AS connected ",
+            "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID',  // contentMeta.whatever',
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID',  // contentMeta.whatever',
             // 'ORDER BY'
             'LIMIT 20'
         ].join('\n');
 
     } else {
         query = [
-            "MATCH (content:content)-[:TAGGED_WITH]-(term:term) ",
+            "MATCH (content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",
-                'term.UUID IN {includedTerms} ',
+                'termNode.UUID IN {includedTerms} ',
             "WITH content, count(*) AS connected ",
+            "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc', // contentMeta.whatever',
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID', // contentMeta.whatever',
             // 'ORDER BY'
             'LIMIT 20'
         ].join('\n');
