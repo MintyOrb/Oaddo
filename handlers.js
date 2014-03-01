@@ -437,24 +437,24 @@ exports.relatedTerms = function (request, reply) {
     if(request.payload.keyTerms.length === 0){
         //return most connected terms if no key terms selected
         query = [
-            'MATCH (typeNode:termType)<-[:IS_TYPE]-(newTermNode:term)<-[:TAGGED_WITH]-(contentNode:content), ',
-                '(newTermNode)-[:HAS_LANGUAGE {languageCode: {language} }]-(newTermMeta:termMeta) ',
+            'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content), ',
+                '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
             'WHERE',
                 'typeNode.name IN {types} ',
-                'AND NOT newTermNode.UUID IN {ignoreTerms} ',
-            'RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections AS connections',
+                'AND NOT matched.UUID IN {ignoreTerms} ',
+            'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections',
             'ORDER BY connections DESC LIMIT 10'
         ].join('\n');
 
     } else {
         query = [
-            'MATCH (typeNode:termType)<-[:IS_TYPE]-(newTermNode:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
-                '(newTermNode)-[:HAS_LANGUAGE {languageCode: {language} }]-(newTermMeta:termMeta) ',
+            'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
+                '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
             'WHERE',
                 'typeNode.name IN {types} ',
                 'AND keyTerms.UUID IN {keyTerms} ',
-                'AND NOT newTermNode.UUID IN {ignoreTerms} ',
-            'RETURN DISTINCT newTermMeta.name AS name, newTermNode.UUID AS UUID, newTermNode.contentConnections AS connections ',
+                'AND NOT matched.UUID IN {ignoreTerms} ',
+            'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
             'ORDER BY connections DESC LIMIT 10'
         ].join('\n');
 

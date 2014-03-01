@@ -115,7 +115,10 @@
 .margin5 {margin:5px;}
 .margin10 {margin:10px;}
 .margin20 {margin:20px;}
-.height200 {min-height: 200px}
+.height200 {
+	height: 200px;
+	overflow:hidden;
+}
 .width80p {min-width: 80%}
 .width100p {min-width: 100%}
 
