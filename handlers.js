@@ -517,7 +517,14 @@ exports.findRelatedContent = function (request, reply){
     // TODO: add content meta ASAP
     // (contentMeta)-[:HAS_LANGUAGE {languageCode: {language} }]-
     // TODO: consider merging filesystemID, weburl, and embedSrc into one property
-    if(member){
+    if(request.payload.includedTerms.length === 0){
+        query = [
+            "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID', // contentMeta.whatever',
+            // 'ORDER BY'
+            'LIMIT 20'
+        ].join('\n');
+    } else if(member){
         query = [
             "MATCH (user:member {UUID: {userID} }), (content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",

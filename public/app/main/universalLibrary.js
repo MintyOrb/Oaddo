@@ -60,7 +60,7 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
 
     $routeProvider
     .when('/home', { title: "home", templateUrl: 'app/main/tempMain.html'})
-    .when('/search', {title: "search", templateUrl: 'app/exploreContent/explore.html'})
+    .when('/explore', {title: "explore", templateUrl: 'app/exploreContent/explore.html'})
     .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/main/test.html'})
     .when('/addContent', {title: "new content", resolve: {loggedin: checkLoggedin}, templateUrl: 'app/addingContent/newContent.html'})
     .when('/content/:id', {title: "content", templateUrl: 'app/exploreContent/contentPage.html', controller:'contentPageCtrl'})
