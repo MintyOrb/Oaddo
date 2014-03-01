@@ -16,48 +16,50 @@ factory('filterFactory', [function () {
     return {
 
         setAll : function(value){
-            for (var term in this) {
-                this[term].included = value;
+            for (var term in this.terms) {
+                this.terms[term].included = value;
             }
         },
 
         isCollapsed: true,
 
-        people: {
-            included: false,
-            name: 'person',
-        },
-        organizations: {
-            included: false,
-            name: 'organization',
-        },
-        physicalObjects: {
-            included: false,
-            name: 'physical object',
-        },
-        concepts: {
-            included: false,
-            name: 'concept',
-        },
-        jargon: {
-            included: false,
-            name: 'jargon',
-        },
-        disciplines: {
-            included: false,
-            name: 'discipline',
-        },
-        activities: {
-            included: false,
-            name: 'activity',
-        },
-        locations: {
-            included: false,
-            name: 'location',
-        },
-        contentTypes: {
-            included: false,
-            name: 'content type',
+        terms: {
+            people: {
+                included: false,
+                name: 'person',
+            },
+            organizations: {
+                included: false,
+                name: 'organization',
+            },
+            physicalObjects: {
+                included: false,
+                name: 'physical object',
+            },
+            concepts: {
+                included: false,
+                name: 'concept',
+            },
+            jargon: {
+                included: false,
+                name: 'jargon',
+            },
+            disciplines: {
+                included: false,
+                name: 'discipline',
+            },
+            activities: {
+                included: false,
+                name: 'activity',
+            },
+            locations: {
+                included: false,
+                name: 'location',
+            },
+            contentTypes: {
+                included: false,
+                name: 'content type',
+            }
         }
         
     };

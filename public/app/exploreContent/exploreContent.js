@@ -32,7 +32,7 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
 
         $http.post('/relatedTerms', { 
             keyTerms: $scope.contentTerms.selected,
-            type: $scope.filter,
+            type: $scope.filter.terms,
             language: appLanguage.lang }).
         success(function(data){
             for (var i = 0; i < data.results.length; i++) {
@@ -41,7 +41,7 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
         });
     };
 
-    $scope.$watch("filter", function(newValue, oldValue){
+    $scope.$watch("filter.terms", function(newValue, oldValue){
 		if (newValue !== oldValue) {
 			$scope.getRelatedTerms();
 		}
