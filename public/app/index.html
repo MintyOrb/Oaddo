@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html ng-app="universalLibrary">
     <head>
+        <!-- load style to prevent raw index html -->
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="app/universalLibrary.css">
+
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- diable zoom on mobile devies -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -14,16 +18,28 @@
             <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle noOutline" data-toggle="collapse">
-                      <span class="sr-only">Toggle navigation</span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                    </button>
+                    <a class='dropdown-toggle'>
+                        <button type="button" class="navbar-toggle noOutline" data-toggle="collapse">
+                          <span class="sr-only">Toggle navigation</span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                        </button>
+                    </a>
+
+                    <!-- collapsed nav components -->
+                    <ul class="width100p dropdown-menu">
+                        <li><a href="/explore">Explore</a></li>
+                        <hr>
+                        <li ng-controller="LoginModalCtrl">
+                            <a ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn">Login</a>
+                            <a ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn">Logout</a>
+                        </li>
+                      </ul>
                     <a class="navbar-brand" href="#"><span class="h3">Aaddo</span><span class="h6 text-danger"> alpha</span></a>
                 </div>
         
-                <!-- Collect the nav links, forms, and other content for toggling -->
+                <!-- full page nave bar components -->
                 <div class="collapse navbar-collapse">
                
                     <!-- <span class="form-group">
@@ -35,19 +51,9 @@
                             <button ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn" class="btn btn-default noOutline">Logout</button>
                         </form>
                        <li><a href="/explore">Explore</a></li>
-                      <!-- <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                          <li><a href="#">Action</a></li>
-                          <li><a href="#">Another action</a></li>
-                          <li><a href="#">Something else here</a></li>
-                          <li class="divider"></li>
-                          <li><a href="#">Separated link</a></li>
-                        </ul>
-                      </li> -->
                     </ul>
-                </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
+                </div>
+            </div>
         </nav>
     
         <div ng-view ></div>
@@ -79,7 +85,6 @@
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
         <!-- <link rel="stylesheet" href="css/font-awesome-4.0.3/css/font-awesome.min.css"> -->
         <script type="text/javascript" src='resources/textAngular.min.js'></script>
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
         <!-- temp work around: ui popover template modifed to accept html -->
         <script type="text/javascript" src='resources/ui-bootstrap-tpls-0.10.0.min.js'></script>
         <!-- <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script> -->
@@ -93,7 +98,6 @@
         
     
         <!-- app -->
-        <link rel="stylesheet" href="app/universalLibrary.css">
         <script type="text/javascript" src="app/main/universalLibrary.js"></script>
         <script type="text/javascript" src="app/addingContent/adding_content.js"></script>
         <script type="text/javascript" src="app/languageUniversality/language_universality.js"></script>
