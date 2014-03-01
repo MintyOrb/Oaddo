@@ -50,16 +50,21 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
 
 
     $routeProvider
-    .when('/home', {templateUrl: 'app/main/tempMain.html'})
-    .when('/search', {templateUrl: 'app/exploreContent/explore.html'})
+    .when('/home', { title: "home", templateUrl: 'app/main/tempMain.html'})
+    .when('/search', {title: "search", templateUrl: 'app/exploreContent/explore.html'})
     .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/main/test.html'})
-    .when('/addContent', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/addingContent/newContent.html'})
-    .when('/content/:id', {templateUrl: 'app/exploreContent/contentPage.html', controller:'contentPageCtrl'})
+    .when('/addContent', {title: "new content", resolve: {loggedin: checkLoggedin}, templateUrl: 'app/addingContent/newContent.html'})
+    .when('/content/:id', {title: "content", templateUrl: 'app/exploreContent/contentPage.html', controller:'contentPageCtrl'})
     .otherwise({redirectTo: '/home'});
     $locationProvider.html5Mode(true);
 }).
 
 run(function ($rootScope, LoginService, $cookieStore, appLanguage) {
+
+    // change site title based on route
+    $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
+        $rootScope.title = current.$$route.title;
+    });
 
     //respond to 401s by opening login modal
     $rootScope.$on('event:auth-loginRequired', function() {
@@ -90,6 +95,7 @@ service('appLanguage', [function () {
 
 controller('appCtrl', ['$scope', 'appLanguage', function ($scope, appLanguage) {
     $scope.displayLanguage = appLanguage.lang;
+    $scope.title = "Aaddo";
 }]).
 
 

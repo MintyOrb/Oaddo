@@ -4,7 +4,6 @@
 angular.module('universalLibrary').
 
 controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location, $http, appLanguage, filterFactory) {
-	
 	// NOTE: this controller contains largly identical functionality to the termSelection controller
 		// consider refactoring to be more DRY
 	$scope.contentTerms = contentTerms;
