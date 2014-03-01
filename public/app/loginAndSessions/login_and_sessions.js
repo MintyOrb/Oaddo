@@ -11,7 +11,7 @@ controller('LoginModalCtrl', function ($scope, LoginService) {
     
 }).
     
-controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, LoginService, authService, $http) {
+controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, LoginService, authService, $http, $cookieStore) {
     console.log("instance ctrl here");
     $scope.form = {};
     $scope.display = {
@@ -25,10 +25,13 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
         checkPassword: ""
     };
 
-    $scope.$on('$routeChangeStart', function() {
+    $scope.$on('$routeChangeStart', function(event, current, previous) {
         console.log("closing modal");
         LoginService.modalIsOpen = false;
-        $modalInstance.close();
+        // only close if route change is not coming from loggedin resolve i.e. user access is denied
+        if(previous.$$route.resolve === undefined || Object.keys(previous.$$route.resolve)[0] !=='loggedin'){
+            $modalInstance.dismiss("routeChange");
+        }
     });
 
     $scope.checkEmail = function(){
@@ -71,6 +74,8 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
             then(function(response) {
                 if(response.data.loginSuccessful === true){
                     console.log("success here");
+                    $cookieStore.put('loggedIn',true);
+                    LoginService.loggedIn = true;
                     LoginService.modalIsOpen = false;
                     authService.loginConfirmed();
                     $modalInstance.close();
@@ -109,11 +114,23 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, API, Log
 
 }).
 
-factory('LoginService', function ($modal) {
+factory('LoginService', function ($location, $modal, $http, $cookieStore) {
     
     return {
 
         modalIsOpen: false,
+
+        loggedIn: false,
+
+        logout: function(){
+            this.loggedIn = false;
+            $http.post('/logout')
+            .success(function(){
+                console.log("success: ");
+                $location.path('/home');
+                $cookieStore.put('loggedIn',false);
+            });
+        },
 
         open: function () {
             console.log(this.modalIsOpen);

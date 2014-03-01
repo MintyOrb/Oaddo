@@ -22,29 +22,38 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
     //function for checking login status before a route change
     //TODO: consider saving value in a cookie?
     //  this would be easy to fake, but no secure data would be leaked from the server
-    var checkLoggedin = function ($q, $timeout, $http, $location, $window, LoginService) {
+    var checkLoggedin = function ($q, $timeout, $http, $location, $window, LoginService, $cookieStore) {
         
         console.log("check logged in function here.");
 
         // Initialize a new promise 
         var deferred = $q.defer();
     
-        // Make an AJAX call to check if the user is logged in
-        $http.get('/loggedin').success(function(data){
-            // Authenticated
-            if (data.message === true){
-                console.log("user is logged in...");
-                deferred.resolve();
-            // Not Authenticated
-            } else {
-                console.log('user needs to login...');
-                $window.history.back();
-                console.log("location: " + $location.path());
-                deferred.reject();
-                LoginService.open();
-            }
-        });
-
+        // // Make an AJAX call to check if the user is logged in
+        // $http.get('/loggedin').success(function(data){
+        //     // Authenticated
+        //     if (data.message){
+        //         console.log("user is logged in...");
+        //         deferred.resolve();
+        //     // Not Authenticated
+        //     } else {
+        //         console.log('user needs to login...');
+        //         $window.history.back();
+        //         console.log("location: " + $location.path());
+        //         deferred.reject();
+        //         LoginService.open();
+        //     }
+        // });
+        console.log("loggedin: ");
+        console.log($cookieStore.get('loggedIn'));
+        if($cookieStore.get("loggedIn")){
+            deferred.resolve();
+        } else {
+            deferred.reject();
+            $window.history.back();
+            console.log("before to: " + $location.path());
+            LoginService.open();
+        }
         return deferred.promise;
     };
 
@@ -72,11 +81,15 @@ run(function ($rootScope, LoginService, $cookieStore, appLanguage) {
         LoginService.open();
     });
 
+    if($cookieStore.get('loggedIn') !== undefined){
+        LoginService.loggedIn = $cookieStore.get('loggedIn');
+    }
+
     //set language for session based on saved value or value from window
     var langFromCookie = $cookieStore.get('languagePreference');
     if (langFromCookie === undefined){
         var lang = window.navigator.userLanguage || window.navigator.language;
-        lang = lang.substr(0,2);
+        lang = lang.substr(0,2); // get two letter language code
         console.log("language from window.nav: " + lang);
         $cookieStore.put('languagePreference',lang);
         appLanguage.lang = lang;
@@ -95,7 +108,6 @@ service('appLanguage', [function () {
 
 controller('appCtrl', ['$scope', 'appLanguage', function ($scope, appLanguage) {
     $scope.displayLanguage = appLanguage.lang;
-    $scope.title = "Aaddo";
 }]).
 
 

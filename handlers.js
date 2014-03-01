@@ -43,7 +43,6 @@ exports.authUser = function (email, password, done) {
 };
 
 exports.logout = function (request, reply) {
-
     console.log('logout here');
     request.session._logOut();
     console.log('logged out');
