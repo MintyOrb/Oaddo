@@ -45,7 +45,7 @@
 }
 .imgContainer {
 	overflow: hidden;
-	height: 230px;
+	max-height: 230px;
 	margin-bottom: 15px;
 }
 .imgContainer img {
@@ -54,9 +54,12 @@
 	margin-left: auto;
 	margin-right: auto;
 }
+
+/*over write angular ui tab css*/
 .tab-content{
 	height: 160px;
 	overflow: scroll;
+	flex-grow:1;			-webkit-flex-grow:1;
 	border-bottom: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 	border-left: 1px solid #ddd;

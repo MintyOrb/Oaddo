@@ -66,7 +66,7 @@
 	<br>
 
 	<div class="cardsContainer f-flexC f-row f-wrap f-m-around">
-		<div class="cardContainer panel panel-default margin5" ng-repeat="content in returnedContent">
+		<div class="f-flexC  f-column f-m-between cardContainer panel panel-default margin5" ng-repeat="content in returnedContent">
 			<div class="panel-heading">
 			    <h3 class="panel-title"></h3>
 			</div>
@@ -77,7 +77,7 @@
 					<img ng-if="content.displayType === 'image' || content.displayType === 'webpage'" ng-src="img/submittedContent/{{content.savedAs}}">
 				</a>
 			</div>
-			<tabset class='margin10'>
+			<tabset class='f-grow-1 f-flexC f-column margin10'>
 				<tab heading="Terms">
 					<div class="f-flexC f-row f-wrap f-m-center ">
 						<button ng-repeat="term in content.terms"class="btn btn-default btn-sm margin5">{{term}}</button>
