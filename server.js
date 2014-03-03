@@ -109,8 +109,6 @@ server.route([
     //api routes
     { method: 'POST', path: '/user', handler: handlers.addAccount },
 
-    { method: 'GET', path: '/loggedin', handler: handlers.loggedin},
-
     { method: 'POST', path: '/logout', handler: handlers.logout},
 
     { method: 'POST', path: '/term', config: {auth: 'passport'}, handler: handlers.addTerm},

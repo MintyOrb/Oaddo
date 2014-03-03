@@ -49,12 +49,6 @@ exports.logout = function (request, reply) {
     reply({message:'logged out'});
 };
 
-exports.loggedin = function (request, reply) {
-
-    console.log('checking if logged in: ' + request.session._isAuthenticated());
-    reply({message: request.session._isAuthenticated()});
-};
-
 //new user
 exports.addAccount = function (request, reply) {
 
@@ -347,9 +341,8 @@ exports.addNewContent = function (request, reply){
     }
     
     //query for creating the content and relationships to tagged terms
-        // NOTE: will this query be too slow with a large number of terms?
     var query = [
-        "CREATE (contentNode:content:testContent {contentParams}) ",
+        "CREATE (contentNode:content:testContent {contentParams})-[r:HAS_META {languageCode: {lang} }]-(metaNode:contentMeta {metaParams}) ",
         "WITH contentNode MATCH (termNode:term) ",
         "WHERE termNode.UUID IN {taggedTermsUUID} ",
         "CREATE (contentNode)-[:TAGGED_WITH]->(termNode)"
@@ -366,7 +359,9 @@ exports.addNewContent = function (request, reply){
             webURL: request.payload.webURL,
             savedAs: modifiedName, 
         },
-        taggedTermsUUID: []
+        taggedTermsUUID: [],
+        lang: request.payload.language,
+        meta: {}
     };
 
     //populate term UUID array

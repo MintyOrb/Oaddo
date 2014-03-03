@@ -28,22 +28,7 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
 
         // Initialize a new promise 
         var deferred = $q.defer();
-    
-        // // Make an AJAX call to check if the user is logged in
-        // $http.get('/loggedin').success(function(data){
-        //     // Authenticated
-        //     if (data.message){
-        //         console.log("user is logged in...");
-        //         deferred.resolve();
-        //     // Not Authenticated
-        //     } else {
-        //         console.log('user needs to login...');
-        //         $window.history.back();
-        //         console.log("location: " + $location.path());
-        //         deferred.reject();
-        //         LoginService.open();
-        //     }
-        // });
+
         console.log("loggedin: ");
         console.log($cookieStore.get('loggedIn'));
         if($cookieStore.get("loggedIn")){

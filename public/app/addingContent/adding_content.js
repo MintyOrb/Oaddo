@@ -19,6 +19,7 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
         // },
         // links: [], //array of objects with url, description
         // description: "",
+        // title: "",
         savedAs: "",
         fileSystemID: "",
         displayType: "",
@@ -367,6 +368,7 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
 
 
 // TODO: add ng-model support for suggest input (bind it to other input and clear after a term has been added)
+// TODO: auto switch to fb search when no content found in aaddo db
 directive('suggest', function() {
     return {
         restrict: 'E',
