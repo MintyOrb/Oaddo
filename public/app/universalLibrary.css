@@ -8,7 +8,7 @@
 
 
 /* override bootstrap 3 css*/
-.hr{margin:5px; border-top: 1px solid #C0C0C0;}
+hr{margin:5px; border-top: 1px solid #C0C0C0;}
 .row{margin:0px;}
 .container {width:auto;}
 .form-control{
@@ -114,18 +114,14 @@
 .marginBottom0 {margin-bottom: 0px;}
 .margin5 {margin:5px;}
 .margin10 {margin:10px;}
+.marginTop10 {margin-top: 10px}
 .margin20 {margin:20px;}
-.height200 {
-	height: 200px;
-	overflow:hidden;
+.height150 {
+	height: 150px;
+	overflow:scroll;
 }
 .width80p {min-width: 80%}
 .width100p {min-width: 100%}
-
-.filterSel {
-	width:240px;
-	border-right: solid 1px;
-}
 
 .droppable{background-color:#e0e0e0;}
 .above{z-index: 2;position: relative;}

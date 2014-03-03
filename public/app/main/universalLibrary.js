@@ -72,7 +72,9 @@ run(function ($rootScope, LoginService, $cookieStore, appLanguage) {
 
     // change site title based on route
     $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
-        $rootScope.title = current.$$route.title;
+        if(current.$$route){
+            $rootScope.title = current.$$route.title;
+        }
     });
 
     //respond to 401s by opening login modal

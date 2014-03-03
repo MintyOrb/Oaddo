@@ -1,25 +1,21 @@
 
 
  <div class="container" ng-controller="exploreCtrl">
-	<!-- <div class="row f-flexC f-m-center margin20">
-	    <input ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="DBTerm" ng-change="findTerm()" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in typeAhead" placeholder="Type term name here">
-	</div> -->
 
 	<div ui-on-Drop="" class="col-sm-12">
 
-	   	<button ng-hide="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i> Hide Filter</button>
-	   	<button ng-show="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i> Show Filter</button>
+		<div class="input-group col-sm-3 col-sm-offset-7">
+		    <input type="text" class="form-control" ng-model="DBTerm" ng-change="findTerm()" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in typeAhead" placeholder="type search term here">
+		    <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
+		</div>
+
+	   	<button ng-hide="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i> Hide Filter <i class=' text-muted fa fa-question-circle'></i></button>
+	   	<button ng-show="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i> Show Filter <i class=' text-muted fa fa-question-circle'></i></button>
 
 	    <div collapse="filter.isCollapsed">
-	    	<div  class="f-flexC f-row f-m-between f-c-center panel panel-default marginBottom0 col-sm-8 col-sm-offset-2">
-	    		<div class="filterSel f-flexC f-column f-m-center f-c-center">
-	    			<span class="h5">Term filter:</span>
-	    			<div>
-						<button ng-click="filter.setAll(true)" class="margin5 btn btn-xs btn-primary">Select All</button>
-						<button ng-click="filter.setAll(false)" class="margin5 btn btn-xs btn-primary">Clear All</button>
-	    			</div>
-	    		</div>
-	    		<div class="f-flexC f-row f-wrap f-m-center f-c-center">
+
+	    	<div  class="f-flexC f-column f-m-between f-c-center panel panel-default marginBottom0 col-sm-8 col-sm-offset-2">
+	    		<div class="marginTop10 f-flexC f-row f-wrap f-m-center f-c-center">
 	    			<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.people.included">People</button>
 					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.organizations.included">Organizations</button>
 					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.physicalObjects.included">Physical Objects</button>
@@ -30,10 +26,17 @@
 					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.locations.included">Locations</button>
 					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.contentTypes.included">Content Types</button>
 	    		</div>
+	    		<div class="">
+	    			<div class='margin10'>
+						<button ng-click="filter.setAll(true)" class=" btn btn-xs btn-primary">Select All</button>
+						<button ng-click="filter.setAll(false)" class=" btn btn-xs btn-primary">De-select All</button>
+	    			</div>
+	    		</div>
 	    	</div>
 	    </div>
-	    <div ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm col-sm-8 col-sm-offset-2 height200'>
+	    <div ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm col-sm-8 col-sm-offset-2 height150'>
 	        <i class='pull-right text-muted fa fa-question-circle'></i>
+
 	        <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">no matching terms</span>
 	        <div class="f-flexC f-row f-m-around f-wrap">
 	            <button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" ng-repeat="term in contentTerms.related" class='dn-bounce above btn margin5 btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
@@ -41,8 +44,9 @@
 	    </div>   
 	  	<br>
 	    <div ui-on-Drop="recievingHandler($data, contentTerms.selected)" drag-enter-class="droppable" class="well well-sm col-sm-8 col-sm-offset-2">
-	        <!-- <button class="btn btn-sm btn-default">Add Term</button> -->
+	        
 	        <i class='pull-right text-muted fa fa-question-circle'></i>
+	        
 	        <div class="f-flexC f-row f-m-center">
 	            <span ng-hide="contentTerms.selected.length > 0"class="dn-fade text-muted background h3">included terms</span>
 	            <div class="f-flexC f-row f-m-around f-wrap">

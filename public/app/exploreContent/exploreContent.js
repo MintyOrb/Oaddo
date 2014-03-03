@@ -35,6 +35,7 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
             type: $scope.filter.terms,
             language: appLanguage.lang }).
         success(function(data){
+            console.log(data);
             for (var i = 0; i < data.results.length; i++) {
                 $scope.contentTerms.related.push(data.results[i]);
             }
@@ -57,7 +58,11 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
     {   
         $http.get('/termTypeAhead', { params: { entered: $scope.DBTerm, language: appLanguage.lang } }).
         success(function(response){
-            $scope.typeAhead = response.matches;
+            if(response.matches !== undefined){
+                $scope.typeAhead = response.matches;
+            } else {
+                $scope.typeAhead = [{name:" - no terms matched - "}];
+            }
         }).
         error(function(data){
             console.log("type ahead error: "+ JSON.stringify(data));

@@ -222,7 +222,11 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
     {   
         $http.get('/termTypeAhead', { params: { entered: $scope.DBTerm, language: appLanguage.lang } }).
         success(function(response){
-            $scope.typeAhead = response.matches;
+            if(response.matches !== undefined){
+                $scope.typeAhead = response.matches;
+            } else {
+                $scope.typeAhead = [{name:" - no terms matched - "}];
+            }
         }).
         error(function(data){
             console.log("type ahead error: "+ JSON.stringify(data));
