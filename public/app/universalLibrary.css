@@ -8,7 +8,7 @@
 
 
 /* override bootstrap 3 css*/
-hr{margin:5px; border-top: 1px solid #C0C0C0;}
+.hr{margin:5px; border-top: 1px solid #C0C0C0;}*/
 .row{margin:0px;}
 .container {width:auto;}
 .form-control{
@@ -26,6 +26,20 @@ hr{margin:5px; border-top: 1px solid #C0C0C0;}
 .btn-default .badge {
 	background-color: #B3B3B3;
 }
+.tab-content{
+	height: 110px;
+	overflow: scroll;
+	flex-grow:1;			-webkit-flex-grow:1;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+.tab-content>.tab-pane {
+	margin-top: 10px
+}
+
 
 
 
@@ -41,7 +55,7 @@ hr{margin:5px; border-top: 1px solid #C0C0C0;}
 }
 .cardContainer {
 	width:300px;
-	height: 500px;
+	min-height: 500px;
 }
 .imgContainer {
 	overflow: hidden;
@@ -54,19 +68,6 @@ hr{margin:5px; border-top: 1px solid #C0C0C0;}
 	margin-left: auto;
 	margin-right: auto;
 }
-
-/*over write angular ui tab css*/
-.tab-content{
-	height: 160px;
-	overflow: scroll;
-	flex-grow:1;			-webkit-flex-grow:1;
-	border-bottom: 1px solid #ddd;
-	border-right: 1px solid #ddd;
-	border-left: 1px solid #ddd;
-	border-bottom-right-radius: 5px;
-	border-bottom-left-radius: 5px;
-}
-
 
 .noOutline:focus {
 	background-color: white;
