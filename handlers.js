@@ -361,7 +361,7 @@ exports.addNewContent = function (request, reply){
         },
         taggedTermsUUID: [],
         lang: request.payload.language,
-        meta: {}
+        metaParams: request.payload.meta
     };
 
     //populate term UUID array
@@ -510,11 +510,11 @@ exports.findRelatedContent = function (request, reply){
     };
 
     // TODO: add content meta ASAP
-    // (contentMeta)-[:HAS_LANGUAGE {languageCode: {language} }]-
     // TODO: consider merging filesystemID, weburl, and embedSrc into one property
     if(request.payload.includedTerms.length === 0){
+        // (contentMeta)-[meta:HAS_META {languageCode: {language} }]-
         query = [
-            "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
+            "MATCH (content:content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID', // contentMeta.whatever',
             // 'ORDER BY'
             'LIMIT 20'
@@ -564,9 +564,10 @@ exports.findRelatedContent = function (request, reply){
 };
 
 exports.getContent = function (request, reply){
+    // TODO: handle returning same content in different languages
     console.log("data: "+ request.query);
     console.log("data: "+ JSON.stringify(request.query));
-
+    // TODO: increase view count by one
     var query = "MATCH (contentNode:content {UUID: {id} }) RETURN contentNode.displayType AS displayType, contentNode.savedAs AS savedAs, contentNode.webURL AS webURL, contentNode.embedSrc AS embedSrc";
     var properties = { 
         id: request.query.uuid

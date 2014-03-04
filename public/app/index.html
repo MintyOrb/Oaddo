@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html ng-app="universalLibrary">
     <head>
-        <!-- load style to prevent raw index html -->
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="app/universalLibrary.css">
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- diable zoom on mobile devies -->
@@ -14,8 +11,8 @@
         </head>
     <body class="container" ng-controller="appCtrl">
   
-        <nav class="navbar navbar-default" role="navigation">
-            <div class="container-fluid">
+        <nav ng-cloak class="navbar navbar-default" role="navigation">
+            <div ng-controller="LoginModalCtrl" class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
                     <a class='dropdown-toggle'>
@@ -31,7 +28,7 @@
                     <ul class="width100p dropdown-menu">
                         <li><a href="/explore">Explore</a></li>
                         <hr class="hr">
-                        <li ng-controller="LoginModalCtrl">
+                        <li>
                             <a ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn">Login</a>
                             <a ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn">Logout</a>
                         </li>
@@ -46,7 +43,7 @@
                     
                     </span> -->
                     <ul class="nav navbar-nav navbar-right">
-                        <form ng-controller="LoginModalCtrl" class="navbar-form navbar-right">
+                        <form class="navbar-form navbar-right">
                             <button ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn"class="btn btn-default noOutline">Login</button>
                             <button ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn" class="btn btn-default noOutline">Logout</button>
                         </form>
@@ -72,14 +69,17 @@
         <script type="text/javascript" src="resources/angular/angular-resource.min.js"></script>
         <script type="text/javascript" src="bower_components/angular-animate/angular-animate.min.js"></script>
     
-    
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="app/universalLibrary.css">
+
         <!-- freebase search widget -->
         <link type="text/css" rel="stylesheet" href="resources/css/suggest.css" />
         <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>
         <script type="text/javascript" src="https://www.gstatic.com/freebase/suggest/4_2/suggest.min.js"></script>
       
 
-        <!-- resources -->      
+        <!-- resources -->  
+        <script src="resources/angular-pageslide-directive.js"></script>    
         <link href="resources/css/animate.min.css" rel="stylesheet">
         <script type="text/javascript" src="bower_components/ngAnimate-animate.css/animate.js"></script>
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">

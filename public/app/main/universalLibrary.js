@@ -15,6 +15,7 @@ var universalLibrary = angular.module('universalLibrary',
         'chieffancypants.loadingBar',
         'ngAnimate-animate.css',
         'ngDragDrop',
+        'pageslide-directive'
     ]).
 
 config(function($routeProvider, $locationProvider, $httpProvider) {
@@ -137,6 +138,7 @@ controller('buttonCtrl', function($scope, API, $location, $http) {
 
 controller('TabsDemoCtrl', function ($scope) {
 
+    $scope.checked = false;
     $scope.tabs = [
         { title:"Dynamic Title 1", content:"Dynamic content 1" },
         { title:"Dynamic Title 2", content:"Dynamic content 2", disabled: true }

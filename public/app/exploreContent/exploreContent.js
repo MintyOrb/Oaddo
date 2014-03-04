@@ -4,7 +4,7 @@
 angular.module('universalLibrary').
 
 controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location, $http, appLanguage, filterFactory) {
-	// NOTE: this controller contains largly identical functionality to the termSelection controller
+    // NOTE: this controller contains largly identical functionality to the termSelection controller
 		// consider refactoring to be more DRY
 	$scope.contentTerms = contentTerms;
     $scope.DBTerm = "";
@@ -105,8 +105,21 @@ service('viewContent', [function () {
 
 controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewContent", function ($sce, $http, $routeParams, $scope, viewContent) {
 	
+    $scope.panelVisible = true;
     console.log("location id: " + $routeParams.id);
     console.log($routeParams);
+
+    // $scope.$on('$locationChangeStart', function() {
+    //     console.log("here I am: " );
+    //     $scope.panelVisible = false;
+    //     console.log("panelvisi: " + $scope.panelVisible);
+    // });
+
+    // $scope.$on('$routeChangeStart', function() {
+    //     console.log("ROUTE here I am: " );
+    //     $scope.panelVisible = false;
+    //     console.log("panelvisi: " + $scope.panelVisible);
+    // });
 
     // TODO: handle error - if content with UUID not found, display error
     $http.get('/content', {params: {uuid: $routeParams.id}})
@@ -120,8 +133,6 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
 
     });
 
-
-	
 }]).
 
 

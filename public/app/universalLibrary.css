@@ -42,7 +42,11 @@
 
 
 
-
+#ng-pageslide {
+    background: #eee;
+    border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
 
 .center {
   display: block;

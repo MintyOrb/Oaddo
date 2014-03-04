@@ -51,13 +51,10 @@ Passport.use(new LocalStrategy( handlers.authUser ) );
 
     //for sessions
 Passport.serializeUser(function(user, done) {
-    console.log("serial user: " + JSON.stringify(user));
     done(null, user);
 });
 
 Passport.deserializeUser(function (obj, done) {
-    console.log("deserialize User here...");
-    console.log(JSON.stringify(obj));
     done(null, obj);
 });
 
@@ -99,11 +96,6 @@ server.route([
     { method: 'GET', path: '/loginSuccess', config: {auth: 'passport'}, handler: function(request, reply){
         console.log("successful login here. about to reply with a 200...");
         reply({loginSuccessful:true});
-    }},
-
-    { method: 'GET', path: '/test', config: {auth: 'passport'} , handler: function(request, reply){
-        console.log("user must be logged on for you to see this...");
-        reply({message: 'Oh, hey! You must be logged in.'});
     }},
 
     //api routes

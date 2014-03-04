@@ -1,5 +1,8 @@
 
 <div class='center'>
+
+		 <button class="btn btn-primary" ng-click="panelVisible = !panelVisible;">open/close</button>
+
 	<zui  ng-if="content.displayType === 'image'" url="img/submittedContent/{{content.savedAs}}"></zui>
 
 	<div ng-if="content.displayType === 'embed'" class="videoWrapper">
@@ -8,5 +11,12 @@
 
 	<div ng-if="content.displayType === 'webpage'" class="webHolder">
 		<iframe ng-src="{{content.webURL}}"></iframe>
+	</div>
+
+	<a pageslide="left" customtop="90px" customheight="590px" ps-speed="0.5" ps-target="#target" size="50%" ps-open="panelVisible" href="#target"></a>
+
+	<div id="target">            
+	    <p>some random content...</p>
+		 <button class="btn btn-primary" ng-click="panelVisible = false;">close</button>
 	</div>
 </div>

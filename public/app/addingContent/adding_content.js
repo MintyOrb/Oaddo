@@ -7,19 +7,23 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
 
     $scope.contentObject = {
         language: appLanguage.lang,
-        // source: {
-        //     link: "",
-        //     description: "",
-        //     text: ""
-        // },
-        // publisher: {
-        //     link: "",
-        //     description: "",
-        //     text: ""
-        // },
-        // links: [], //array of objects with url, description
-        // description: "",
-        // title: "",
+        // language specific
+        meta: {
+            source: {
+                link: "",
+                description: "",
+                text: ""
+            },
+            publisher: {
+                link: "",
+                description: "",
+                text: ""
+            },
+            links: [], //array of objects with url, description
+            description: "",
+            title: ""
+        },
+        // for all
         savedAs: "",
         fileSystemID: "",
         displayType: "",
@@ -366,6 +370,9 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
     });
 }).
 
+controller('metaSectionCtrl', ['$scope', function ($scope) {
+    $scope.example = 'test';
+}]).
 
 // TODO: add ng-model support for suggest input (bind it to other input and clear after a term has been added)
 // TODO: auto switch to fb search when no content found in aaddo db

@@ -121,30 +121,34 @@
                 </div>
             </accordion-group>
     
-            <!-- <accordion-group heading="Add Meta Information">
-                <div>
-                    source, publisher, dates, relevant links, description
-                </div>
-                <div>
-                    <label>Add source:</label>
-                    <br>
-                    <input class="form-control" type="text" ng-model="">
-                </div>
+            <accordion-group heading="Add Meta Information">
+                <div ng-controller="metaSectionCtrl">
+                    <div>
+                        source, publisher, dates, relevant links, description
+                    </div>
+                    <div>
+                        <label>source:</label>
+                        <br>
+                        <input class="form-control" type="text" ng-model="blah">
+                    </div>
 
-                <div>
-                    <Button class="btn btn-default" ng-model="">Add relevant link</Button>
-                    <label>URL</label>
-                    <input type='text' class='form-control'>
-                </div>
+                    <div>
+                        <Button class="btn btn-default" ng-model="blah">relevant link:</Button>
+                        <label>url</label>
+                        <input type='text' class='form-control'>
+                    </div>
 
-                <div>
-                    <label>Description</label>
-                    <text-angular class='ta-editor' ta-toolbar="[['h1','h2','h3'],['bold','italics']]" ng-model="example"></text-angular>
-                </div>   
-            </accordion-group> -->
+                    <div>
+                        <label>description</label>
+                        <text-angular class='ta-editor' ta-toolbar="[['h1', 'h2', 'h3', 'p', 'pre', 'quote'], ['bold', 'italics', 'underline', 'ul', 'ol', 'redo', 'undo', 'clear'], ['justifyLeft','justifyCenter','justifyRight'],['html', 'insertImage', 'insertLink', 'unlink']]" ng-model="example"></text-angular>
+                    </div>   
+                </div>
+            </accordion-group>
 
         </accordion>
-                
+        <div ng-controller="metaSectionCtrl">
+                <text-angular class='ta-editor' ta-toolbar="[['h1','h2','h3'],['bold','italics']]" ng-model="example"></text-angular>
+                </div>
     </form>
     <br>
     <button ng-click="submitNewContent()"class="btn btn-primary btn-large">Add Content</button>
