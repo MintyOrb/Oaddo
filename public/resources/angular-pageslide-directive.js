@@ -38,28 +38,28 @@ pageslideDirective.directive('pageslide', [
                 
                 switch (param.side){
                             case 'right':
-                                slider.style.height = attrs.customheight || '100%'; 
-                                slider.style.top = attrs.customtop ||  '0px';
-                                slider.style.bottom = attrs.custombottom ||  '0px';
-                                slider.style.right = attrs.customright ||  '0px';
+                                slider.style.height = attrs.customHeight || '100%'; 
+                                slider.style.top = attrs.customTop ||  '0px';
+                                slider.style.bottom = attrs.customBottom ||  '0px';
+                                slider.style.right = attrs.customRight ||  '0px';
                                 break;
                             case 'left':
-                                slider.style.height = attrs.customheight || '100%';   
-                                slider.style.top = attrs.customtop || '0px';
-                                slider.style.bottom = attrs.custombottom || '0px';
-                                slider.style.left = attrs.customleft || '0px';
+                                slider.style.height = attrs.customHeight || '100%';   
+                                slider.style.top = attrs.customTop || '0px';
+                                slider.style.bottom = attrs.customBottom || '0px';
+                                slider.style.left = attrs.customLeft || '0px';
                                 break;
                             case 'top':
-                                slider.style.width = attrs.customwidth || '100%';   
-                                slider.style.left = attrs.customleft || '0px';
-                                slider.style.top = attrs.customtop || '0px';
+                                slider.style.width = attrs.customWidth || '100%';   
+                                slider.style.left = attrs.customLeft || '0px';
+                                slider.style.top = attrs.customTop || '0px';
                                 slider.style.right = attrs.customright || '0px';
                                 break;
                             case 'bottom':
-                                slider.style.width = attrs.customwidth || '100%'; 
-                                slider.style.bottom = attrs.custombottom || '0px';
-                                slider.style.left = attrs.customleft || '0px';
-                                slider.style.right = attrs.customright || '0px';
+                                slider.style.width = attrs.customWidth || '100%'; 
+                                slider.style.bottom = attrs.customBottom || '0px';
+                                slider.style.left = attrs.customLeft || '0px';
+                                slider.style.right = attrs.customRight || '0px';
                                 break;
                         }
 
@@ -129,8 +129,9 @@ pageslideDirective.directive('pageslide', [
 
                 // close panel on location change
                 $scope.$on("$locationChangeStart", function(){
-                    console.log("closed??: " );
-                    psClose(slider, param);
+                    if(attrs.autoClose){
+                        psClose(slider, param);
+                    }
                 });
 
 

@@ -13,26 +13,26 @@
                 <div class="form-group" ng-class="{ 'has-error' : form.loginForm.email.$invalid && !form.loginForm.email.$pristine }">
                     <label>email</label>
                     <br>
-                    <input type="email" ng-blur="checkEmail()" name="email" class="form-control" ng-model="user.email">
+                    <input tabindex='1' type="email" ng-blur="checkEmail()" name="email" class="form-control" ng-model="user.email">
                 </div>
                 <div> 
                     <label>password
                         <br>
-                        <input class="form-control" type="password" ng-model="user.password">
+                        <input tabindex='2' class="form-control" type="password" ng-model="user.password">
                     </label>
                 </div>
                 <div>
                     <label ng-hide="display.returningUser">re-type password
                         <br>
-                        <input class="form-control" ng-blur="checkPass()" type="password" ng-model="user.checkPassword">
+                        <input tabindex='3' class="form-control" ng-blur="checkPass()" type="password" ng-model="user.checkPassword">
                     </label>
                 </div>
             </div>
             <div class="f-flexC f-column f-m-center f-c-center col-sm-6">
                 <h4>Don't have an account?</h4> 
                 <br>
-                <button ng-show="display.returningUser" ng-click="display.returningUser = false;" class="btn btn-primary">Click here to sign up</button>
-                <button ng-hide="display.returningUser" ng-click="display.returningUser = true;" class="btn btn-primary">I have an account</button>
+                <span ng-show="display.returningUser" ng-click="display.returningUser = false;" class="btn btn-primary">Click here to sign up</span>
+                <span ng-hide="display.returningUser" ng-click="display.returningUser = true;" class="btn btn-primary">I have an account</span>
                 <br>
                 <p class="text-danger">{{message}}</p>
                 <p class="text-danger" ng-hide="display.validEmail">invalid email address</p>
@@ -42,7 +42,7 @@
 
     </div>
     <div class="modal-footer">
-        <button ng-hide="display.returningUser" class="btn btn-primary" ng-click="create()">Join</button>
-        <button ng-show="display.returningUser" class="btn btn-primary" ng-click="login(user.email, user.password)">Login</button>
+        <button ng-hide="display.returningUser" tabindex='3' class="btn btn-primary" ng-click="create()">Join</button>
+        <button ng-show="display.returningUser" tabindex='3' class="btn btn-primary" ng-click="login(user.email, user.password)">Login</button>
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>

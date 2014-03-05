@@ -87,23 +87,28 @@
 }
 .videoWrapper iframe {
 	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+	right: 0;
+	transition-duration : .5s;
+    webkit-transition-duration : .5s;
+    transition-property : width, height, top;
 }
+
 .webHolder{
 	position: absolute;
 	height: 100%;
 	width: 100%;
 	top: 0;
-	left: 0;
+	right: 0;
 }
 .webHolder iframe {
+	transition-duration : .5s;
+    webkit-transition-duration : .5s;
+    transition-property : width, height;
 	border-radius: 5px;
 	height: 87.5%;
 	width: 95%;
 	margin: 75px 0% 0% 2.5%;
+	float:right;
 }
 
 .background {
@@ -135,11 +140,11 @@
 
 
 .ta-editor {
-  min-height: 300px;
+/*  min-height: 300px;
   height: auto;
   overflow: auto;
   font-family: inherit;
-  font-size: 100%;
+  font-size: 100%;*/
 }
 
 .fileUpload {

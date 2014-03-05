@@ -1,21 +1,30 @@
 
 <div class='center'>
 
-		 <button class="btn btn-primary" ng-click="panelVisible = !panelVisible;">open/close</button>
+		 <button class="btn btn-primary" ng-click="panelVisible = !panelVisible; panelHalfScreen = !panelHalfScreen">open/close</button>
+		 <button class="btn btn-primary" ng-click="vSize={height: '100%' , width: '100%', top: '0'}">100</button>
+		 <button class="btn btn-primary" ng-click="vSize={height: '50%', width: '50%', top: '10%'}">50</button>
+
 
 	<zui  ng-if="content.displayType === 'image'" url="img/submittedContent/{{content.savedAs}}"></zui>
 
+	<!-- TODO: modify for mobile -->
 	<div ng-if="content.displayType === 'embed'" class="videoWrapper">
-		<iframe class="center" ng-src="{{content.embedSrc}}" allowfullscreen></iframe>
+		<iframe ng-style="vSize" class="center" ng-src="{{content.embedSrc}}" allowfullscreen></iframe>
 	</div>
 
 	<div ng-if="content.displayType === 'webpage'" class="webHolder">
-		<iframe ng-src="{{content.webURL}}"></iframe>
+		<iframe ng-style="wSize" ng-src="{{content.webURL}}"></iframe>
 	</div>
 
-	<a pageslide="left" customtop="90px" customheight="590px" ps-speed="0.5" ps-target="#target" size="50%" ps-open="panelVisible" href="#target"></a>
+</div>
 
-	<div id="target">            
+<div>
+	<a pageslide="left" auto-close="true" custom-top="75px" custom-height="605px" ps-speed="0.5" ps-target="#metaPanel" size="50%" ps-open="panelVisible" href="#metaPanel"></a>
+
+	<div id="metaPanel">  
+	<button class="btn btn-primary" style="z-index: 500;"ng-click="wSize={height: '100%' , width: '100%', top: '0'}">w100</button>
+		 <button class="btn btn-primary" style="z-index: 500;"ng-click="wSize={height: '100%', width: '50%'}">w50</button>          
 	    <p>some random content...</p>
 		 <button class="btn btn-primary" ng-click="panelVisible = false;">close</button>
 	</div>

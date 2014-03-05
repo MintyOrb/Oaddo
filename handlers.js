@@ -424,8 +424,9 @@ exports.relatedTerms = function (request, reply) {
     var properties = {
         language: request.payload.language ,
         ignoreTerms: [],
-        keyTerms: [],
-        types: []
+        searchTerms: [],
+        types: [],
+        searchTermsCount: 0
 
     };
 
@@ -443,20 +444,37 @@ exports.relatedTerms = function (request, reply) {
 
     } else {
         query = [
-            'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
-                '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
-            'WHERE',
-                'typeNode.name IN {types} ',
-                'AND keyTerms.UUID IN {keyTerms} ',
-                'AND NOT matched.UUID IN {ignoreTerms} ',
-            'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
+            'MATCH (contentNode:content)-[:TAGGED_WITH]->(searchTerms:term) ',
+            'WITH contentNode, COUNT(contentNode) as contentCount, searchTerms ',
+            'WHERE searchTerms.UUID IN {searchTerms} AND contentCount = {searchTermsCount} ',
+            'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-contentNode, ',
+                'matched-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
+            'WHERE NOT matched.UUID IN {ignoreTerms}',
+            'RETURN termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
             'ORDER BY connections DESC LIMIT 10'
+
+            // MATCH (contentNode:content)-[:TAGGED_WITH]->(searchTerms:term)
+            // WITH contentNode, COUNT(*) as cnt
+            // WHERE searchTerms.UUID IN {searchTerms} AND cnt = {_searchTerms_size_} 
+            // MATCH (matched:term)<-[:TAGGED_WITH]-contentNode    
+            // RETURN matched.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections
+            // ORDER BY connections DESC LIMIT 10
+
+            // 'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
+            //     '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
+            // 'WHERE',
+            //     'typeNode.name IN {types} ',
+            //     'AND keyTerms.UUID IN {keyTerms} ',
+            //     'AND NOT matched.UUID IN {ignoreTerms} ',
+            // 'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
+            // 'ORDER BY connections DESC LIMIT 10'
         ].join('\n');
 
         // add UUIDs from key terms to ignore and key term arrays
         for (var i = 0; i < request.payload.keyTerms.length; i++) {
+            properties.searchTermsCount += 1;
             properties.ignoreTerms.push(request.payload.keyTerms[i].UUID);
-            properties.keyTerms.push(request.payload.keyTerms[i].UUID);
+            properties.searchTerms.push(request.payload.keyTerms[i].UUID);
         }
     }
 
@@ -472,8 +490,9 @@ exports.relatedTerms = function (request, reply) {
 
 
     db.query(query, properties, function (err, results) {
+        console.log("out of query");
         if (err) {throw err;}
-        console.log("done with query: ");
+        console.log("query success: ");
         console.log(results);
         reply({results: results});
     });
