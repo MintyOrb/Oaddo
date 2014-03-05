@@ -29,7 +29,8 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
         // clear current related
         // TODO: only remove terms that are not again returned? (prevent term from vanishing only to re-appear)
         $scope.contentTerms.related = [];
-
+        console.log("app language: ");
+        console.log(appLanguage.lang);
         $http.post('/relatedTerms', { 
             keyTerms: $scope.contentTerms.selected,
             type: $scope.filter.terms,

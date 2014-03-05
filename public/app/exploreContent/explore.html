@@ -1,7 +1,10 @@
 
 
  <div class="container" ng-controller="exploreCtrl">
- 
+ 	{{displayLanguage.lang}}
+ 	<br>
+ 	{{lang}}
+ 	<input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang">
 	<div ui-on-Drop="" class="col-sm-12">
 
 		<div class="input-group col-sm-3 col-sm-offset-7">
@@ -72,6 +75,12 @@
 	<div class="cardsContainer f-flexC f-row f-wrap f-m-around">
 		<div class="f-flexC  f-column f-m-between cardContainer panel panel-default margin5" ng-repeat="content in returnedContent">
 			<div class="panel-heading">
+				<i class="fa fa-ban pull-right"></i>
+			    <i class="fa fa-eye pull-right"> 0</i>
+			    <i class="fa fa-heart pull-right"> 0</i>
+
+                <br>
+                <hr class="hr">
 			    <h3 class="panel-title">{{content.title}}</h3>
 			</div>
 			<br>

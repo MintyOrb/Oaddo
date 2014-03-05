@@ -32,13 +32,14 @@
                           ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
                     <button ng-click="upload.abort()">Cancel Upload</button> -->
                     
-                    <div ng-if="displaySettings.fileSelected">
+                   
+                    <div ng-if="imageDisplaySettings.fileSelected">
                         <label>Preview:</label>
                         <br>
-                        <img height="300px" ng-src="{{displaySettings.dataUrl.image}}">
+                        <img height="300px" ng-src="{{imageDisplaySettings.dataUrl.image}}">
                     </div>
                     
-                    <div ng-if="displaySettings.imageURLPresent">
+                    <div ng-if="imageDisplaySettings.imageURLPresent">
                         <label>Preview:</label>
                         <br>
                         <img height="300px" ng-src="{{contentObject.webURL}}">
@@ -121,34 +122,93 @@
                 </div>
             </accordion-group>
     
-            <accordion-group heading="Add Meta Information">
+            <accordion-group heading="Add Meta Information (optional)">
                 <div ng-controller="metaSectionCtrl">
-                    <div>
-                        source, publisher, dates, relevant links, description
-                    </div>
-                    <div>
-                        <label>source:</label>
+                    <div class="col-sm-6">
+
+                        <div class="form-group" ng-class="{ 'has-error' : addContentForm.title.$invalid }">
+                            <label>title: 
+                            <span class='text-danger' ng-show="addContentForm.title.$invalid"> must be shorter than 100 characters</span></label>
+                            <br>
+                            <input ng-maxlength="100" class="form-control width100p" name='title' type="text" ng-model="contentObject.title">
+                        </div>
+                        <!-- TODO: get description (text-angular) validation working -->
+                        <div class="form-group" ng-class="{ 'has-error' : addContentForm.description.$invalid }">
+                            <label>description:</label>
+                            <span class='text-danger' ng-show="addContentForm.description.$invalid"> must be shorter than 900 characters</span>
+                            <text-angular name="description" ng-maxlength='900' ng-focus="tab.description = true" ta-toolbar="[['bold', 'italics', 'underline'],['redo', 'undo'],['insertLink', 'unlink']]" ng-model="contentObject.description"></text-angular>
+                        </div>
                         <br>
-                        <input class="form-control" type="text" ng-model="blah">
+                        <div>
+                            <label>source:</label>
+                            <br>
+                            <div class="col-md-11 col-md-offset-1">
+                                <div class="form-group" ng-class="{ 'has-error' : addContentForm.sourceName.$invalid }">
+                                    <strong>display name:</strong>
+                                    <span class='text-danger' ng-show="addContentForm.sourceName.$invalid"> must be shorter than 50 characters</span>
+                                    <br>
+                                    <input ng-maxlength="50" name="sourceName" class="width100p form-control margin5" type="text" ng-model="contentObject.source.text">
+                                </div>                            
+                                
+                                <div class="form-group" ng-class="{ 'has-error' : addContentForm.sourceLink.$invalid && !addContentForm.sourceLink.$pristine }">
+                                    <strong>link:</strong>
+                                    <span class='text-danger' ng-show="addContentForm.sourceLink.$invalid"> must be a valid URL</span>
+                                    <br>
+                                    <input name="sourceLink" class="width100p form-control margin5" type="url" ng-model="contentObject.source.url">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label>relevant links</label>
+                            <br>
+                            <div class="col-md-11 col-md-offset-1">
+                                <label>url:</label>
+                                <input class="form-control width100p" type="url">
+                                <label>display text:</label>
+                                <input class="form-control width100p" type="text">
+                                <label>description:</label>
+                                <text-angular ng-model="contentObject.links[link].description" ta-toolbar="[['bold', 'italics', 'underline'],['redo', 'undo'],['insertLink', 'unlink']]"></text-angular>
+                                <button class="btn btn-default"><i class='fa fa-x'></i>delete</button>
+                            </div>
+                            <Button class="btn btn-default btn-sm" ng-model="contentObject.links">add link</Button>
+                        </div>
                     </div>
 
-                    <div>
-                        <Button class="btn btn-default" ng-model="blah">relevant link:</Button>
-                        <label>url</label>
-                        <input type='text' class='form-control'>
-                    </div>
+                    <div class="f-flexC f-column f-c-center col-sm-6">
+                        <div class="f-flexC  f-column f-m-between cardContainer panel panel-default margin5">
+                            <div class="panel-heading">
+                                <i class="fa fa-ban pull-right"></i>
+                                <i class="fa fa-eye pull-right">    0</i>
+                                <i class="fa fa-heart pull-right"> 0</i>
+                                
+                                <br>
+                                <hr class="hr">
+                                <h3 class="panel-title">{{contentObject.title}}</h3>
+                            </div>
+                            <br>
+                            <div class="f-flexC f-column f-m-center f-c-center imgContainer">                                
+                                <img ng-if="imageDisplaySettings.fileSelected" ng-src="{{imageDisplaySettings.dataUrl.image}}">
+                                <img ng-if="imageDisplaySettings.imageURLPresent" ng-src="{{contentObject.webURL}}">                    
+                            </div>
 
-                    <div>
-                        <label>description</label>
-                        <text-angular class='ta-editor' ta-toolbar="[['h1', 'h2', 'h3', 'p', 'pre', 'quote'], ['bold', 'italics', 'underline', 'ul', 'ol', 'redo', 'undo', 'clear'], ['justifyLeft','justifyCenter','justifyRight'],['html', 'insertImage', 'insertLink', 'unlink']]" ng-model="example"></text-angular>
-                    </div>   
+                            <tabset class='f-grow-1 f-flexC f-column margin10'>
+                                <tab active="tab.terms" heading="Terms">
+                                    <div class="f-flexC f-row f-wrap f-m-center ">
+                                        <button ng-repeat="term in contentTerms.selected"class="btn btn-default btn-sm margin5">{{term.name}}</button>
+                                    </div>
+                                </tab>
+                                <tab active="tab.description" heading="Description">
+                                    <div ng-bind-html="contentObject.description" class="margin10"></div>
+                                </tab>
+                            </tabset>           
+                        </div>
+                    </div>  
                 </div>
+
             </accordion-group>
 
         </accordion>
-        <div ng-controller="metaSectionCtrl">
-                <text-angular class='ta-editor' ta-toolbar="[['h1','h2','h3'],['bold','italics']]" ng-model="example"></text-angular>
-                </div>
     </form>
     <br>
     <button ng-click="submitNewContent()"class="btn btn-primary btn-large">Add Content</button>

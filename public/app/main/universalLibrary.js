@@ -74,28 +74,30 @@ run(function ($rootScope, LoginService, $cookieStore, appLanguage) {
     }
 
     //set language for session based on saved value or value from window
-    var langFromCookie = $cookieStore.get('languagePreference');
-    if (langFromCookie === undefined){
+    if (appLanguage.get() === undefined){
         var lang = window.navigator.userLanguage || window.navigator.language;
         lang = lang.substr(0,2); // get two letter language code
         console.log("language from window.nav: " + lang);
-        $cookieStore.put('languagePreference',lang);
-        appLanguage.lang = lang;
-       
+        appLanguage.set(lang);
     } else {
-        //set lang pref based on previously stored cookie
-        appLanguage.lang = langFromCookie;
-        console.log("lang from cookie: " + langFromCookie);
+        appLanguage.set($cookieStore.get('languagePreference'));
     }
     
 }).
 
-service('appLanguage', [function () {
+service('appLanguage', ['$cookieStore',function ($cookieStore) {
+    this.set = function(code){
+        $cookieStore.put('languagePreference', code);
+        this.lang = code;
+    };
+    this.get = function(){
+        return $cookieStore.get('languagePreference');
+    };
     this.lang = "";
 }]).
 
 controller('appCtrl', ['$scope', 'appLanguage', function ($scope, appLanguage) {
-    $scope.displayLanguage = appLanguage.lang;
+    $scope.displayLanguage = appLanguage;
 }]).
 
 

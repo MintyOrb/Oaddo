@@ -4,22 +4,20 @@
 angular.module('universalLibrary').
 
 controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLanguage', '$http', function ($location, $scope, contentTerms, appLanguage, $http) {
+    $scope.imageDisplaySettings = {
+        fileSelected : false,
+        imageURLPresent : false,
+        dataUrl : []
+    };
 
     $scope.contentObject = {
         language: appLanguage.lang,
         // language specific
         meta: {
             source: {
-                link: "",
-                description: "",
+                url: "",
                 text: ""
             },
-            publisher: {
-                link: "",
-                description: "",
-                text: ""
-            },
-            links: [], //array of objects with url, description
             description: "",
             title: ""
         },
@@ -44,12 +42,14 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
 
     $scope.reset = function(){
         $scope.displaySettings = {
-            fileSelected : false,
-            imageURLPresent : false,
-            dataUrl : {},
             optionSelected : false,
             disableFileSelection : false,
             uploadNonImage : false,
+        };
+        $scope.imageDisplaySettings = {
+            fileSelected : false,
+            imageURLPresent : false,
+            dataUrl : {}
         };
         $scope.contentObject.savedAs = "";
         $scope.contentObject.fileSystemID = "";
@@ -79,9 +79,6 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
 controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appLanguage){
 
     $scope.displaySettings = {
-        fileSelected : false,
-        imageURLPresent : false,
-        dataUrl : [],
         optionSelected : false,
         disableFileSelection : false,
         uploadNonImage : false,
@@ -102,13 +99,13 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
                 fileReader.readAsDataURL(file[0]);
                 fileReader.onload = function(e) {
                     $timeout(function() {
-                        $scope.displaySettings.dataUrl.image = e.target.result;
+                        $scope.imageDisplaySettings.dataUrl.image = e.target.result;
                     });
                 };
             }    
 
+            $scope.imageDisplaySettings.fileSelected = true;     //display image preview and selected file name
             $scope.displaySettings.optionSelected = true;   //display cancel button
-            $scope.displaySettings.fileSelected = true;     //display image preview and selected file name
             $scope.displaySettings.fileName = file[0].name; //place file name in exposed input
 
             $upload.upload({
@@ -142,7 +139,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
             success(function(response){
 
                 if(response.displayType === "image"){
-                    $scope.displaySettings.imageURLPresent = true; //display preivew of linked image
+                    $scope.imageDisplaySettings.imageURLPresent = true; //display preivew of linked image
                 }
                 
                 $scope.contentObject.savedAs = response.savedAs;
@@ -370,10 +367,6 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
     });
 }).
 
-controller('metaSectionCtrl', ['$scope', function ($scope) {
-    $scope.example = 'test';
-}]).
-
 // TODO: add ng-model support for suggest input (bind it to other input and clear after a term has been added)
 // TODO: auto switch to fb search when no content found in aaddo db
 directive('suggest', function() {
@@ -398,4 +391,18 @@ directive('suggest', function() {
             });
         }
     };
-});
+}).
+
+
+
+
+
+
+
+controller('metaSectionCtrl', ['$scope', 'contentTerms', function ($scope, contentTerms) {
+    $scope.tab = {
+        description: false,
+        terms: true
+    };
+    $scope.contentTerms = contentTerms;
+}]);

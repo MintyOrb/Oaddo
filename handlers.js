@@ -536,7 +536,7 @@ exports.findRelatedContent = function (request, reply){
             "MATCH (content:content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID', // contentMeta.whatever',
             // 'ORDER BY'
-            'LIMIT 20'
+            'LIMIT 15'
         ].join('\n');
     } else if(member){
         query = [
@@ -549,7 +549,7 @@ exports.findRelatedContent = function (request, reply){
             "WHERE connected = {numberOfIncluded} ",
             'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID',  // contentMeta.whatever',
             // 'ORDER BY'
-            'LIMIT 20'
+            'LIMIT 15'
         ].join('\n');
 
     } else {
@@ -562,7 +562,7 @@ exports.findRelatedContent = function (request, reply){
             "WHERE connected = {numberOfIncluded} ",
             'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID', // contentMeta.whatever',
             // 'ORDER BY'
-            'LIMIT 20'
+            'LIMIT 15'
         ].join('\n');
     }
     
