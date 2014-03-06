@@ -6,6 +6,7 @@ angular.module('universalLibrary').
 controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLanguage', '$http', function ($location, $scope, contentTerms, appLanguage, $http) {
     
     $scope.contentTerms = contentTerms;
+    contentTerms.matchAll = false;
 
     $scope.tab = {
         description: false,
@@ -16,6 +17,13 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
         fileSelected : false,
         imageURLPresent : false,
         dataUrl : []
+    };
+    $scope.displaySettings = {
+        fileName: "",
+        optionSelected : false,
+        disableFileSelection : false,
+        uploadNonImage : false,
+        webShotURL: false
     };
 
     $scope.contentObject = {
@@ -50,10 +58,13 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
     };
 
     $scope.reset = function(){
+        console.log("resetting: " );
         $scope.displaySettings = {
+            fileName: "",
             optionSelected : false,
             disableFileSelection : false,
             uploadNonImage : false,
+            webShotURL : false
         };
         $scope.imageDisplaySettings = {
             fileSelected : false,
@@ -87,11 +98,6 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
 
 controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appLanguage){
 
-    $scope.displaySettings = {
-        optionSelected : false,
-        disableFileSelection : false,
-        uploadNonImage : false,
-    };
 
     $scope.onFileSelect = function(file) {
 
@@ -113,9 +119,9 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
                 };
             }    
 
-            $scope.imageDisplaySettings.fileSelected = true;     //display image preview and selected file name
-            $scope.displaySettings.optionSelected = true;   //display cancel button
-            $scope.displaySettings.fileName = file[0].name; //place file name in exposed input
+            $scope.imageDisplaySettings.fileSelected = true;  //display image preview and selected file name
+            $scope.displaySettings.optionSelected = true;     //display cancel button
+            $scope.displaySettings.fileName = file[0].name;   //place file name in exposed input
 
             $upload.upload({
                 url: '/newImage',
@@ -150,7 +156,9 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
                 if(response.displayType === "image"){
                     $scope.imageDisplaySettings.imageURLPresent = true; //display preivew of linked image
                 }
-                
+                if(response.displayType === "webpage"){
+                    $scope.imageDisplaySettings.webShotURL = true;
+                }
                 $scope.contentObject.savedAs = response.savedAs;
                 $scope.contentObject.embedSrc = response.embedSrc;
                 $scope.contentObject.fileSystemID = response.id;

@@ -18,7 +18,6 @@
             <accordion-group heading="Identify The Content">
                 <h4 class='text-center'>Paste a URL below or choose a file to upload:</h4>
                 <div ng-controller="fileSelectionCtrl" class="f-flexC f-row f-wrap f-m-around">
-                    
                     <div class="f-flexC f-row f-wrap f-m-around f-c-center">
                         <div  ng-disabled="displaySettings.disableFileSelection" class="fileUpload btn btn-primary">
     
@@ -27,15 +26,15 @@
     
                         </div>
     
-                        <input  class="form-control" id='disabledInput' ng-if="displaySettings.fileSelected" ng-model="displaySettings.fileName" disabled type="text"/>
+                        <input  class="form-control" id='disabledInput' ng-show="imageDisplaySettings.fileSelected" ng-model="displaySettings.fileName" disabled type="text"/>
     
-                        <input  class="form-control" ng-if="!displaySettings.fileSelected" name="pasteURL" ng-model="contentObject.webURL" type="URL" ng-change="onURLChange()">
+                        <input  class="form-control" ng-show="!imageDisplaySettings.fileSelected" name="pasteURL" ng-model="contentObject.webURL" type="URL" ng-change="onURLChange()">
     
                         <button ng-show="displaySettings.optionSelected" class="btn fileUpload" ng-click="reset()">Reset</button>
                     </div>
-                    
-                    <small class="text-danger" ng-show="displaySettings.uploadNonImage">You may only upload images at this time.</small>
-                    
+                    <br>
+                    <span class="text-danger" ng-show="displaySettings.uploadNonImage">You may only upload images at this time.</span>
+
                     <!-- TODO: support for dropping files, canceling uploads. Good place to show upload progress? -->
                     <!--  <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class"
                           ng-show="dropSupported">drop files here</div>
@@ -44,16 +43,22 @@
                     <button ng-click="upload.abort()">Cancel Upload</button> -->
                     
                    
-                    <div ng-if="imageDisplaySettings.fileSelected">
+                    <div ng-show="imageDisplaySettings.fileSelected">
                         <label>Preview:</label>
                         <br>
                         <img height="300px" ng-src="{{imageDisplaySettings.dataUrl.image}}">
                     </div>
                     
-                    <div ng-if="imageDisplaySettings.imageURLPresent">
+                    <div ng-show="imageDisplaySettings.imageURLPresent">
                         <label>Preview:</label>
                         <br>
                         <img height="300px" ng-src="{{contentObject.webURL}}">
+                    </div>
+
+                    <div ng-show="imageDisplaySettings.webShotURL">
+                        <label>Preview:</label>
+                        <br>
+                        <img height="300px" ng-src="img/submittedContent/{{contentObject.savedAs}}">
                     </div>
 
                 </div>
@@ -261,7 +266,8 @@
                 <h3 class="panel-title">{{contentObject.title}}</h3>
             </div>
             <br>
-            <div class="f-flexC f-column f-m-center f-c-center imgContainer">                                
+            <div class="f-flexC f-column f-m-center f-c-center imgContainer">    
+                <img ng-if="imageDisplaySettings.webShotURL" ng-src="img/submittedContent/{{contentObject.savedAs}}">          
                 <img ng-if="imageDisplaySettings.fileSelected" ng-src="{{imageDisplaySettings.dataUrl.image}}">
                 <img ng-if="imageDisplaySettings.imageURLPresent" ng-src="{{contentObject.webURL}}">                    
             </div>

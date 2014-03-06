@@ -33,6 +33,8 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
         // NOTE: dropping term from search into search leads to multiple instances of terms being returned
         // this should be fixed with correct term drop logic (restricting drop zones)
         $http.post('/relatedTerms', { 
+            matchAll: $scope.contentTerms.matchAll,
+            ignoreTerms: $scope.contentTerms.discarded,
             keyTerms: $scope.contentTerms.selected,
             type: $scope.filter.terms,
             language: appLanguage.lang }).
@@ -46,9 +48,6 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
     //typeahead from neo4j
     $scope.findTerm = function()
     {   
-
-        console.log("search: ");
-        console.log($scope.displayOptions.DBTerm);
         return $http.get('/termTypeAhead', { params: { entered: $scope.displayOptions.DBTerm, language: appLanguage.lang } }).
         then(function(response){
             if(!response.data.results){
@@ -75,6 +74,7 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
 }).
 
 service('contentTerms', [function () {
+    this.matchAll = true;   // specifies whether all or any terms must be matched
     this.selected = [];     // tag content with
     this.discarded = [];    // remove from suggested
     this.related = [];      // return based on search

@@ -418,9 +418,8 @@ exports.relatedTerms = function (request, reply) {
     // TODO: verify query is working properly - new terms should relate to all key terms
     console.log("payload: \n");
     console.log(request.payload);
-
+    var matchAllTerms = true;
     var query = "";
-
     var properties = {
         language: request.payload.language ,
         ignoreTerms: [],
@@ -429,6 +428,10 @@ exports.relatedTerms = function (request, reply) {
         searchTermsCount: 0
 
     };
+
+    if(request.payload.matchAll !== undefined && request.payload.matchAll){
+        matchAllTerms = false;
+    }
 
     if(request.payload.keyTerms.length === 0){
         //return most connected terms if no key terms selected
@@ -443,27 +446,30 @@ exports.relatedTerms = function (request, reply) {
         ].join('\n');
 
     } else {
-        query = [
-            'MATCH (contentNode:content)-[:TAGGED_WITH]->(searchTerms:term) ',
-            'WHERE searchTerms.UUID IN {searchTerms} ',
-            'WITH contentNode, COUNT(searchTerms) as count ',
-            'WHERE count = {searchTermsCount} ',
-            'MATCH (matched:term)<-[:TAGGED_WITH]-contentNode, ',
-            'matched-[:HAS_LANGUAGE {languageCode: {language} }]->(termMeta:termMeta) ',
-            'WHERE NOT matched.UUID IN {ignoreTerms} ',    
-            'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
-            'ORDER BY connections DESC LIMIT 10'
-
-            // original - returnes terms connected to any of the terms provied (good for when adding terms to content?)
-            // 'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
-            //     '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
-            // 'WHERE',
-            //     'typeNode.name IN {types} ',
-            //     'AND keyTerms.UUID IN {keyTerms} ',
-            //     'AND NOT matched.UUID IN {ignoreTerms} ',
-            // 'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
-            // 'ORDER BY connections DESC LIMIT 10'
-        ].join('\n');
+        if(matchAllTerms){
+            query = [
+                'MATCH (contentNode:content)-[:TAGGED_WITH]->(searchTerms:term) ',
+                'WHERE searchTerms.UUID IN {searchTerms} ',
+                'WITH contentNode, COUNT(searchTerms) as count ',
+                'WHERE count = {searchTermsCount} ',
+                'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-contentNode, ',
+                'matched-[:HAS_LANGUAGE {languageCode: {language} }]->(termMeta:termMeta) ',
+                'WHERE typeNode.name IN {types} AND NOT matched.UUID IN {ignoreTerms} ',    
+                'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
+                'ORDER BY connections DESC LIMIT 10'
+            ].join('\n');
+        } else {
+            query = [
+                'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
+                    '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
+                'WHERE',
+                    'typeNode.name IN {types} ',
+                    'AND keyTerms.UUID IN {keyTerms} ',
+                    'AND NOT matched.UUID IN {ignoreTerms} ',
+                'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
+                'ORDER BY connections DESC LIMIT 10'
+            ].join('\n');
+        }
 
         // add UUIDs from key terms to ignore and key term arrays
         for (var i = 0; i < request.payload.keyTerms.length; i++) {
@@ -479,7 +485,9 @@ exports.relatedTerms = function (request, reply) {
             properties.types.push(request.payload.type[type].name);
         }
     }
-
+    for (var term in request.payload.ignoreTerms) {
+        properties.ignoreTerms.push(request.payload.ignoreTerms[term].UUID);    
+    }
     
     console.log("props: " + JSON.stringify(properties));
 
