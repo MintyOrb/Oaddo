@@ -4,6 +4,14 @@
 angular.module('universalLibrary').
 
 controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLanguage', '$http', function ($location, $scope, contentTerms, appLanguage, $http) {
+    
+    $scope.contentTerms = contentTerms;
+
+    $scope.tab = {
+        description: false,
+        terms: true
+    };
+
     $scope.imageDisplaySettings = {
         fileSelected : false,
         imageURLPresent : false,
@@ -177,7 +185,6 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
 
     $scope.contentTerms = contentTerms;
     $scope.DBTerm = "";
-    $scope.typeAhead = [];
     $scope.displayOptions = {
         addingNewTerm : false // display freebase input or dbinput depending
     };
@@ -192,11 +199,17 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
     });
 
     // NOTE: is there a better solution to getting terms on filter change?
-    //  maybe keep an array of all the values and watch that instead?
-    $scope.$watchCollection("[filter.people.included,filter.organizations.included,filter.physicalObjects.included,filter.concepts.included,filter.jargon.included,filter.disciplines.included,filter.activities.included,filter.locations.included,filter.contentTypes.included,filter.people.included]", function(){
-        console.log("triggered: ");
-        getRelatedTerms();
-    });
+    // //  maybe keep an array of all the values and watch that instead?
+    // $scope.$watchCollection("[filter.people.included,filter.organizations.included,filter.physicalObjects.included,filter.concepts.included,filter.jargon.included,filter.disciplines.included,filter.activities.included,filter.locations.included,filter.contentTypes.included,filter.people.included]", function(){
+    //     console.log("triggered: ");
+    //     getRelatedTerms();
+    // });
+
+    $scope.$watch("filter.terms", function(newValue, oldValue){
+        if (newValue !== oldValue) {
+            getRelatedTerms();
+        }
+    }, true); // true as second parameter sets up deep watch
 
     $scope.$watch('DBTerm', function(){
         console.log("fired: " );
@@ -215,9 +228,8 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
         // NOTE: dropping term from search into search leads to multiple instances of terms being returned
         // this should be fixed with correct term drop logic (restricting drop zones)
         $http.post('/relatedTerms', { 
-            selectedTerms: $scope.contentTerms.selected,
             keyTerms: $scope.contentTerms.selected,
-            type: $scope.filter,
+            type: $scope.filter.terms,
             language: appLanguage.lang }).
         success(function(data){
             console.log("data: " + JSON.stringify(data));
@@ -232,14 +244,10 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
     {   
         return $http.get('/termTypeAhead', { params: { entered: $scope.DBTerm, language: appLanguage.lang } }).
         then(function(response){
-            console.log("type ahead response: ");
-            console.log(response);
-            console.log(response.matches);
             if(!response.data.results){
                 $scope.displayOptions.addingNewTerm = true;
                 focus('suggest');
             }
-            $scope.typeAhead = response.data.matches;
             return response.data.matches;
         });       
     };
@@ -404,48 +412,7 @@ directive('suggest', function() {
     };
 }).
 
-// directive('focusMe', function($timeout) {
-//   return {
-//     link: function(scope, element, attrs) {
-//       scope.$watch(attrs.focusMe, function(value) {
-//         console.log("focus me: ");
-//         console.log('value='+value);
-//         if(value) { 
-//           $timeout(function() {
-//             element[0].focus();
-//             scope[attrs.focusMe] = false;
-//           },10);
-//         }
-//       });
-//     }
-//   };
-// }).
-
-// directive('focusOn', function() {
-//     return {
-//         restrict: 'A',
-//         link:function (scope, element, attrs) {
-//             console.log("directive here: ");
-//             console.log(element);
-//             scope.$watch(attrs.focusOn, function(value){
-//                 if(attrs.focusOn) {
-//                     window.setTimeout(function(){
-//                         element[0].focus();
-//                     },10);
-//                 }
-//             }, true);
-//         }
-//     };
-// }).
-
-
-
-
 
 controller('metaSectionCtrl', ['$scope', 'contentTerms', function ($scope, contentTerms) {
-    $scope.tab = {
-        description: false,
-        terms: true
-    };
-    $scope.contentTerms = contentTerms;
+
 }]);

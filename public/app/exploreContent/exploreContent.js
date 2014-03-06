@@ -14,6 +14,18 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
     $scope.filter = filterFactory;
     $scope.filter.setAll(true);  // initialize filter values to true (include all types)
 
+    $scope.$watch("filter.terms", function(newValue, oldValue){
+        if (newValue !== oldValue) {
+            $scope.getRelatedTerms();
+        }
+    }, true); // true as second parameter sets up deep watch
+
+    // fetch related terms and content when search term array or filter options change
+    $scope.$watchCollection("contentTerms.selected", function(newValue, oldValue){
+        $scope.getRelatedTerms();
+        $scope.getRelatedContent();
+    });
+
     $scope.getRelatedContent = function(){
 		$http.post('/explore', { 
             includedTerms: $scope.contentTerms.selected,
@@ -42,18 +54,6 @@ controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location
             }
         });
     };
-
-    $scope.$watch("filter.terms", function(newValue, oldValue){
-		if (newValue !== oldValue) {
-			$scope.getRelatedTerms();
-		}
-    }, true); // true as second parameter sets up deep watch
-
-    // fetch related terms and content when search term array or filter options change
-    $scope.$watchCollection("contentTerms.selected", function(newValue, oldValue){
-		$scope.getRelatedTerms();
-		$scope.getRelatedContent();
-    });
 
 	$scope.findTerm = function()
     {   
