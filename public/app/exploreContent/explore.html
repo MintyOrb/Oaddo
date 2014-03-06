@@ -1,10 +1,8 @@
 
 
  <div class="container" ng-controller="exploreCtrl">
- 	{{displayLanguage.lang}}
- 	<br>
- 	{{lang}}
- 	<input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang">
+
+ 	<!-- <input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang"> -->
 	<div ui-on-Drop="" class="col-sm-12">
 
 		<div class="input-group col-sm-3 col-sm-offset-7">
@@ -80,7 +78,7 @@
 			    <i class="fa fa-heart pull-right"> 0</i>
 
                 <br>
-                <hr class="hr">
+                <hr ng-show="content.title.length > 0" class="hr">
 			    <h3 class="panel-title">{{content.title}}</h3>
 			</div>
 			<br>
@@ -96,8 +94,8 @@
 						<button ng-repeat="term in content.terms"class="btn btn-default btn-sm margin5">{{term}}</button>
 					</div>
 				</tab>
-				<tab heading="Description">
-					Nothing here yet.
+				<tab ng-if="content.description.length > 0" heading="Description">
+					<div ng-bind-html="content.description" class="margin10"></div>
 				</tab>
 			</tabset>			
 		</div>

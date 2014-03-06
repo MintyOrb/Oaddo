@@ -438,28 +438,23 @@ exports.relatedTerms = function (request, reply) {
             'WHERE',
                 'typeNode.name IN {types} ',
                 'AND NOT matched.UUID IN {ignoreTerms} ',
-            'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections',
+            'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
             'ORDER BY connections DESC LIMIT 10'
         ].join('\n');
 
     } else {
         query = [
             'MATCH (contentNode:content)-[:TAGGED_WITH]->(searchTerms:term) ',
-            'WITH contentNode, COUNT(contentNode) as contentCount, searchTerms ',
-            'WHERE searchTerms.UUID IN {searchTerms} AND contentCount = {searchTermsCount} ',
-            'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-contentNode, ',
-                'matched-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
-            'WHERE NOT matched.UUID IN {ignoreTerms}',
-            'RETURN termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
+            'WHERE searchTerms.UUID IN {searchTerms} ',
+            'WITH contentNode, COUNT(searchTerms) as count ',
+            'WHERE count = {searchTermsCount} ',
+            'MATCH (matched:term)<-[:TAGGED_WITH]-contentNode, ',
+            'matched-[:HAS_LANGUAGE {languageCode: {language} }]->(termMeta:termMeta) ',
+            'WHERE NOT matched.UUID IN {ignoreTerms} ',    
+            'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
             'ORDER BY connections DESC LIMIT 10'
 
-            // MATCH (contentNode:content)-[:TAGGED_WITH]->(searchTerms:term)
-            // WITH contentNode, COUNT(*) as cnt
-            // WHERE searchTerms.UUID IN {searchTerms} AND cnt = {_searchTerms_size_} 
-            // MATCH (matched:term)<-[:TAGGED_WITH]-contentNode    
-            // RETURN matched.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections
-            // ORDER BY connections DESC LIMIT 10
-
+            // original - returnes terms connected to any of the terms provied (good for when adding terms to content?)
             // 'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
             //     '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
             // 'WHERE',
@@ -531,36 +526,36 @@ exports.findRelatedContent = function (request, reply){
     // TODO: add content meta ASAP
     // TODO: consider merging filesystemID, weburl, and embedSrc into one property
     if(request.payload.includedTerms.length === 0){
-        // (contentMeta)-[meta:HAS_META {languageCode: {language} }]-
+
         query = [
-            "MATCH (content:content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID', // contentMeta.whatever',
+            "MATCH (meta:contentMeta)<-[metaLang:HAS_META {languageCode: {language} }]-(content:content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
     } else if(member){
         query = [
-            "MATCH (user:member {UUID: {userID} }), (content:content)-[:TAGGED_WITH]-(termNode:term) ",
+            "MATCH (user:member {UUID: {userID} }), (meta:contentMeta)<-[metaLang:HAS_META {languageCode: {language} }]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",
                 "NOT (user)-[:BLOCKED]-(content) ",
                 'AND termNode.UUID IN {includedTerms} ',
-            "WITH content, count(*) AS connected ",
-            "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
+            "WITH content, count(*) AS connected, meta ",
+            "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[metaLang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID',  // contentMeta.whatever',
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
 
     } else {
         query = [
-            "MATCH (content:content)-[:TAGGED_WITH]-(termNode:term) ",
+            "MATCH (meta:contentMeta)<-[metaLang:HAS_META {languageCode: {language} }]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",
                 'termNode.UUID IN {includedTerms} ',
-            "WITH content, count(*) AS connected ",
+            "WITH content, count(*) AS connected, meta ",
             "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID', // contentMeta.whatever',
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
