@@ -173,7 +173,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
 
 
 
-controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLanguage, $modal, filterFactory) {
+controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, appLanguage, $modal, filterFactory) {
 
     $scope.contentTerms = contentTerms;
     $scope.DBTerm = "";
@@ -184,6 +184,28 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
 
     $scope.filter = filterFactory;
     $scope.filter.setAll(true);  // initialize filter values to true (include all types)
+
+    // fetch terms related when search term array or filter options change
+    $scope.$watchCollection("contentTerms.selected", function(){
+        getRelatedTerms();
+        console.log("triggered selected: " );
+    });
+
+    // NOTE: is there a better solution to getting terms on filter change?
+    //  maybe keep an array of all the values and watch that instead?
+    $scope.$watchCollection("[filter.people.included,filter.organizations.included,filter.physicalObjects.included,filter.concepts.included,filter.jargon.included,filter.disciplines.included,filter.activities.included,filter.locations.included,filter.contentTypes.included,filter.people.included]", function(){
+        console.log("triggered: ");
+        getRelatedTerms();
+    });
+
+    $scope.$watch('DBTerm', function(){
+        console.log("fired: " );
+        if($scope.DBTerm.length === 0){
+            console.log("length 0: " );
+            $scope.displayOptions.addingNewTerm = false;
+            focus('db');
+        }
+    });
 
     var getRelatedTerms = function(){
         // clear current related
@@ -205,35 +227,21 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         });
     };
 
-    // fetch terms related when search term array or filter options change
-    $scope.$watchCollection("contentTerms.selected", function(){
-        
-        getRelatedTerms();
-        console.log("triggered selected: " );
-        
-    });
-
-    // NOTE: is there a better solution to getting terms on filter change?
-    //  maybe keep an array of all the values and watch that instead?
-    $scope.$watchCollection("[filter.people.included,filter.organizations.included,filter.physicalObjects.included,filter.concepts.included,filter.jargon.included,filter.disciplines.included,filter.activities.included,filter.locations.included,filter.contentTypes.included,filter.people.included]", function(){
-        console.log("triggered: ");
-        getRelatedTerms();
-    });
-
     //typeahead from neo4j
     $scope.findTerm = function()
     {   
-        $http.get('/termTypeAhead', { params: { entered: $scope.DBTerm, language: appLanguage.lang } }).
-        success(function(response){
-            if(response.matches !== undefined){
-                $scope.typeAhead = response.matches;
-            } else {
-                $scope.typeAhead = [{name:" - no terms matched - "}];
+        return $http.get('/termTypeAhead', { params: { entered: $scope.DBTerm, language: appLanguage.lang } }).
+        then(function(response){
+            console.log("type ahead response: ");
+            console.log(response);
+            console.log(response.matches);
+            if(!response.data.results){
+                $scope.displayOptions.addingNewTerm = true;
+                focus('suggest');
             }
-        }).
-        error(function(data){
-            console.log("type ahead error: "+ JSON.stringify(data));
-        });        
+            $scope.typeAhead = response.data.matches;
+            return response.data.matches;
+        });       
     };
 
     $scope.addToSelectedFromDB = function(){
@@ -244,7 +252,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
 
     $scope.openNewTermModal = function (termData) {
         // $scope.newTermMeta.name = termData.name;
-        var test = termData;
+        $scope.DBTerm = "";
         console.log("termMeta: " + JSON.stringify(termData));
         var modalInstance = $modal.open({
             templateUrl: 'app/addingContent/newTermModal.html',
@@ -368,14 +376,16 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
     });
 }).
 
-// TODO: add ng-model support for suggest input (bind it to other input and clear after a term has been added)
 // TODO: auto switch to fb search when no content found in aaddo db
 directive('suggest', function() {
     return {
         restrict: 'E',
-        template: "<input style='background: url(img/fbIcon.png); background-position: 140px 6px; background-repeat: no-repeat;' type='text'>",
+        template: "<input style='background: url(img/fbIcon.png); background-position: 140px 6px; background-repeat: no-repeat;' ng-model='inputModel' type='text'>",
         replace:true,
-        scope:{onSelect:'&'},
+        scope:{
+            onSelect:'&',
+            inputModel:'='
+        },
         link: function(scope, element, attrs) {
             attrs.$observe('lang', function(value) {
                 $(element).suggest({
@@ -394,7 +404,39 @@ directive('suggest', function() {
     };
 }).
 
+// directive('focusMe', function($timeout) {
+//   return {
+//     link: function(scope, element, attrs) {
+//       scope.$watch(attrs.focusMe, function(value) {
+//         console.log("focus me: ");
+//         console.log('value='+value);
+//         if(value) { 
+//           $timeout(function() {
+//             element[0].focus();
+//             scope[attrs.focusMe] = false;
+//           },10);
+//         }
+//       });
+//     }
+//   };
+// }).
 
+// directive('focusOn', function() {
+//     return {
+//         restrict: 'A',
+//         link:function (scope, element, attrs) {
+//             console.log("directive here: ");
+//             console.log(element);
+//             scope.$watch(attrs.focusOn, function(value){
+//                 if(attrs.focusOn) {
+//                     window.setTimeout(function(){
+//                         element[0].focus();
+//                     },10);
+//                 }
+//             }, true);
+//         }
+//     };
+// }).
 
 
 

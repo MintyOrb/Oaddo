@@ -405,9 +405,9 @@ exports.termTypeAhead = function (request, reply){
         console.log("returned from db: " + JSON.stringify(matches));
         if(matches[0] === undefined){
             console.log("none found: " + JSON.stringify(matches));
-            reply({ message : 'no content found' });
+            reply({ matches : [], results: false });
         } else {
-            reply({matches:matches});
+            reply({matches:matches, results: true });
         }
     });    
 };

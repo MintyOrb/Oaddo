@@ -63,4 +63,25 @@ factory('filterFactory', [function () {
         }
         
     };
-}]);
+}]).
+
+directive('focusOn', function() {
+   return function(scope, elem, attr) {
+      scope.$on('focusOn', function(e, name) {
+        console.log("focusOn: " );
+        console.log(name);
+        console.log(attr.focusOn);
+        if(name === attr.focusOn) {
+          elem[0].focus();
+        }
+      });
+   };
+}).
+
+factory('focus', function ($rootScope, $timeout) {
+  return function(name) {
+    $timeout(function (){
+      $rootScope.$broadcast('focusOn', name);
+    },10);
+  };
+});
