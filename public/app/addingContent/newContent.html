@@ -93,9 +93,9 @@
             <!-- TODO: set up drop channels that don't accept an element coming from its own container -->
                 <div ng-controller="termSelectionCtrl">
                     <div class="row margin5 f-flexC f-m-center margin20">
-                        <div>
-                            <suggest focus-on="suggest" ng-show="displayOptions.addingNewTerm" class='form-control' on-select="openNewTermModal(data)" input-model="DBTerm" lang="{{displayLanguage.get()}}"></suggest>
-                            <input focus-on="db" ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="Type term name here" >
+                        <div ng-controller="newTermCtrl">
+                            <suggest focus-on="suggest" ng-show="displayOptions.addingNewTerm" class='form-control' on-select="openNewTermModal(data)" input-model="displayOptions.DBTerm" lang="{{displayLanguage.get()}}"></suggest>
+                            <input focus-on="db" ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="Type term name here" >
                             <button ng-click="displayOptions.addingNewTerm = !displayOptions.addingNewTerm" class='btn btn-default btn-sm'>Change Source</button>
                             <i class='text-muted fa fa-question-circle'></i>
                         </div>

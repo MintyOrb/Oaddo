@@ -3,10 +3,10 @@
  <div ng-controller="exploreCtrl">
 
  	<!-- <input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang"> -->
-	<div ui-on-Drop="" class="col-sm-12">
+	<div ng-controller='termSelectionCtrl' ui-on-Drop="" class="col-sm-12">
 
 		<div class="input-group col-sm-3 col-sm-offset-7">
-		    <input type="text" class="form-control" ng-model="DBTerm" ng-change="findTerm()" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in typeAhead" placeholder="type search term here">
+		    <input type="text" class="form-control" ng-model="DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">
 		    <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
 		</div>
 
@@ -76,7 +76,6 @@
 				<i class="fa fa-ban pull-right"></i>
 			    <i class="fa fa-eye pull-right"> 0</i>
 			    <i class="fa fa-heart pull-right"> 0</i>
-
                 <br>
                 <hr ng-show="content.title.length > 0" class="hr">
 			    <h3 class="panel-title">{{content.title}}</h3>

@@ -3,105 +3,30 @@
 
 angular.module('universalLibrary').
 
-controller("exploreCtrl", function ($scope, contentTerms, viewContent, $location, $http, appLanguage, filterFactory) {
-    // NOTE: this controller contains largly identical functionality to the termSelection controller
-		// consider refactoring to be more DRY
-	$scope.contentTerms = contentTerms;
-    $scope.DBTerm = "";
-    $scope.typeAhead = [];
+controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
+
+    $scope.contentTerms = contentTerms;
     $scope.returnedContent = [];
-    
-    $scope.filter = filterFactory;
-    $scope.filter.setAll(true);  // initialize filter values to true (include all types)
 
-    $scope.$watch("filter.terms", function(newValue, oldValue){
-        if (newValue !== oldValue) {
-            $scope.getRelatedTerms();
-        }
-    }, true); // true as second parameter sets up deep watch
-
-    // fetch related terms and content when search term array or filter options change
-    $scope.$watchCollection("contentTerms.selected", function(newValue, oldValue){
-        $scope.getRelatedTerms();
-        $scope.getRelatedContent();
+    $scope.$watchCollection("contentTerms.selected", function(){
+        getRelatedContent();
     });
 
-    $scope.getRelatedContent = function(){
-		$http.post('/explore', { 
+    var getRelatedContent = function(){
+        $http.post('/explore', { 
             includedTerms: $scope.contentTerms.selected,
             excludedTerms: $scope.contentTerms.discarded, 
             language: appLanguage.lang }).
         success(function(data){
             $scope.returnedContent = data; 
-            console.log(data);           
         });
-	};
-
-	$scope.getRelatedTerms = function(){
-        // clear current related
-        // TODO: only remove terms that are not again returned? (prevent term from vanishing only to re-appear)
-        $scope.contentTerms.related = [];
-        console.log("app language: ");
-        console.log(appLanguage.lang);
-        $http.post('/relatedTerms', { 
-            keyTerms: $scope.contentTerms.selected,
-            type: $scope.filter.terms,
-            language: appLanguage.lang }).
-        success(function(data){
-            console.log(data);
-            for (var i = 0; i < data.results.length; i++) {
-                $scope.contentTerms.related.push(data.results[i]);
-            }
-        });
-    };
-
-	$scope.findTerm = function()
-    {   
-        $http.get('/termTypeAhead', { params: { entered: $scope.DBTerm, language: appLanguage.lang } }).
-        success(function(response){
-            if(response.matches !== undefined){
-                $scope.typeAhead = response.matches;
-            } else {
-                $scope.typeAhead = [{name:" - no terms matched - "}];
-            }
-        }).
-        error(function(data){
-            console.log("type ahead error: "+ JSON.stringify(data));
-        });        
-    };
-
-	$scope.addToSelectedFromDB = function(){
-        contentTerms.selected.push({name:$scope.DBTerm.name,UUID:$scope.DBTerm.UUID});
-        $scope.DBTerm = "";
-    };
-
-	$scope.dropFromHandler = function(index, termArray){
-        termArray.splice(index, 1);
-    };
-
-    $scope.recievingHandler = function(data, termArray){
-        termArray.push(data);
     };
 }).
-
-
-
-
 
 
 service('viewContent', [function () {
     this.selected = {};
 }]).
-
-
-
-
-
-
-
-
-
-
 
 
 controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewContent", function ($sce, $http, $routeParams, $scope, viewContent) {

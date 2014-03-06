@@ -176,92 +176,9 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
 
 
 
-
-
-
-
-
-controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, appLanguage, $modal, filterFactory) {
-
-    $scope.contentTerms = contentTerms;
-    $scope.DBTerm = "";
-    $scope.displayOptions = {
-        addingNewTerm : false // display freebase input or dbinput depending
-    };
-
-    $scope.filter = filterFactory;
-    $scope.filter.setAll(true);  // initialize filter values to true (include all types)
-
-    // fetch terms related when search term array or filter options change
-    $scope.$watchCollection("contentTerms.selected", function(){
-        getRelatedTerms();
-        console.log("triggered selected: " );
-    });
-
-    // NOTE: is there a better solution to getting terms on filter change?
-    // //  maybe keep an array of all the values and watch that instead?
-    // $scope.$watchCollection("[filter.people.included,filter.organizations.included,filter.physicalObjects.included,filter.concepts.included,filter.jargon.included,filter.disciplines.included,filter.activities.included,filter.locations.included,filter.contentTypes.included,filter.people.included]", function(){
-    //     console.log("triggered: ");
-    //     getRelatedTerms();
-    // });
-
-    $scope.$watch("filter.terms", function(newValue, oldValue){
-        if (newValue !== oldValue) {
-            getRelatedTerms();
-        }
-    }, true); // true as second parameter sets up deep watch
-
-    $scope.$watch('DBTerm', function(){
-        console.log("fired: " );
-        if($scope.DBTerm.length === 0){
-            console.log("length 0: " );
-            $scope.displayOptions.addingNewTerm = false;
-            focus('db');
-        }
-    });
-
-    var getRelatedTerms = function(){
-        // clear current related
-        // TODO: only remove terms that are not again returned? (prevent term from vanishing only to re-appear)
-        $scope.contentTerms.related = [];
-
-        // NOTE: dropping term from search into search leads to multiple instances of terms being returned
-        // this should be fixed with correct term drop logic (restricting drop zones)
-        $http.post('/relatedTerms', { 
-            keyTerms: $scope.contentTerms.selected,
-            type: $scope.filter.terms,
-            language: appLanguage.lang }).
-        success(function(data){
-            console.log("data: " + JSON.stringify(data));
-            for (var i = 0; i < data.results.length; i++) {
-                $scope.contentTerms.related.push(data.results[i]);
-            }
-        });
-    };
-
-    //typeahead from neo4j
-    $scope.findTerm = function()
-    {   
-        return $http.get('/termTypeAhead', { params: { entered: $scope.DBTerm, language: appLanguage.lang } }).
-        then(function(response){
-            if(!response.data.results){
-                $scope.displayOptions.addingNewTerm = true;
-                focus('suggest');
-            }
-            return response.data.matches;
-        });       
-    };
-
-    $scope.addToSelectedFromDB = function(){
-        contentTerms.selected.push({name:$scope.DBTerm.name,UUID:$scope.DBTerm.UUID});
-        $scope.DBTerm = "";
-        console.log("selected: " + JSON.stringify(contentTerms.selected));
-    };
+controller("newTermCtrl", function ($scope, focus, $modal) {
 
     $scope.openNewTermModal = function (termData) {
-        // $scope.newTermMeta.name = termData.name;
-        $scope.DBTerm = "";
-        console.log("termMeta: " + JSON.stringify(termData));
         var modalInstance = $modal.open({
             templateUrl: 'app/addingContent/newTermModal.html',
             controller: 'newTermModalInstanceCtrl',
@@ -274,19 +191,12 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
         });
     };
 
-    $scope.dropFromHandler = function(index, termArray){
-        console.log("DROPPING");
-        console.log("termArray: " + termArray);
-        console.log("index: " + index);
-        termArray.splice(index, 1);
-    };
-
-    $scope.recievingHandler = function(data, termArray){
-        console.log("RECIEVING");
-        console.log("data: " + data);
-        console.log("termArray: " + termArray);
-        termArray.push(data);
-    };
+    $scope.$watch('displayOptions.DBTerm', function(){
+        if($scope.displayOptions.DBTerm.length === 0){
+            $scope.displayOptions.addingNewTerm = false;
+            focus('db');
+        }
+    });
 
 }).
 
