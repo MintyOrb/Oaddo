@@ -18,6 +18,7 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
                 url: "",
                 text: ""
             },
+            takeAway: "",
             description: "",
             title: ""
         },
@@ -193,7 +194,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
         // this should be fixed with correct term drop logic (restricting drop zones)
         $http.post('/relatedTerms', { 
             selectedTerms: $scope.contentTerms.selected,
-            keyTerms: $scope.contentTerms.search,
+            keyTerms: $scope.contentTerms.selected,
             type: $scope.filter,
             language: appLanguage.lang }).
         success(function(data){
@@ -205,11 +206,11 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
     };
 
     // fetch terms related when search term array or filter options change
-    $scope.$watchCollection("contentTerms.search", function(){
-        if(contentTerms.selected.length > 0){
-            getRelatedTerms();
-            console.log("triggered selected: " );
-        }    
+    $scope.$watchCollection("contentTerms.selected", function(){
+        
+        getRelatedTerms();
+        console.log("triggered selected: " );
+        
     });
 
     // NOTE: is there a better solution to getting terms on filter change?
