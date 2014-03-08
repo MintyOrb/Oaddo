@@ -342,7 +342,7 @@ exports.addNewContent = function (request, reply){
     
     //query for creating the content and relationships to tagged terms
     var query = [
-        "CREATE (contentNode:content:testContent {contentParams})-[r:HAS_META {languageCode: {lang} }]-(metaNode:contentMeta {metaParams}) ",
+        "CREATE (contentNode:content:testContent {contentParams})-[r:HAS_META {languageCode: {lang} }]->(metaNode:contentMeta {metaParams}) ",
         "WITH contentNode MATCH (termNode:term) ",
         "WHERE termNode.UUID IN {taggedTermsUUID} ",
         "CREATE (contentNode)-[:TAGGED_WITH]->(termNode)"
@@ -418,7 +418,7 @@ exports.relatedTerms = function (request, reply) {
     // TODO: verify query is working properly - new terms should relate to all key terms
     console.log("payload: \n");
     console.log(request.payload);
-    var matchAllTerms = true;
+    var matchAllTerms;
     var query = "";
     var properties = {
         language: request.payload.language ,
@@ -429,8 +429,10 @@ exports.relatedTerms = function (request, reply) {
 
     };
 
-    if(request.payload.matchAll !== undefined && request.payload.matchAll){
-        matchAllTerms = false;
+    if(request.payload.matchAll !== undefined){
+        matchAllTerms = request.payload.matchAll;
+    } else {
+        matchAllTerms = true;
     }
 
     if(request.payload.keyTerms.length === 0){
@@ -460,23 +462,22 @@ exports.relatedTerms = function (request, reply) {
             ].join('\n');
         } else {
             query = [
-                'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(keyTerms:term), ',
+                'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(searchTerms:term), ',
                     '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
                 'WHERE',
                     'typeNode.name IN {types} ',
-                    'AND keyTerms.UUID IN {keyTerms} ',
+                    'AND searchTerms.UUID IN {searchTerms} ',
                     'AND NOT matched.UUID IN {ignoreTerms} ',
                 'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
                 'ORDER BY connections DESC LIMIT 10'
             ].join('\n');
         }
-
-        // add UUIDs from key terms to ignore and key term arrays
-        for (var i = 0; i < request.payload.keyTerms.length; i++) {
-            properties.searchTermsCount += 1;
-            properties.ignoreTerms.push(request.payload.keyTerms[i].UUID);
-            properties.searchTerms.push(request.payload.keyTerms[i].UUID);
-        }
+    }
+     // add UUIDs from key terms to ignore and key term arrays
+    for (var i = 0; i < request.payload.keyTerms.length; i++) {
+        properties.searchTermsCount += 1;
+        properties.ignoreTerms.push(request.payload.keyTerms[i].UUID);
+        properties.searchTerms.push(request.payload.keyTerms[i].UUID);
     }
 
     // add filters to type array
@@ -493,10 +494,7 @@ exports.relatedTerms = function (request, reply) {
 
 
     db.query(query, properties, function (err, results) {
-        console.log("out of query");
         if (err) {throw err;}
-        console.log("query success: ");
-        console.log(results);
         reply({results: results});
     });
 };
@@ -534,10 +532,9 @@ exports.findRelatedContent = function (request, reply){
     // TODO: add content meta ASAP
     // TODO: consider merging filesystemID, weburl, and embedSrc into one property
     if(request.payload.includedTerms.length === 0){
-
         query = [
             "MATCH (meta:contentMeta)<-[metaLang:HAS_META {languageCode: {language} }]-(content:content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description',
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
@@ -550,7 +547,7 @@ exports.findRelatedContent = function (request, reply){
             "WITH content, count(*) AS connected, meta ",
             "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[metaLang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description',
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title ',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
@@ -563,7 +560,7 @@ exports.findRelatedContent = function (request, reply){
             "WITH content, count(*) AS connected, meta ",
             "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description',
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title ',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
@@ -590,9 +587,10 @@ exports.getContent = function (request, reply){
     console.log("data: "+ request.query);
     console.log("data: "+ JSON.stringify(request.query));
     // TODO: increase view count by one
-    var query = "MATCH (contentNode:content {UUID: {id} }) RETURN contentNode.displayType AS displayType, contentNode.savedAs AS savedAs, contentNode.webURL AS webURL, contentNode.embedSrc AS embedSrc";
+    var query = "MATCH (meta:contentMeta)-[:HAS_META { languageCode: { language } }]-(contentNode:content {UUID: {id} }) RETURN contentNode.displayType AS displayType, contentNode.savedAs AS savedAs, contentNode.webURL AS webURL, contentNode.embedSrc AS embedSrc";
     var properties = { 
-        id: request.query.uuid
+        id: request.query.uuid,
+        language: request.query.language,
     };
 
     db.query(query, properties, function (err, content) {

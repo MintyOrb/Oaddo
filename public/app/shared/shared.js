@@ -29,7 +29,7 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
     var getRelatedTerms = function(){
         // clear current related
         // TODO: only remove terms that are not again returned? (prevent term from vanishing only to re-appear)
-        $scope.contentTerms.related = [];
+        // $scope.contentTerms.related = [];
         // NOTE: dropping term from search into search leads to multiple instances of terms being returned
         // this should be fixed with correct term drop logic (restricting drop zones)
         $http.post('/relatedTerms', { 
@@ -39,9 +39,48 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
             type: $scope.filter.terms,
             language: appLanguage.lang }).
         success(function(data){
-            for (var i = 0; i < data.results.length; i++) {
-                $scope.contentTerms.related.push(data.results[i]);
+            // for (var jj = 0; jj < data.results.length; jj++) {
+            //         console.log("adding terms: " );
+            //         $scope.contentTerms.related.push(data.results[jj]);
+            //     }
+
+            // get matches
+            
+            if($scope.contentTerms.related.length > 0){
+                var matched = [];
+                // for earch term in related go though results get name if also found in results.
+                for (var i = 0; i < $scope.contentTerms.related.length; i++) {
+                    for (var x = 0; x < data.results.length; x++) {
+                        if($scope.contentTerms.related[i].name === data.results[x].name){
+                            matched.push(data.results[x].name);
+                        }
+                    }
+                }
+                
+                if(matched.length > 0){
+                    // remove terms from related if not a match
+                    var length = $scope.contentTerms.related.length;
+                    while (length--){
+                        console.log($scope.contentTerms.related[length].name);
+                        console.log(matched.indexOf($scope.contentTerms.related[length].name));
+                        if(matched.indexOf($scope.contentTerms.related[length].name) < 0){
+                            $scope.contentTerms.related.splice(length,1);
+                        }   
+                    }
+                }
+                // add results to related if not a match
+                for (var ii = 0; ii < data.results.length; ii++) {
+                    if( matched.indexOf(data.results[ii].name ) < 0 ){
+                        console.log("adding: " );
+                        $scope.contentTerms.related.push(data.results[ii]);
+                    }
+                }
+            } else {
+                for (var jj = 0; jj < data.results.length; jj++) {
+                    $scope.contentTerms.related.push(data.results[jj]);
+                }
             }
+            
         });
     };
 
@@ -131,7 +170,11 @@ factory('filterFactory', [function () {
             contentTypes: {
                 included: false,
                 name: 'content type',
-            }
+            },
+            // events: {
+            //     included: false,
+            //     name: 'event',
+            // }
         }
         
     };

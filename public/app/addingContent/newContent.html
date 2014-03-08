@@ -55,7 +55,7 @@
                         <img height="300px" ng-src="{{contentObject.webURL}}">
                     </div>
 
-                    <div ng-show="imageDisplaySettings.webShotURL">
+                    <div ng-if="imageDisplaySettings.webShotURL">
                         <label>Preview:</label>
                         <br>
                         <img height="300px" ng-src="img/submittedContent/{{contentObject.savedAs}}">
@@ -190,13 +190,13 @@
                         <label>title: 
                         <span class='text-danger' ng-show="addContentForm.title.$invalid"> must be shorter than 100 characters</span></label>
                         <br>
-                        <input ng-maxlength="100" class="form-control width100p" name='title' type="text" ng-model="contentObject.title">
+                        <input ng-maxlength="100" class="form-control width100p" name='title' type="text" ng-model="contentObject.meta.title">
                     </div>
                     <!-- TODO: get description (text-angular) validation working -->
                     <div class="form-group" ng-class="{ 'has-error' : addContentForm.description.$invalid }">
                         <label>description:</label>
                         <span class='text-danger' ng-show="addContentForm.description.$invalid"> must be shorter than 900 characters</span>
-                        <text-angular name="description" ng-maxlength='900' ng-focus="tab.description = true" ta-toolbar="[['bold', 'italics', 'underline'],['redo', 'undo'],['insertLink', 'unlink']]" ng-model="contentObject.description"></text-angular>
+                        <text-angular name="description" ng-maxlength='900' ng-focus="tab.description = true" ta-toolbar="[['bold', 'italics', 'underline'],['redo', 'undo'],['insertLink', 'unlink']]" ng-model="contentObject.meta.description"></text-angular>
                     </div>
                     <br>
                     <div class="form-group" ng-class="{ 'has-error' : addContentForm.takeAway.$invalid }">
@@ -262,8 +262,8 @@
                 <i class="fa fa-heart pull-right"> 0</i>
                 
                 <br>
-                <hr ng-show="contentObject.title.length > 0" class="hr">
-                <h3 class="panel-title">{{contentObject.title}}</h3>
+                <hr ng-show="contentObject.meta.title.length > 0" class="hr">
+                <h3 class="panel-title">{{contentObject.meta.title}}</h3>
             </div>
             <br>
             <div class="f-flexC f-column f-m-center f-c-center imgContainer">    
@@ -279,7 +279,7 @@
                     </div>
                 </tab>
                 <tab active="tab.description" heading="Description">
-                    <div ng-bind-html="contentObject.description" class="margin10"></div>
+                    <div ng-bind-html="contentObject.meta.description" class="margin10"></div>
                 </tab>
             </tabset>           
         </div>

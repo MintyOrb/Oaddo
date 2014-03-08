@@ -30,7 +30,7 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, LoginSer
         LoginService.modalIsOpen = false;
         // only close if route change is not coming from loggedin resolve i.e. user access is denied
         if(previous.$$route === undefined || previous.$$route.resolve === undefined || Object.keys(previous.$$route.resolve)[0] !=='loggedin'){
-            $modalInstance.dismiss("routeChange");
+            $modalInstance.close();
         }
     });
 

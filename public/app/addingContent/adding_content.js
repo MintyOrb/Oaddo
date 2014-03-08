@@ -30,11 +30,11 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
         language: appLanguage.lang,
         // language specific
         meta: {
-            source: {
-                url: "",
-                text: ""
-            },
-            takeAway: "",
+            // source: {
+            //     url: "",
+            //     text: ""
+            // },
+            // takeAway: "",
             description: "",
             title: ""
         },

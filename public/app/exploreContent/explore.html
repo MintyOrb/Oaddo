@@ -4,14 +4,13 @@
 
  	<!-- <input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang"> -->
 	<div ng-controller='termSelectionCtrl' ui-on-Drop="" class="col-sm-12">
-
 		<div class="input-group col-sm-3 col-sm-offset-7">
 		    <input type="text" class="form-control" ng-model="DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">
 		    <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
 		</div>
 
-	   	<button ng-hide="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Hide Filter  <i class=' text-muted fa fa-question-circle'></i></button>
-	   	<button ng-show="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Show Filter  <i class=' text-muted fa fa-question-circle'></i></button>
+	   	<button ng-hide="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Hide Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
+	   	<button ng-show="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Show Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
 
 	    <div collapse="filter.isCollapsed">
 

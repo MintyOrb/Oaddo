@@ -29,18 +29,14 @@ service('viewContent', [function () {
 }]).
 
 
-controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewContent", function ($sce, $http, $routeParams, $scope, viewContent) {
+controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewContent", "appLanguage", function ($sce, $http, $routeParams, $scope, viewContent, appLanguage) {
 	
     $scope.panelVisible = true;
     $scope.panelHalfScreen = true;
-    console.log("location id: " + $routeParams.id);
-    console.log($routeParams);
 
     // TODO: handle error - if content with UUID not found, display error
-    $http.get('/content', {params: {uuid: $routeParams.id}})
+    $http.get('/content', {params: {uuid: $routeParams.id, language: appLanguage.get()}})
     .success(function(data){
-        console.log("data: " );
-        console.log(data);
         viewContent.selected = data[0];  
         $scope.content = viewContent.selected;
         $scope.content.embedSrc = $sce.trustAsResourceUrl($scope.content.embedSrc);
