@@ -34,15 +34,15 @@
 
 	        <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">no matching terms</span>
 	        <div class="f-flexC f-row f-m-around f-wrap">
-	        	<div ng-repeat="term in contentTerms.related" class="dropdown">
-		        	<div class="btn-group margin5 dn-bounce">
-		            	<button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" class='btn btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
-		        		<button class='dropdown-toggle btn btn-default'>^<i class="fa fa-chevron-down"></i></button>
+	        	<div ng-repeat="term in contentTerms.related" class="dropdown dn-bounce">
+		        	<div class="btn-group margin5">
+		            	<button ng-click="addToFrom(contentTerms.selected,contentTerms.related,term,$index)" ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" class='btn btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
+		        		<button class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
 		        		<!-- TOOD: get menu out of hidden overflow -->
 			        	<ul class='dropdown-menu'>
-		        			<li><a>add to search</a></li>
-		        			<li><a>discard</a></li>
-		        			<li><a>term</a></li>
+		        			<li><a ng-click="addToFrom(contentTerms.selected,contentTerms.related,term,$index)">add to search</a></li>
+		        			<li><a ng-click="addToFrom(contentTerms.discarded,contentTerms.related,term,$index)">discard</a></li>
+		        			<li><a>term page</a></li>
 			        	</ul>
 			        </div>
 		        </div>
@@ -56,7 +56,19 @@
 	        <div class="f-flexC f-row f-m-center">
 	            <span ng-hide="contentTerms.selected.length > 0"class="dn-fade text-muted background h3">search terms</span>
 	            <div class="f-flexC f-row f-m-around f-wrap">
-	                <button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.selected)" drag="term" ng-repeat="term in contentTerms.selected" class='dn-bounce above btn margin5 btn-default'>{{term.name}}</button>
+
+					<div ng-repeat="term in contentTerms.selected" class="dropdown dn-bounce">
+			        	<div class="btn-group margin5">
+			            	<button ng-click="addToFrom(contentTerms.discarded,contentTerms.selected,term,$index)" ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.selected)" drag="term" class='btn btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
+			        		<button class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
+			        		<!-- TOOD: get menu out of hidden overflow -->
+				        	<ul class='dropdown-menu'>
+			        			<li><a ng-click="addToFrom(contentTerms.discarded,contentTerms.selected,term,$index)">discard</a></li>
+			        			<li><a>term page</a></li>
+				        	</ul>
+				        </div>
+			        </div>
+
 	            </div>
 	        </div>
 	    </div>
@@ -66,7 +78,19 @@
 	        <div class="f-flexC f-row f-m-center">
 	            <span ng-hide="contentTerms.discarded.length > 0" class="dn-fade text-muted background h3">discarded terms</span>
 	            <div class="f-flexC f-row f-m-around f-wrap">
-	                <button ui-draggable="true" on-drop-success="dropFromHandler($index, contentTerms.discarded)" drag="term" ng-repeat="term in contentTerms.discarded" class='dn-bounce above btn margin5 btn-default btn-xs'>{{term.name}}</button>
+	                
+	            	<div ng-repeat="term in contentTerms.discarded" class="dropdown dn-bounce">
+			        	<div class="btn-group btn-group-xs margin5">
+			            	<button ng-click="addToFrom(contentTerms.selected,contentTerms.discarded,term,$index)" ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.discarded)" drag="term" class='btn btn-default'>{{term.name}}</button>
+			        		<button class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
+			        		<!-- TOOD: get menu out of hidden overflow -->
+				        	<ul class='dropdown-menu'>
+			        			<li><a ng-click="addToFrom(contentTerms.selected,contentTerms.discarded,term,$index)">add to search</a></li>
+			        			<li><a>term page</a></li>
+				        	</ul>
+				        </div>
+			        </div>
+
 	            </div>
 	        </div>
 	    </div>

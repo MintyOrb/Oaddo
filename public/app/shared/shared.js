@@ -46,7 +46,6 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
                             matched.push(data.results[x].name);
                         }
                     }
-                    console.log("related: " + $scope.contentTerms.related[i].name);
                 }
                 
                 if(matched.length > 0){
@@ -95,12 +94,18 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
         $scope.displayOptions.DBTerm = "";
     };
 
-    $scope.dropFromHandler = function(index, termArray){
+    $scope.dropFromHandler = function(index, termArray){  // this method can be replaced by addToFrom()
         termArray.splice(index, 1);
     };
 
-    $scope.recievingHandler = function(data, termArray){
+    $scope.recievingHandler = function(data, termArray){  // this method can be replaced by addToFrom()
         termArray.push(data);
+    };
+
+    $scope.addToFrom = function(to,from,term,index){
+        console.log("index: " + index);
+        to.push(term);
+        from.splice(index, 1);
     };
 
 }).
@@ -133,7 +138,6 @@ factory('filterFactory', [function () {
             }
         },
         selectGroup : function(group){
-            console.log("called: " + group);            
             for (var term in this.terms) {
                 if(this.terms[term].name === group){
                     this.terms[term].included = true;
