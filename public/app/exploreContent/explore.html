@@ -1,7 +1,6 @@
 
 
  <div ng-controller="exploreCtrl">
-
  	<input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang">
 	<div ng-controller='termSelectionCtrl' ui-on-Drop="" class="col-sm-12">
 		<div class="input-group col-sm-3 col-sm-offset-7">
@@ -16,22 +15,18 @@
 
 	    	<div  class="f-flexC f-column f-m-between f-c-center panel panel-default marginBottom0 col-sm-8 col-sm-offset-2">
 	    		<div class="marginTop10 f-flexC f-row f-wrap f-m-center f-c-center">
-	    			<button ng-class="{ 'buttonSelected' : filter.terms.people.included }" ng-click="filter.selectGroups(['person'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.people.included">People</button>
-					<button ng-class="{ 'buttonSelected' : filter.terms.organizations.included }" ng-click="filter.selectGroups(['organization'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.organizations.included">Organizations</button>
-					<button ng-class="{ 'buttonSelected' : filter.terms.physicalObjects.included }" ng-click="filter.selectGroups(['physical object'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.physicalObjects.included">Physical Objects</button>
-					<button ng-class="{ 'buttonSelected' : filter.terms.concepts.included }" ng-click="filter.selectGroups(['concept'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.concepts.included">Concepts</button>
-					<button ng-class="{ 'buttonSelected' : filter.terms.jargon.included }" ng-click="filter.selectGroups(['jargon'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.jargon.included">Jargon</button>
-					<button ng-class="{ 'buttonSelected' : filter.terms.disciplines.included }" ng-click="filter.selectGroups(['discipline'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.disciplines.included">Disciplines</button>
-					<button ng-class="{ 'buttonSelected' : filter.terms.activities.included }" ng-click="filter.selectGroups(['activity'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.activities.included">Activities</button>
-					<button ng-class="{ 'buttonSelected' : filter.terms.locations.included }" ng-click="filter.selectGroups(['location'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.locations.included">Locations</button>
-					<button ng-class="{ 'buttonSelected' : filter.terms.contentTypes.included }" ng-click="filter.selectGroups(['content type'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.contentTypes.included">Content Types</button>
+	    			<div ng-repeat="group in filter.terms" class="btn-group btn-group-xs margin5">
+	    				<button ng-click="filter.addGroup(group.name)" class="btn btn-default">+</button>
+	    				<button ng-class="{ 'buttonSelected' : group.included }" ng-click="filter.selectGroup(group.name)" class="btn noOutline btn-default" type="button">{{group.name}}</button>
+						<button ng-click="filter.removeGroup(group.name)" class="btn btn-default">-</button>
+	    			</div>
 	    		</div>
 	    		<div class="">
 	    			<div class='margin10'>
 						<button ng-click="filter.setAll(true)" class=" btn btn-xs btn-primary">Select All</button>
-						<button ng-click="filter.setAll(false)" class=" btn btn-xs btn-primary">De-select All</button>
+						<button ng-click="filter.setAll(false)" class="btn btn-xs btn-primary">De-select All</button>
 	    			</div>
-	    		</div>
+	    		</div> 
 	    	</div>
 	    </div>
 	    <div ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm col-sm-8 col-sm-offset-2 height150'>
@@ -39,7 +34,18 @@
 
 	        <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">no matching terms</span>
 	        <div class="f-flexC f-row f-m-around f-wrap">
-	            <button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" ng-repeat="term in contentTerms.related" class='dn-bounce above btn margin5 btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
+	        	<div ng-repeat="term in contentTerms.related" class="dropdown">
+		        	<div class="btn-group margin5 dn-bounce">
+		            	<button ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" class='btn btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
+		        		<button class='dropdown-toggle btn btn-default'>^<i class="fa fa-chevron-down"></i></button>
+		        		<!-- TOOD: get menu out of hidden overflow -->
+			        	<ul class='dropdown-menu'>
+		        			<li><a>add to search</a></li>
+		        			<li><a>discard</a></li>
+		        			<li><a>term</a></li>
+			        	</ul>
+			        </div>
+		        </div>
 	        </div>
 	    </div>   
 	  	<br>

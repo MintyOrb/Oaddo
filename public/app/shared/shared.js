@@ -118,17 +118,29 @@ factory('filterFactory', [function () {
     
     
     return {
-        selectGroups : function(groups){
-            for(var ii = 0; ii<groups.length; ii++){
-                for (var term in this.terms) {
-                    if(this.terms[term].name === groups[ii]){
-                        this.terms[term].included = true;
-                    } else {
-                        this.terms[term].included = false;
-                    }
+        addGroup: function(group){
+            for (var term in this.terms) {
+                if(this.terms[term].name === group){
+                    this.terms[term].included = true;
                 }
             }
-            
+        },
+        removeGroup: function(group){
+            for (var term in this.terms) {
+                if(this.terms[term].name === group){
+                    this.terms[term].included = false;
+                }
+            }
+        },
+        selectGroup : function(group){
+            console.log("called: " + group);            
+            for (var term in this.terms) {
+                if(this.terms[term].name === group){
+                    this.terms[term].included = true;
+                } else {
+                    this.terms[term].included = false;
+                }
+            }
         },
         setAll : function(value){
             for (var term in this.terms) {
