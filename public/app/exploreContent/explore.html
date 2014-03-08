@@ -2,7 +2,7 @@
 
  <div ng-controller="exploreCtrl">
 
- 	<!-- <input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang"> -->
+ 	<input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang">
 	<div ng-controller='termSelectionCtrl' ui-on-Drop="" class="col-sm-12">
 		<div class="input-group col-sm-3 col-sm-offset-7">
 		    <input type="text" class="form-control" ng-model="DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">

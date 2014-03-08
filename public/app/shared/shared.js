@@ -27,9 +27,6 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
     });
 
     var getRelatedTerms = function(){
-        // clear current related
-        // TODO: only remove terms that are not again returned? (prevent term from vanishing only to re-appear)
-        // $scope.contentTerms.related = [];
         // NOTE: dropping term from search into search leads to multiple instances of terms being returned
         // this should be fixed with correct term drop logic (restricting drop zones)
         $http.post('/relatedTerms', { 
@@ -39,12 +36,6 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
             type: $scope.filter.terms,
             language: appLanguage.lang }).
         success(function(data){
-            // for (var jj = 0; jj < data.results.length; jj++) {
-            //         console.log("adding terms: " );
-            //         $scope.contentTerms.related.push(data.results[jj]);
-            //     }
-
-            // get matches
             
             if($scope.contentTerms.related.length > 0){
                 var matched = [];

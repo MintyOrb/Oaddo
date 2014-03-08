@@ -261,7 +261,7 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
     
     $scope.$on('$routeChangeStart', function() {
         console.log("closing modal");
-        $modalInstance.close();
+        $modalInstance.dismiss();
     });
 
     $scope.cancel = function () {

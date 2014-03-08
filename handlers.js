@@ -129,6 +129,7 @@ exports.addTerm = function (request, reply) {
 
     var createProperties = {
             "coreProps" : {
+                "contentConnections": 0,
                 "MID": request.payload.mid,
                 "dateAdded": new Date(),
                 "addedBy" : request.user.id,
@@ -342,9 +343,10 @@ exports.addNewContent = function (request, reply){
     
     //query for creating the content and relationships to tagged terms
     var query = [
-        "CREATE (contentNode:content:testContent {contentParams})-[r:HAS_META {languageCode: {lang} }]->(metaNode:contentMeta {metaParams}) ",
+        "CREATE (contentNode:content:testContent:testtest {contentParams})-[r:HAS_META {languageCode: {lang} }]->(metaNode:contentMeta {metaParams}) ",
         "WITH contentNode MATCH (termNode:term) ",
         "WHERE termNode.UUID IN {taggedTermsUUID} ",
+        "SET termNode.contentConnections = termNode.contentConnections + 1 ",
         "CREATE (contentNode)-[:TAGGED_WITH]->(termNode)"
     ].join('\n');
 
