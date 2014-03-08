@@ -5,7 +5,7 @@
  	<input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang">
 	<div ng-controller='termSelectionCtrl' ui-on-Drop="" class="col-sm-12">
 		<div class="input-group col-sm-3 col-sm-offset-7">
-		    <input type="text" class="form-control" ng-model="DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">
+		    <input type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">
 		    <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
 		</div>
 
@@ -16,15 +16,15 @@
 
 	    	<div  class="f-flexC f-column f-m-between f-c-center panel panel-default marginBottom0 col-sm-8 col-sm-offset-2">
 	    		<div class="marginTop10 f-flexC f-row f-wrap f-m-center f-c-center">
-	    			<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.people.included">People</button>
-					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.organizations.included">Organizations</button>
-					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.physicalObjects.included">Physical Objects</button>
-					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.concepts.included">Concepts</button>
-					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.jargon.included">Jargon</button>
-					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.disciplines.included">Disciplines</button>
-					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.activities.included">Activities</button>
-					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.locations.included">Locations</button>
-					<button btn-checkbox class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.contentTypes.included">Content Types</button>
+	    			<button ng-class="{ 'buttonSelected' : filter.terms.people.included }" ng-click="filter.selectGroups(['person'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.people.included">People</button>
+					<button ng-class="{ 'buttonSelected' : filter.terms.organizations.included }" ng-click="filter.selectGroups(['organization'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.organizations.included">Organizations</button>
+					<button ng-class="{ 'buttonSelected' : filter.terms.physicalObjects.included }" ng-click="filter.selectGroups(['physical object'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.physicalObjects.included">Physical Objects</button>
+					<button ng-class="{ 'buttonSelected' : filter.terms.concepts.included }" ng-click="filter.selectGroups(['concept'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.concepts.included">Concepts</button>
+					<button ng-class="{ 'buttonSelected' : filter.terms.jargon.included }" ng-click="filter.selectGroups(['jargon'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.jargon.included">Jargon</button>
+					<button ng-class="{ 'buttonSelected' : filter.terms.disciplines.included }" ng-click="filter.selectGroups(['discipline'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.disciplines.included">Disciplines</button>
+					<button ng-class="{ 'buttonSelected' : filter.terms.activities.included }" ng-click="filter.selectGroups(['activity'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.activities.included">Activities</button>
+					<button ng-class="{ 'buttonSelected' : filter.terms.locations.included }" ng-click="filter.selectGroups(['location'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.locations.included">Locations</button>
+					<button ng-class="{ 'buttonSelected' : filter.terms.contentTypes.included }" ng-click="filter.selectGroups(['content type'])" class="btn margin5 btn-xs noOutline btn-default" type="button" ng-model="filter.terms.contentTypes.included">Content Types</button>
 	    		</div>
 	    		<div class="">
 	    			<div class='margin10'>

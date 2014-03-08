@@ -46,23 +46,23 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
                             matched.push(data.results[x].name);
                         }
                     }
+                    console.log("related: " + $scope.contentTerms.related[i].name);
                 }
                 
                 if(matched.length > 0){
                     // remove terms from related if not a match
                     var length = $scope.contentTerms.related.length;
                     while (length--){
-                        console.log($scope.contentTerms.related[length].name);
-                        console.log(matched.indexOf($scope.contentTerms.related[length].name));
                         if(matched.indexOf($scope.contentTerms.related[length].name) < 0){
                             $scope.contentTerms.related.splice(length,1);
                         }   
                     }
+                } else {
+                    $scope.contentTerms.related = [];
                 }
                 // add results to related if not a match
                 for (var ii = 0; ii < data.results.length; ii++) {
                     if( matched.indexOf(data.results[ii].name ) < 0 ){
-                        console.log("adding: " );
                         $scope.contentTerms.related.push(data.results[ii]);
                     }
                 }
@@ -82,9 +82,11 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
         then(function(response){
             if(!response.data.results){
                 $scope.displayOptions.addingNewTerm = true;
-                focus('suggest');
+                focus('suggest'); // for switching search source
+                return [{name:"- term not found -"}];
+            } else {
+                return response.data.matches;
             }
-            return response.data.matches;
         });       
     };
 
@@ -116,7 +118,18 @@ factory('filterFactory', [function () {
     
     
     return {
-
+        selectGroups : function(groups){
+            for(var ii = 0; ii<groups.length; ii++){
+                for (var term in this.terms) {
+                    if(this.terms[term].name === groups[ii]){
+                        this.terms[term].included = true;
+                    } else {
+                        this.terms[term].included = false;
+                    }
+                }
+            }
+            
+        },
         setAll : function(value){
             for (var term in this.terms) {
                 this.terms[term].included = value;
