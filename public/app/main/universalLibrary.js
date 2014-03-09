@@ -43,9 +43,8 @@ config(function($routeProvider, $locationProvider, $httpProvider) {
 
 
     $routeProvider
-    .when('/home', { title: "home", templateUrl: 'app/main/tempMain.html'})
+    .when('/home', { title: "home", templateUrl: 'app/main/home.html'})
     .when('/explore', {title: "explore", templateUrl: 'app/exploreContent/explore.html'})
-    .when('/test', {resolve: {loggedin: checkLoggedin}, templateUrl: 'app/main/test.html'})
     .when('/addContent', {title: "new content", resolve: {loggedin: checkLoggedin}, templateUrl: 'app/addingContent/newContent.html'})
     .when('/content/:id', {title: "content", templateUrl: 'app/exploreContent/contentPage.html', controller:'contentPageCtrl'})
     .otherwise({redirectTo: '/home'});
@@ -124,69 +123,6 @@ controller('termModalInstanceCtrl', ['$scope', '$modalInstance', 'data',function
 
     $scope.cancel = function(){
         $modalInstance.close("location change");
-    };
-}]).
-
-//testing
-controller('buttonCtrl', function($scope, API, $location, $http) {
-    
-    $scope.logout = function (){
-        var logout = new API.Logout();
-        logout.$save(function(data){
-            console.log(data);
-        });
-    };
-    $scope.loggedin = function(){
-        var loggedin = new API.LoggedIn();
-        loggedin.$get(function(response){
-            console.log(response);
-        });
-    };
-
-    $scope.test = function(){
-        var test = new API.test();
-        test.$get(function(response){
-            console.log(response);
-        });
-    };
-
-    $scope.navigateToAddContent = function(){
-        console.log("lets add new content");
-        $location.path('/addContent');
-    };
-
-    $scope.addTerm = function(){
-        console.log("lets add a new term");
-        $http.post("/term");
-        
-    };
-    
-}).
-
-controller('TabsDemoCtrl', function ($scope) {
-
-    $scope.checked = false;
-    $scope.tabs = [
-        { title:"Dynamic Title 1", content:"Dynamic content 1" },
-        { title:"Dynamic Title 2", content:"Dynamic content 2", disabled: true }
-    ];
-  
-    $scope.alertMe = function() {
-      setTimeout(function() {
-        alert("You've selected the alert tab!");
-      });
-    };
-  
-    $scope.navType = 'pills';
-}).
-
-factory('API', ['$resource', function ($resource) {
-    return {
-        User: $resource('/user/:id', {id: '@id'} ),
-        Login: $resource('/login'),
-        Logout: $resource('/logout'),
-        LoggedIn: $resource('/loggedin'),
-        test: $resource('/test')
     };
 }]);
 
