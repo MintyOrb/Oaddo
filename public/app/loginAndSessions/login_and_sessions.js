@@ -2,14 +2,6 @@
 'use strict';
 
 angular.module('universalLibrary').
-
-
-controller('LoginModalCtrl', function ($scope, LoginService) {
-
-    console.log("loginModalCtrl here.");
-    $scope.Login = LoginService;
-    
-}).
     
 controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, LoginService, authService, $http, $cookieStore) {
     console.log("instance ctrl here");

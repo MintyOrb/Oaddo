@@ -21,9 +21,7 @@ var universalLibrary = angular.module('universalLibrary',
 config(function($routeProvider, $locationProvider, $httpProvider) {
 
     //function for checking login status before a route change
-    //TODO: consider saving value in a cookie?
-    //  this would be easy to fake, but no secure data would be leaked from the server
-    var checkLoggedin = function ($q, $timeout, $http, $location, $window, LoginService, $cookieStore) {
+    var checkLoggedin = function ($q, $http, $location, $window, LoginService, $cookieStore) {
         
         console.log("check logged in function here.");
 
@@ -96,11 +94,38 @@ service('appLanguage', ['$cookieStore',function ($cookieStore) {
     this.lang = "";
 }]).
 
-controller('appCtrl', ['$scope', 'appLanguage', function ($scope, appLanguage) {
+controller('appCtrl', ['$scope', 'appLanguage', 'LoginService', '$modal',function ($scope, appLanguage, LoginService,$modal) {
+
     $scope.displayLanguage = appLanguage;
+    $scope.Login = LoginService;
+
+    $scope.openTermModal = function (termData) {
+        var modalInstance = $modal.open({
+            templateUrl: 'app/shared/termModal.html',
+            controller: 'termModalInstanceCtrl',
+            windowClass: "",
+            resolve: {
+                data: function () {
+                    return termData;
+                }
+            }
+        });
+    };
+
 }]).
 
+controller('termModalInstanceCtrl', ['$scope', '$modalInstance', 'data',function ($scope, $modalInstance, data) {
+    $scope.term = data;
 
+    $scope.$on('$routeChangeStart', function(event, current, previous) {
+        console.log("closing modal");
+        $modalInstance.close("cancelled");
+    });
+
+    $scope.cancel = function(){
+        $modalInstance.close("location change");
+    };
+}]).
 
 //testing
 controller('buttonCtrl', function($scope, API, $location, $http) {

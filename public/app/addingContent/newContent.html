@@ -141,7 +141,7 @@
                                         <ul class='dropdown-menu'>
                                             <li><a ng-click="addToFrom(contentTerms.selected,contentTerms.related,term,$index)">add to search</a></li>
                                             <li><a ng-click="addToFrom(contentTerms.discarded,contentTerms.related,term,$index)">discard</a></li>
-                                            <li><a>term page</a></li>
+                                            <li><a ng-click="openTermModal(term)" >term page</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -163,7 +163,7 @@
                                             <!-- TOOD: get menu out of hidden overflow -->
                                             <ul class='dropdown-menu'>
                                                 <li><a ng-click="addToFrom(contentTerms.discarded,contentTerms.selected,term,$index)">discard</a></li>
-                                                <li><a>term page</a></li>
+                                                <li><a ng-click="openTermModal(term)" >term page</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -185,7 +185,7 @@
                                             <!-- TOOD: get menu out of hidden overflow -->
                                             <ul class='dropdown-menu'>
                                                 <li><a ng-click="addToFrom(contentTerms.selected,contentTerms.discarded,term,$index)">add to search</a></li>
-                                                <li><a>term page</a></li>
+                                                <li><a ng-click="openTermModal(term)" >term page</a></li>
                                             </ul>
                                         </div>
                                     </div>
