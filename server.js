@@ -105,6 +105,8 @@ server.route([
 
     { method: 'POST', path: '/term', config: {auth: 'passport'}, handler: handlers.addTerm},
 
+    { method: 'GET', path: '/term', handler: handlers.getTerm},
+
     { method: 'POST', path: '/relatedTerms', handler: handlers.relatedTerms},
 
     { method: 'POST', path: '/newImage', config: {auth: 'passport'}, handler: handlers.addImageFile},
