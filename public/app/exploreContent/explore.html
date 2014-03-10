@@ -2,109 +2,22 @@
 
  <div ng-controller="exploreCtrl">
  	<input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang">
-	<div ng-controller='termSelectionCtrl' ui-on-Drop="" class="col-sm-12">
+	<div ng-controller='termSelectionCtrl' ui-on-Drop="" >
 		<div class="input-group col-sm-3 col-sm-offset-7">
 		    <input type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">
 		    <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
 		</div>
 
-	   	<button ng-hide="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Hide Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
-	   	<button ng-show="filter.isCollapsed" class="noOutline col-sm-offset-2 btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Show Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
-
-	    <div collapse="filter.isCollapsed">
-
-	    	<div  class="f-flexC f-column f-m-between f-c-center panel panel-default marginBottom0 col-sm-8 col-sm-offset-2">
-	    		<div class="marginTop10 f-flexC f-row f-wrap f-m-center f-c-center">
-	    			<div ng-repeat="group in filter.terms" class="btn-group btn-group-xs margin5">
-	    				<button ng-click="filter.addGroup(group.name)" class="btn btn-default">+</button>
-	    				<button ng-class="{ 'buttonSelected' : group.included }" ng-click="filter.selectGroup(group.name)" class="btn noOutline btn-default" type="button">{{group.name}}</button>
-						<button ng-click="filter.removeGroup(group.name)" class="btn btn-default">-</button>
-	    			</div>
-	    		</div>
-	    		<div class="">
-	    			<div class='margin10'>
-						<button ng-click="filter.setAll(true)" class=" btn btn-xs btn-primary">Select All</button>
-						<button ng-click="filter.setAll(false)" class="btn btn-xs btn-primary">De-select All</button>
-	    			</div>
-	    		</div> 
-	    	</div>
-	    </div>
-	    <div ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm col-sm-8 col-sm-offset-2 height150'>
-	        <i class='pull-right text-muted fa fa-question-circle'></i>
-
-	        <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">no matching terms</span>
-	        <div class="f-flexC f-row f-m-around f-wrap">
-	        	<div ng-repeat="term in contentTerms.related" class="dropdown dn-bounce">
-		        	<div class="btn-group margin5">
-		            	<button ng-click="addToFrom(contentTerms.selected,contentTerms.related,term,$index)" ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" class='btn btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
-		        		<button class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
-		        		<!-- TOOD: get menu out of hidden overflow -->
-			        	<ul class='dropdown-menu'>
-		        			<li><a ng-click="addToFrom(contentTerms.selected,contentTerms.related,term,$index)">add to search</a></li>
-		        			<li><a ng-click="addToFrom(contentTerms.discarded,contentTerms.related,term,$index)">discard</a></li>
-		        			<li><a ng-click="openTermModal(term)">term page</a></li>
-			        	</ul>
-			        </div>
-		        </div>
-	        </div>
-	    </div>   
-	  	<br>
-	    <div ui-on-Drop="recievingHandler($data, contentTerms.selected)" drag-enter-class="droppable" class="well well-sm col-sm-8 col-sm-offset-2">
-	        
-	        <i class='pull-right text-muted fa fa-question-circle'></i>
-	        
-	        <div class="f-flexC f-row f-m-center">
-	            <span ng-hide="contentTerms.selected.length > 0"class="dn-fade text-muted background h3">search terms</span>
-	            <div class="f-flexC f-row f-m-around f-wrap">
-
-					<div ng-repeat="term in contentTerms.selected" class="dropdown dn-bounce">
-			        	<div class="btn-group margin5">
-			            	<button ng-click="addToFrom(contentTerms.discarded,contentTerms.selected,term,$index)" ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.selected)" drag="term" class='btn btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
-			        		<button class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
-			        		<!-- TOOD: get menu out of hidden overflow -->
-				        	<ul class='dropdown-menu'>
-			        			<li><a ng-click="addToFrom(contentTerms.discarded,contentTerms.selected,term,$index)">discard</a></li>
-			        			<li><a ng-click="openTermModal(term)">term page</a></li>
-				        	</ul>
-				        </div>
-			        </div>
-
-	            </div>
-	        </div>
-	    </div>
-    
-	    <div ui-on-Drop="recievingHandler($data, contentTerms.discarded)" drag-enter-class="droppable" class="well well-sm col-sm-8 col-sm-offset-2">
-	        <i class='pull-right text-muted fa fa-question-circle'></i>
-	        <div class="f-flexC f-row f-m-center">
-	            <span ng-hide="contentTerms.discarded.length > 0" class="dn-fade text-muted background h3">discarded terms</span>
-	            <div class="f-flexC f-row f-m-around f-wrap">
-	                
-	            	<div ng-repeat="term in contentTerms.discarded" class="dropdown dn-bounce">
-			        	<div class="btn-group btn-group-xs margin5">
-			            	<button ng-click="addToFrom(contentTerms.selected,contentTerms.discarded,term,$index)" ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.discarded)" drag="term" class='btn btn-default'>{{term.name}}</button>
-			        		<button class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
-			        		<!-- TOOD: get menu out of hidden overflow -->
-				        	<ul class='dropdown-menu'>
-			        			<li><a ng-click="addToFrom(contentTerms.selected,contentTerms.discarded,term,$index)">add to search</a></li>
-			        			<li><a ng-click="openTermModal(term)">term page</a></li>
-				        	</ul>
-				        </div>
-			        </div>
-
-	            </div>
-	        </div>
-	    </div>
-	   
+	   	<ng-include class="col-sm-8 col-sm-offset-2 padding0" src="'app/shared/termSelectionPartial.html'"></ng-include>
 	</div>
-
 	<br>
 
 	<div class="cardsContainer f-flexC f-row f-wrap f-m-around">
 		<div class="f-flexC  f-column f-m-between cardContainer panel panel-default margin5" ng-repeat="content in returnedContent">
 			<div class="panel-heading">
+				<i class="fa fa-flag pull-right"></i>
 				<i class="fa fa-ban pull-right"></i>
 			    <i class="fa fa-eye pull-right"> 0</i>
-			    <i class="fa fa-heart pull-right"> 0</i>
                 <br>
                 <hr ng-show="content.title.length > 0" class="hr">
 			    <h3 class="panel-title">{{content.title}}</h3>
@@ -124,6 +37,9 @@
 				</tab>
 				<tab ng-if="content.description.length > 0" heading="Description">
 					<div ng-bind-html="content.description" class="margin10"></div>
+				</tab>
+				<tab ng-if="content.value.length > 0" heading="value">
+					<div ng-bind-html="content.value" class="margin10"></div>
 				</tab>
 			</tabset>			
 		</div>

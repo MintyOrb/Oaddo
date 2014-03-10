@@ -35,6 +35,7 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
             //     text: ""
             // },
             // takeAway: "",
+            value: "",
             description: "",
             title: ""
         },

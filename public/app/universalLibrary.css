@@ -15,6 +15,7 @@
 	display:inline;
 	width:auto;
 }
+
 .well {
   position: relative;
   min-height: 70px;
@@ -84,6 +85,9 @@
 	outline: 0;
 }
 
+.padding0{
+	padding:0;
+}
 
 .videoWrapper {
 	position: relative;
@@ -102,6 +106,7 @@
 }
 
 .webHolder{
+	z-index: -1;
 	position: absolute;
 	height: 100%;
 	width: 100%;
@@ -134,8 +139,8 @@
 .margin10 {margin:10px;}
 .marginTop10 {margin-top: 10px}
 .margin20 {margin:20px;}
-.height150 {
-	height: 150px;
+.height170 {
+	height: 170px;
 	overflow:scroll;
 }
 .width80p {min-width: 80%}
