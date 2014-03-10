@@ -3,7 +3,7 @@
 
 angular.module('universalLibrary').
 
-controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, appLanguage, $modal, filterFactory) {
+controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, appLanguage, $modal, filterFactory, $route) {
 
     $scope.contentTerms = contentTerms;
     
@@ -80,9 +80,13 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
         return $http.get('/termTypeAhead', { params: { entered: $scope.displayOptions.DBTerm, language: appLanguage.lang } }).
         then(function(response){
             if(!response.data.results){
-                $scope.displayOptions.addingNewTerm = true;
-                focus('suggest'); // for switching search source
-                return [{name:"- term not found -"}];
+                if($route.current.templateUrl === "app/addingContent/newContent.html"){
+                    $scope.displayOptions.addingNewTerm = true;
+                    focus('suggest'); // for switching search source
+                    return [];
+                } else {
+                     return [{name:"- term not found -"}];
+                }
             } else {
                 return response.data.matches;
             }
@@ -111,6 +115,12 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
 }).
 
 service('contentTerms', [function () {
+    this.emptyAll = function(){
+        this.selected = [];  
+        this.discarded = []; 
+        this.related = [];   
+        this.search = [];    
+    };
     this.matchAll = true;   // specifies whether all or any terms must be matched
     this.selected = [];     // tag content with
     this.discarded = [];    // remove from suggested

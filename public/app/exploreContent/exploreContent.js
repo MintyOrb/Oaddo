@@ -12,6 +12,8 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
         getRelatedContent();
     });
 
+    $scope.$on("$routeChangeStart", contentTerms.emptyAll());
+
     var getRelatedContent = function(){
         $http.post('/explore', { 
             includedTerms: $scope.contentTerms.selected,

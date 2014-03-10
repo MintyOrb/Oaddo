@@ -7,6 +7,7 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
     
     $scope.contentTerms = contentTerms;
     contentTerms.matchAll = false;
+    contentTerms.emptyAll(); 
 
     $scope.tab = {
         description: false,
@@ -210,50 +211,14 @@ controller("newTermCtrl", function ($scope, focus, $modal) {
 }).
 
 
-controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, contentTerms, $http) {
+controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, contentTerms, $http, filterFactory) {
 
     console.log("data in modal: " + JSON.stringify(data));
 
     $scope.newTermMeta = {};
 
-    $scope.newTermMeta.type = {
-        people: {
-            included: false,
-            name: 'person',
-        },
-        organizations: {
-            included: false,
-            name: 'organization',
-        },
-        physicalObjects: {
-            included: false,
-            name: 'physical object',
-        },
-        concepts: {
-            included: false,
-            name: 'concept',
-        },
-        jargon: {
-            included: false,
-            name: 'jargon',
-        },
-        disciplines: {
-            included: false,
-            name: 'discipline',
-        },
-        activities: {
-            included: false,
-            name: 'activity',
-        },
-        locations: {
-            included: false,
-            name: 'location',
-        },
-        contentTypes: {
-            included: false,
-            name: 'content type',
-        }
-    };
+    $scope.newTermMeta.type = filterFactory.terms;
+    filterFactory.setAll(false);  
 
     $scope.newTermMeta.name = data.name;
     $scope.newTermMeta.mid = data.mid; 

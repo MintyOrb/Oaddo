@@ -12,15 +12,12 @@
             <span>Add your term to relevant term groups:</span>
             <br>
             <div class="well well-sm col-sm-8 f-flexC f-row f-wrap f-m-around f-c-center">
-                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.people.included">Person</button>
-                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.organizations.included">Organization</button>
-                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.physicalObjects.included">Physical Object</button>
-                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.concepts.included">Concept</button>
-                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.jargon.included">Jargon</button>
-                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.disciplines.included">Discipline</button>
-                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.activities.included">Activity</button>
-                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.locations.included">Location</button>
-                <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.contentTypes.included">Content Type</button>
+              <!--   <button btn-checkbox class="btn btn-sm btn-default margin5" type="button" ng-model="newTermMeta.type.people.included">Person</button> -->
+                <div ng-repeat="group in filter.terms" class="btn-group btn-group-xs margin5">
+                <button ng-click="filter.addGroup(group.name)" class="btn btn-default">+</button>
+                <button ng-class="{ 'buttonSelected' : group.included }" ng-click="filter.selectGroup(group.name)" class="btn noOutline btn-default" type="button">{{group.name}}</button>
+                <button ng-click="filter.removeGroup(group.name)" class="btn btn-default">-</button>
+            </div>
             </div>
             <br>
             <span>Optional:</span>

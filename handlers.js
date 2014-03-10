@@ -384,7 +384,9 @@ exports.relatedTerms = function (request, reply) {
     });
 };
 
+exports.getTerm = function(request, reply){
 
+};
 
 
 
@@ -585,7 +587,7 @@ exports.findRelatedContent = function (request, reply){
             "WITH content, count(*) AS connected, meta ",
             "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[metaLang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title meta.value AS value',
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
@@ -598,7 +600,7 @@ exports.findRelatedContent = function (request, reply){
             "WITH content, count(*) AS connected, meta ",
             "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title meta.value AS value',
+            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
