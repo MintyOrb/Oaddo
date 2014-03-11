@@ -7,7 +7,7 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
 
     $scope.contentTerms = contentTerms;
     
-    $scope.filter = filterFactory;
+    $scope.filter = filterFactory();
     $scope.filter.setAll(true);  // initialize filter values to true (include all types)
 
     $scope.displayOptions = {
@@ -15,7 +15,7 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
         addingNewTerm : false // display freebase input or dbinput depending
     };
 
-    $scope.$watch("filter.terms", function(newValue, oldValue){
+    $scope.$watch("filter.groups", function(newValue, oldValue){
         if (newValue !== oldValue) {
             getRelatedTerms();
         }
@@ -33,7 +33,7 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
             matchAll: $scope.contentTerms.matchAll,
             ignoreTerms: $scope.contentTerms.discarded,
             keyTerms: $scope.contentTerms.selected,
-            type: $scope.filter.terms,
+            type: $scope.filter.groups,
             language: appLanguage.lang }).
         success(function(data){
             
@@ -82,7 +82,7 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
             if(!response.data.results){
                 if($route.current.templateUrl === "app/addingContent/newContent.html"){
                     $scope.displayOptions.addingNewTerm = true;
-                    focus('suggest'); // for switching search source
+                    focus('suggest'); // switch focus to freebase typeahead
                     return [];
                 } else {
                      return [{name:"- term not found -"}];
@@ -130,83 +130,101 @@ service('contentTerms', [function () {
 
 
 factory('filterFactory', [function () {
-    
-    
-    return {
-        addGroup: function(group){
-            for (var term in this.terms) {
-                if(this.terms[term].name === group){
-                    this.terms[term].included = true;
+    // non-singlton factory
+    return function(){
+        var Groups = function(){
+            this.getGroups= function(term){
+                // TODO= get terms groups
+                if(term){
                 }
-            }
-        },
-        removeGroup: function(group){
-            for (var term in this.terms) {
-                if(this.terms[term].name === group){
-                    this.terms[term].included = false;
+                else {
+                    return Object.create(this.terms);
                 }
-            }
-        },
-        selectGroup : function(group){
-            for (var term in this.terms) {
-                if(this.terms[term].name === group){
-                    this.terms[term].included = true;
-                } else {
-                    this.terms[term].included = false;
+            };
+            this.addGroup= function(group){
+                for (var term in this.groups) {
+                    if(this.groups[term].name === group){
+                        this.groups[term].included = true;
+                    }
                 }
-            }
-        },
-        setAll : function(value){
-            for (var term in this.terms) {
-                this.terms[term].included = value;
-            }
-        },
+            };
+            this.removeGroup= function(group){
+                for (var term in this.groups) {
+                    if(this.groups[term].name === group){
+                        this.groups[term].included = false;
+                    }
+                }
+            };
+            this.selectGroup = function(group){
+                for (var term in this.groups) {
+                    if(this.groups[term].name === group){
+                        this.groups[term].included = true;
+                    } else {
+                        this.groups[term].included = false;
+                    }
+                }
+            };
+            this.setAll = function(value){
+                for (var term in this.groups) {
+                    this.groups[term].included = value;
+                }
+            };
 
-        isCollapsed: true,
+            this.isCollapsed= true;
 
-        terms: {
-            people: {
-                included: false,
-                name: 'person',
-            },
-            organizations: {
-                included: false,
-                name: 'organization',
-            },
-            physicalObjects: {
-                included: false,
-                name: 'physical object',
-            },
-            concepts: {
-                included: false,
-                name: 'concept',
-            },
-            jargon: {
-                included: false,
-                name: 'jargon',
-            },
-            disciplines: {
-                included: false,
-                name: 'discipline',
-            },
-            activities: {
-                included: false,
-                name: 'activity',
-            },
-            locations: {
-                included: false,
-                name: 'location',
-            },
-            contentTypes: {
-                included: false,
-                name: 'content type',
-            },
-            // events: {
-            //     included: false,
-            //     name: 'event',
-            // }
-        }
-        
+            this.groups= {
+                scieces: {
+                    included: false,
+                    name: 'science',
+                },
+                humanities: {
+                    included: false,
+                    name: 'humanities',
+                },
+                environment: {
+                    included: false,
+                    name: 'environment',
+                },
+                technology: {
+                    included: false,
+                    name: 'technology',
+                },
+                organizations: {
+                    included: false,
+                    name: 'organization',
+                },
+                physicalObjects: {
+                    included: false,
+                    name: 'physical object',
+                },
+                concepts: {
+                    included: false,
+                    name: 'concept',
+                },
+                jargon: {
+                    included: false,
+                    name: 'jargon',
+                },
+                disciplines: {
+                    included: false,
+                    name: 'discipline',
+                },
+                activities: {
+                    included: false,
+                    name: 'activity',
+                },
+                locations: {
+                    included: false,
+                    name: 'location',
+                },
+                contentTypes: {
+                    included: false,
+                    name: 'content type',
+                }
+            };
+
+        };
+        return new Groups();        
     };
 }]).
 

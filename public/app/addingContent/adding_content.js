@@ -217,8 +217,7 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
 
     $scope.newTermMeta = {};
 
-    $scope.newTermMeta.type = filterFactory.terms;
-    filterFactory.setAll(false);  
+    $scope.newTermMeta.type = filterFactory().groups;
 
     $scope.newTermMeta.name = data.name;
     $scope.newTermMeta.mid = data.mid; 
@@ -227,7 +226,9 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
     
     $scope.$on('$routeChangeStart', function() {
         console.log("closing modal");
-        $modalInstance.dismiss();
+        if($modalInstance){
+            $modalInstance.close();
+        }
     });
 
     $scope.cancel = function () {
@@ -294,9 +295,4 @@ directive('suggest', function() {
             });
         }
     };
-}).
-
-
-controller('metaSectionCtrl', ['$scope', 'contentTerms', function ($scope, contentTerms) {
-
-}]);
+});

@@ -12,7 +12,7 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
         getRelatedContent();
     });
 
-    $scope.$on("$routeChangeStart", contentTerms.emptyAll());
+    $scope.$on("$routeChangeStart", contentTerms.emptyAll()); // empty currently selected terms when navigating away
 
     var getRelatedContent = function(){
         $http.post('/explore', { 
