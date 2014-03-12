@@ -225,10 +225,10 @@ controller('newTermModalInstanceCtrl' , function ($scope, $modalInstance, data, 
     console.log("data.lang: " + data.lang);
     
     $scope.$on('$routeChangeStart', function() {
+        // TODO: fix error if modal closed properly
+        // should be fixed in next angular ui update...
         console.log("closing modal");
-        if($modalInstance){
-            $modalInstance.close();
-        }
+        $modalInstance.close();
     });
 
     $scope.cancel = function () {

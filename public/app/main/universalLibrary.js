@@ -98,31 +98,5 @@ controller('appCtrl', ['$scope', 'appLanguage', 'LoginService', '$modal',functio
     $scope.displayLanguage = appLanguage;
     $scope.Login = LoginService;
 
-    $scope.openTermModal = function (termData) {
-        var modalInstance = $modal.open({
-            templateUrl: 'app/shared/termModal.html',
-            controller: 'termModalInstanceCtrl',
-            windowClass: "",
-            resolve: {
-                data: function () {
-                    return termData;
-                }
-            }
-        });
-    };
-
-}]).
-
-controller('termModalInstanceCtrl', ['$scope', '$modalInstance', 'data',function ($scope, $modalInstance, data) {
-    $scope.term = data;
-
-    $scope.$on('$routeChangeStart', function(event, current, previous) {
-        console.log("closing modal");
-        $modalInstance.close("cancelled");
-    });
-
-    $scope.cancel = function(){
-        $modalInstance.close("location change");
-    };
 }]);
 

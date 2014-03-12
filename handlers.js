@@ -156,19 +156,19 @@ exports.addTerm = function (request, reply) {
             "metaProps" : [], // array of objects (created below)
         };
 
-    var termTypeProperties = { 
+    var termGroupProperties = { 
         termUUID: UUID,
-        types: [] 
+        groups: [] 
     };
 
 
-    // generate array of term type names
-    for (var type in request.payload.type) {
-        if(request.payload.type[type].included) {
-            termTypeProperties.types.push(request.payload.type[type].name);
+    // generate array of term group names
+    for (var group in request.payload.group) {
+        if(request.payload.group[group].included) {
+            termGroupProperties.groups.push(request.payload.group[group].name);
         }
     }
-    console.log("types: " + JSON.stringify(termTypeProperties.types));
+    console.log("groups: " + JSON.stringify(termGroupProperties.groups));
 
 
     var metaProp = {}; // for storing result of MQL query (will be pushed to createProperties.metaProps)
@@ -180,11 +180,11 @@ exports.addTerm = function (request, reply) {
         "CREATE newTerm-[:HAS_LANGUAGE {languageCode: props.languageCode}]->(:termMeta:testMeta {name: props.name, dateAdded: props.dateAdded, definition: props.definition}) )"
     ].join("\n"); //  if returning data from query use: WITH newTerm MATCH newTerm-[rel:HAS_META]->(metaNode:test:termMeta) RETURN newTerm, rel, metaNode";
     
-    var connectTypesQuery = [
-        "MATCH (typeNode:termType), (termNode:term {UUID: {termUUID} }) ",
-        "WHERE typeNode.name IN {types} ",
-        "CREATE (typeNode)<-[:IS_TYPE]-(termNode) ",
-        "RETURN typeNode, termNode"
+    var connectGroupsQuery = [
+        "MATCH (groupNode:termGroup), (termNode:term {UUID: {termUUID} }) ",
+        "WHERE groupNode.name IN {groups} ",
+        "CREATE (groupNode)<-[:IN_GROUP]-(termNode) ",
+        "RETURN groupNode, termNode"
     ].join("\n");
 
     var checkProperties = {mid: request.payload.mid};
@@ -249,12 +249,12 @@ exports.addTerm = function (request, reply) {
                 callback();
             });
         },
-        //add relationships to relevant term types
+        //add relationships to relevant term groups
         function(callback){
-            db.query(connectTypesQuery, termTypeProperties, function (err, results) {
+            db.query(connectGroupsQuery, termGroupProperties, function (err, results) {
                 if (err) {console.log("neo4j error: " + err);}
                 console.log("results: " + results);
-                console.log("done with connecting term types");
+                console.log("done with connecting term groups");
                 reply({newTerm: true, UUID: UUID});
                 callback();
                 
@@ -279,7 +279,7 @@ exports.termTypeAhead = function (request, reply){
     var query = [
         "MATCH (core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) ",
         "WHERE langNode.name =~ {match} ",
-        "RETURN core.UUID as UUID, langNode.name as name LIMIT 8"
+        "RETURN core.UUID as UUID, langNode.name as name, core.contentConnections as connections LIMIT 8"
     ].join('\n');
     
     console.log("match: " + properties.match);
@@ -309,7 +309,7 @@ exports.relatedTerms = function (request, reply) {
         language: request.payload.language ,
         ignoreTerms: [],
         searchTerms: [],
-        types: [],
+        groups: [],
         searchTermsCount: 0
 
     };
@@ -323,10 +323,10 @@ exports.relatedTerms = function (request, reply) {
     if(request.payload.keyTerms.length === 0){
         //return most connected terms if no key terms selected
         query = [
-            'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content), ',
+            'MATCH (groupNode:termGroup)<-[:IN_GROUP]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content), ',
                 '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
             'WHERE',
-                'typeNode.name IN {types} ',
+                'groupNode.name IN {groups} ',
                 'AND NOT matched.UUID IN {ignoreTerms} ',
             'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
             'ORDER BY connections DESC LIMIT 10'
@@ -339,18 +339,18 @@ exports.relatedTerms = function (request, reply) {
                 'WHERE searchTerms.UUID IN {searchTerms} ',
                 'WITH contentNode, COUNT(searchTerms) as count ',
                 'WHERE count = {searchTermsCount} ',
-                'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-contentNode, ',
+                'MATCH (groupNode:termGroup)<-[:IN_GROUP]-(matched:term)<-[:TAGGED_WITH]-contentNode, ',
                 'matched-[:HAS_LANGUAGE {languageCode: {language} }]->(termMeta:termMeta) ',
-                'WHERE typeNode.name IN {types} AND NOT matched.UUID IN {ignoreTerms} ',    
+                'WHERE groupNode.name IN {groups} AND NOT matched.UUID IN {ignoreTerms} ',    
                 'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
                 'ORDER BY connections DESC LIMIT 10'
             ].join('\n');
         } else {
             query = [
-                'MATCH (typeNode:termType)<-[:IS_TYPE]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(searchTerms:term), ',
+                'MATCH (groupNode:termGroup)<-[:IN_GROUP]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(searchTerms:term), ',
                     '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
                 'WHERE',
-                    'typeNode.name IN {types} ',
+                    'groupNode.name IN {groups} ',
                     'AND searchTerms.UUID IN {searchTerms} ',
                     'AND NOT matched.UUID IN {ignoreTerms} ',
                 'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
@@ -365,10 +365,10 @@ exports.relatedTerms = function (request, reply) {
         properties.searchTerms.push(request.payload.keyTerms[i].UUID);
     }
 
-    // add filters to type array
-    for (var type in request.payload.type) {
-        if(request.payload.type[type].included){
-            properties.types.push(request.payload.type[type].name);
+    // add filters to group array
+    for (var group in request.payload.groups) {
+        if(request.payload.groups[group].included){
+            properties.groups.push(request.payload.groups[group].name);
         }
     }
     for (var term in request.payload.ignoreTerms) {
@@ -388,7 +388,59 @@ exports.getTerm = function(request, reply){
 
 };
 
+exports.getTermGroups = function(request, reply){
+    console.log("get groups here : ");
+    console.log(request.query);
 
+    var properties = {
+        id : request.query.uuid
+    };
+
+    var query = [
+        "MATCH (termNode:term {UUID: {id} })-[r:IN_GROUP]->(groupNode:termGroup) ",
+        "return groupNode.name AS name"
+    ].join('\n');
+
+    db.query(query, properties, function (err, results) {
+        if (err) {throw err;}
+        console.log("results: ");
+        console.log(results);
+        reply(results);
+    });
+};
+
+exports.setTermGroups = function(request, reply){
+
+    // TODO: log changes made and by whom - record date, user id, changes
+    var properties = {
+        id: request.payload.uuid,
+        newGroups: [],
+        date: new Date(),
+        userID: request.user[0].id
+    };
+    
+    for(var group in request.payload.groups) {
+        if(request.payload.groups[group].included){
+            properties.newGroups.push(request.payload.groups[group].name);
+        }
+    }
+
+    var query = [
+        "MATCH  (termNode:term {UUID: {id} }) ",
+        "OPTIONAL MATCH termNode-[r:IN_GROUP]->(oldGroups:termGroup) ",
+        "DELETE r ",
+        "WITH termNode ",
+        "MATCH (newGroups:termGroup) ",
+        "WHERE newGroups.name IN {newGroups} ",
+        "CREATE UNIQUE (termNode)-[:IN_GROUP]->(newGroups) ",
+        "return termNode.UUID, newGroups.name"
+    ].join('\n');  
+
+    db.query(query, properties, function (err, results) {
+        if (err) {throw err;}
+        reply({success:true});
+    });
+};
 
 
 

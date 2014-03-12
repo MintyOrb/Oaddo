@@ -26,6 +26,19 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
         getRelatedTerms();
     });
 
+    $scope.openTermModal = function (termData) {
+        var modalInstance = $modal.open({
+            templateUrl: 'app/shared/termModal.html',
+            controller: 'termModalInstanceCtrl',
+            windowClass: "",
+            resolve: {
+                data: function () {
+                    return termData;
+                }
+            }
+        });
+    };
+
     var getRelatedTerms = function(){
         // NOTE: dropping term from search into search leads to multiple instances of terms being returned
         // this should be fixed with correct term drop logic (restricting drop zones)
@@ -33,7 +46,7 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
             matchAll: $scope.contentTerms.matchAll,
             ignoreTerms: $scope.contentTerms.discarded,
             keyTerms: $scope.contentTerms.selected,
-            type: $scope.filter.groups,
+            groups: $scope.filter.groups,
             language: appLanguage.lang }).
         success(function(data){
             
@@ -129,18 +142,37 @@ service('contentTerms', [function () {
 }]).
 
 
-factory('filterFactory', [function () {
+factory('filterFactory', ['$http',function ($http) {
     // non-singlton factory
     return function(){
         var Groups = function(){
-            this.getGroups= function(term){
-                // TODO= get terms groups
-                if(term){
-                }
-                else {
-                    return Object.create(this.terms);
-                }
-            };
+            // this.getGroups= function(termID){
+            //     if(termID){
+            //         console.log("hello: " + termID);
+            //         console.log(this.groups);
+            //         // NOTE: sending the group list to the server and back can't be the best way...
+            //         $http.get('/termGroups', {params: {uuid: termID, groups:this.groups}})
+            //         .success(function(data){
+            //             console.log("got groups: ");
+            //             console.log(data);
+                        
+            //             return this.groups;
+            //         });
+            //     }
+            //     else {
+            //         return this.groups;
+            //     }
+            // };
+            // this.setGroups= function(termID){
+            //     // second param for groups or take from function?
+            //     $http.post('/termGroups', {})
+            //     .success(function(data){
+            //         console.log("got groups: ");
+            //         console.log(data);
+            //         console.log(this);
+            //     });
+              
+            // };
             this.addGroup= function(group){
                 for (var term in this.groups) {
                     if(this.groups[term].name === group){
@@ -173,7 +205,7 @@ factory('filterFactory', [function () {
             this.isCollapsed= true;
 
             this.groups= {
-                scieces: {
+                sciences: {
                     included: false,
                     name: 'science',
                 },
@@ -225,6 +257,42 @@ factory('filterFactory', [function () {
 
         };
         return new Groups();        
+    };
+}]).
+
+controller('termModalInstanceCtrl', ['$scope', '$modalInstance', 'data', 'filterFactory', '$http',function ($scope, $modalInstance, data, filterFactory, $http) {
+    console.log("data: "    );
+    console.log(data);
+    $scope.term = data;
+    $scope.term.groupObj = filterFactory();
+    $scope.term.groups = $scope.term.groupObj.groups;
+    
+    $http.get('/termGroups', {params: {uuid: $scope.term.UUID}})
+    .success(function(results){
+        console.log(results);
+        for (var ii = 0; ii < results.length; ii++) {
+            $scope.term.groupObj.addGroup(results[ii].name);
+        }           
+    });
+
+    $scope.saveChanges = function(){
+        $http.post('/termGroups', {uuid: $scope.term.UUID, groups: $scope.term.groups})
+        .success(function(results){
+            console.log(results);
+            for (var ii = 0; ii < results.length; ii++) {
+                $scope.term.groupObj.addGroup(results[ii].name);
+            }           
+            $modalInstance.close();
+        });
+    };
+
+    $scope.$on('$routeChangeStart', function(event, current, previous) {
+        console.log("closing modal");
+        $modalInstance.close("location change");
+    });
+
+    $scope.cancel = function(){
+        $modalInstance.close("cancel");
     };
 }]).
 
