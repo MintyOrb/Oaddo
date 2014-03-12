@@ -27,6 +27,7 @@
                     <!-- collapsed nav components -->
                     <ul class="width100p dropdown-menu">
                         <li><a href="/explore">Explore</a></li>
+                        <li ng-show="Login.loggedIn"><a href="addContent">Add Content</a></li>
                         <hr class="hr">
                         <li>
                             <a ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn">Login</a>
