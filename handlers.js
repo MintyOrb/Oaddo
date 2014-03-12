@@ -300,9 +300,7 @@ exports.termTypeAhead = function (request, reply){
 exports.relatedTerms = function (request, reply) {
     
     // TODO: compare query speed of other term type methods (as labels, as properties)
-    // TODO: verify query is working properly - new terms should relate to all key terms
-    console.log("payload: \n");
-    console.log(request.payload);
+
     var matchAllTerms;
     var query = "";
     var properties = {
@@ -374,8 +372,6 @@ exports.relatedTerms = function (request, reply) {
     for (var term in request.payload.ignoreTerms) {
         properties.ignoreTerms.push(request.payload.ignoreTerms[term].UUID);    
     }
-    
-    console.log("props: " + JSON.stringify(properties));
 
 
     db.query(query, properties, function (err, results) {
@@ -389,8 +385,6 @@ exports.getTerm = function(request, reply){
 };
 
 exports.getTermGroups = function(request, reply){
-    console.log("get groups here : ");
-    console.log(request.query);
 
     var properties = {
         id : request.query.uuid
@@ -403,8 +397,6 @@ exports.getTermGroups = function(request, reply){
 
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
-        console.log("results: ");
-        console.log(results);
         reply(results);
     });
 };
@@ -433,12 +425,15 @@ exports.setTermGroups = function(request, reply){
         "MATCH (newGroups:termGroup) ",
         "WHERE newGroups.name IN {newGroups} ",
         "CREATE UNIQUE (termNode)-[:IN_GROUP]->(newGroups) ",
-        "return termNode.UUID, newGroups.name"
     ].join('\n');  
 
     db.query(query, properties, function (err, results) {
-        if (err) {throw err;}
-        reply({success:true});
+        if (err) {
+            reply({success:false});
+            throw err;
+        } else {
+            reply({success:true});
+        }
     });
 };
 

@@ -120,7 +120,6 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
     };
 
     $scope.addToFrom = function(to,from,term,index){
-        console.log("index: " + index);
         to.push(term);
         from.splice(index, 1);
     };
@@ -146,33 +145,6 @@ factory('filterFactory', ['$http',function ($http) {
     // non-singlton factory
     return function(){
         var Groups = function(){
-            // this.getGroups= function(termID){
-            //     if(termID){
-            //         console.log("hello: " + termID);
-            //         console.log(this.groups);
-            //         // NOTE: sending the group list to the server and back can't be the best way...
-            //         $http.get('/termGroups', {params: {uuid: termID, groups:this.groups}})
-            //         .success(function(data){
-            //             console.log("got groups: ");
-            //             console.log(data);
-                        
-            //             return this.groups;
-            //         });
-            //     }
-            //     else {
-            //         return this.groups;
-            //     }
-            // };
-            // this.setGroups= function(termID){
-            //     // second param for groups or take from function?
-            //     $http.post('/termGroups', {})
-            //     .success(function(data){
-            //         console.log("got groups: ");
-            //         console.log(data);
-            //         console.log(this);
-            //     });
-              
-            // };
             this.addGroup= function(group){
                 for (var term in this.groups) {
                     if(this.groups[term].name === group){
@@ -261,15 +233,13 @@ factory('filterFactory', ['$http',function ($http) {
 }]).
 
 controller('termModalInstanceCtrl', ['$scope', '$modalInstance', 'data', 'filterFactory', '$http',function ($scope, $modalInstance, data, filterFactory, $http) {
-    console.log("data: "    );
-    console.log(data);
+
     $scope.term = data;
     $scope.term.groupObj = filterFactory();
     $scope.term.groups = $scope.term.groupObj.groups;
     
     $http.get('/termGroups', {params: {uuid: $scope.term.UUID}})
     .success(function(results){
-        console.log(results);
         for (var ii = 0; ii < results.length; ii++) {
             $scope.term.groupObj.addGroup(results[ii].name);
         }           
@@ -277,17 +247,19 @@ controller('termModalInstanceCtrl', ['$scope', '$modalInstance', 'data', 'filter
 
     $scope.saveChanges = function(){
         $http.post('/termGroups', {uuid: $scope.term.UUID, groups: $scope.term.groups})
-        .success(function(results){
-            console.log(results);
-            for (var ii = 0; ii < results.length; ii++) {
-                $scope.term.groupObj.addGroup(results[ii].name);
-            }           
-            $modalInstance.close();
+        .then(function(results){
+            if(results.data.success){
+                for (var ii = 0; ii < results.length; ii++) {
+                    $scope.term.groupObj.addGroup(results[ii].name);
+                }           
+                $modalInstance.close();
+            } else {
+                // TODO: display error
+            }
         });
     };
 
     $scope.$on('$routeChangeStart', function(event, current, previous) {
-        console.log("closing modal");
         $modalInstance.close("location change");
     });
 
