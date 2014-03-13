@@ -41,7 +41,6 @@
 	margin-top: 10px
 }
 
-
 .buttonSelected {
 	color: #333;
 	background-color: #ebebeb;
@@ -52,8 +51,8 @@
 }
 #ng-pageslide {
     background: #eee;
-    border-top-right-radius: 10px;
-	border-bottom-right-radius: 10px;
+    border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
 }
 
 .center {
@@ -89,10 +88,21 @@
 	padding:0;
 }
 
+.openPanelBtn {
+	z-index: 50;
+	position: absolute;
+	width: 72px;
+	left: -4px;
+	margin-top: -13px;
+}
+.openPanelBtn i{
+	margin-top: 4px;
+}
 .videoWrapper {
 	position: relative;
 	padding-bottom: 56.25%; /* 16:9 */
 	padding-top: 25px;
+	top: -13px;
 }
 .videoWrapper iframe {
 	top:0;
@@ -118,9 +128,9 @@
     webkit-transition-duration : .5s;
     transition-property : width, height;
 	border-radius: 5px;
-	height: 87.5%;
+	height: 89%;
 	width: 95%;
-	margin: 75px 0% 0% 2.5%;
+	margin: 75px 2.5% 0% 0%;
 	float:right;
 }
 

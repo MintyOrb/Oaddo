@@ -1,18 +1,16 @@
 
 <div class='center'>
 
-		 <button class="btn btn-primary" ng-click="panelVisible = !panelVisible; panelHalfScreen = !panelHalfScreen">open/close</button>
-		 <button class="btn btn-primary" ng-click="vSize={height: '100%' , width: '100%', top: '0'}">100</button>
-		 <button class="btn btn-primary" ng-click="vSize={height: '50%', width: '50%', top: '10%'}">50</button>
-
+	<button class="btn btn-default openPanelBtn noOutline" ng-click="panelVisible = !panelVisible; wSize={width: '50%', margin:'75px 0% 0% 0%'}; vSize={height: '50%', width: '50%', top: '10%'}">open<i class='fa fa-chevron-right pull-right'></i></button>
+		
 	<!-- TODO: set max/min zoom based on image size -->
 	<zui  ng-if="content.displayType === 'image'" url="img/submittedContent/{{content.savedAs}}"></zui>
 
-	<!-- TODO: modify for mobile -->
+	<!-- TODO: modify for mobile (go to full page panel) -->
 	<div ng-if="content.displayType === 'embed'" class="videoWrapper">
 		<iframe ng-style="vSize" class="center" ng-src="{{content.embedSrc}}" allowfullscreen></iframe>
 	</div>
-
+	<!-- TODO: modify for mobile (go to full page panel) -->
 	<div ng-if="content.displayType === 'webpage'" class="webHolder">
 		<iframe ng-style="wSize" ng-src="{{content.webURL}}"></iframe>
 	</div>
@@ -22,10 +20,10 @@
 <div>
 	<a pageslide="left" auto-close="true" custom-top="75px" custom-height="605px" ps-speed="0.5" ps-target="#metaPanel" size="50%" ps-open="panelVisible" href="#metaPanel"></a>
 
-	<div id="metaPanel">  
-	<button class="btn btn-primary" style="z-index: 500;"ng-click="wSize={height: '100%' , width: '100%', top: '0'}">w100</button>
-		 <button class="btn btn-primary" style="z-index: 500;"ng-click="wSize={height: '100%', width: '50%'}">w50</button>          
+	<div id="metaPanel">     
+	{{wSize}} <br>{{vSize}}  <br>  
+	<button class="btn btn-primary" style="z-index: 500;"ng-click="panelVisible = false; wSize={height: '100%', width: '95%'}; vSize={height: '100%' , width: '100%', top: '0'}">close</button>
+
 	    <p>some random content...</p>
-		 <button class="btn btn-primary" ng-click="panelVisible = false;">close</button>
 	</div>
 </div>
