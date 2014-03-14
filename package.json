@@ -1,6 +1,6 @@
 {
-  "name": "Oaddo",
-  "version": "0.0.1",
+  "name": "Universal-Library",
+  "version": "0.0.2",
   "private": true,
   "dependencies": {
     "hapi": "2.1.x",
@@ -18,6 +18,6 @@
     "freebase": "2.1.16",
     "async": "0.2.10",
     "webshot": "0.10.0",
-    "grunt": "~0.4.2",
+    "grunt": "~0.4.2"
   }
 }
