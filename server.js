@@ -128,5 +128,5 @@ server.route([
 
 // Start the server
 server.start(function () {
-    console.log('server started on port: ', server.info.port);
+    console.log('!!! server started on port: ', server.info.port);
 });
