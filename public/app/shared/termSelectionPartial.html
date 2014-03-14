@@ -1,0 +1,87 @@
+<button ng-hide="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Hide Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
+<button ng-show="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Show Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
+
+<div collapse="filter.isCollapsed">
+
+    <div  class="f-flexC f-column f-m-between f-c-center panel panel-default marginBottom0">
+        <div class="marginTop10 f-flexC f-row f-wrap f-m-center f-c-center">
+            <div ng-repeat="group in filter.groups" class="btn-group btn-group-xs margin5">
+                <button ng-class="{ 'buttonSelected' : group.included }" ng-click="filter.selectGroup(group.name)" class="btn noOutline btn-default" type="button">{{group.name}}</button>
+                <button ng-if="group.included" ng-click="filter.removeGroup(group.name)" class="btn btn-default">-</button>
+                <button ng-if="!group.included" ng-click="filter.addGroup(group.name)" class="btn btn-default">+</button>
+            </div>
+        </div>
+        <div class="">
+            <div class='margin10'>
+                <button ng-click="filter.setAll(true)" class=" btn btn-xs btn-primary">Select All</button>
+                <button ng-click="filter.setAll(false)" class="btn btn-xs btn-primary">De-select All</button>
+            </div>
+        </div> 
+    </div>
+</div>
+<div ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm height170'>
+    <i class='pull-right text-muted fa fa-question-circle'></i>
+
+    <div class="f-flexC f-row f-m-around f-wrap">
+        <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">no related terms</span>
+        <div ng-repeat="term in contentTerms.related" class="dropdown dn-bounce">
+            <div class="btn-group margin5">
+            <!-- TODO: popover term card on hover -->
+                <button ng-click="addToFrom(contentTerms.selected,contentTerms.related,term,$index)" ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.related)" drag="term" class='btn btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
+                <button class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
+                <!-- TOOD: get menu out of hidden overflow -->
+                <ul class='dropdown-menu'>
+                    <li><a ng-click="addToFrom(contentTerms.selected,contentTerms.related,term,$index)">add to search</a></li>
+                    <li><a ng-click="addToFrom(contentTerms.discarded,contentTerms.related,term,$index)">discard</a></li>
+                    <li ng-show="Login.loggedIn"><a ng-click="openTermModal(term)" >edit term groups</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>   
+<br>
+<div ui-on-Drop="recievingHandler($data, contentTerms.selected)" drag-enter-class="droppable" class="well well-sm">
+    
+    <i class='pull-right text-muted fa fa-question-circle'></i>
+    
+    <div class="f-flexC f-row f-m-center">
+        <span ng-hide="contentTerms.selected.length > 0"class="dn-fade text-muted background h3">selected terms</span>
+        <div class="f-flexC f-row f-m-around f-wrap">
+
+            <div ng-repeat="term in contentTerms.selected" class="dropdown dn-bounce">
+                <div class="btn-group margin5">
+                    <button ng-click="addToFrom(contentTerms.discarded,contentTerms.selected,term,$index)" ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.selected)" drag="term" class='btn btn-default'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
+                    <button class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
+                    <!-- TOOD: get dropdown menu out of hidden overflow -->
+                    <ul class='dropdown-menu'>
+                        <li><a ng-click="addToFrom(contentTerms.discarded,contentTerms.selected,term,$index)">discard</a></li>
+                        <li ng-show="Login.loggedIn"><a ng-click="openTermModal(term)" >edit term groups</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div ui-on-Drop="recievingHandler($data, contentTerms.discarded)" drag-enter-class="droppable" class="well well-sm">
+    <i class='pull-right text-muted fa fa-question-circle'></i>
+    <div class="f-flexC f-row f-m-center">
+        <span ng-hide="contentTerms.discarded.length > 0" class="dn-fade text-muted background h3">discarded terms</span>
+        <div class="f-flexC f-row f-m-around f-wrap">
+
+            <div ng-repeat="term in contentTerms.discarded" class="dropdown dn-bounce">
+                <div class="btn-group btn-group-xs margin5">
+                    <button ng-click="addToFrom(contentTerms.selected,contentTerms.discarded,term,$index)" ui-draggable="true" on-drop-success="dropFromHandler($index,contentTerms.discarded)" drag="term" class='btn btn-default'>{{term.name}}</button>
+                    <button class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
+                    <!-- TOOD: get menu out of hidden overflow -->
+                    <ul class='dropdown-menu'>
+                        <li><a ng-click="addToFrom(contentTerms.selected,contentTerms.discarded,term,$index)">add to search</a></li>
+                        <li ng-show="Login.loggedIn"><a ng-click="openTermModal(term)" >edit term groups</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
