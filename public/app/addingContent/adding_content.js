@@ -11,6 +11,7 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
 
     $scope.tab = {
         description: false,
+        value: false,
         terms: true
     };
 

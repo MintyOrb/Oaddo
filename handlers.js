@@ -8,7 +8,7 @@ var bcrypt = require('bcrypt'),
     uuid = require('node-uuid'),
     webshot = require('webshot');
 
-console.log("TESTINGTESTINGTESTING: ");
+console.log("Graphene URL: ");
 console.log(process.env.GRAPHENEDB_URL);
 //auth and sessions
 
