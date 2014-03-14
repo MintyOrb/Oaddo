@@ -1,6 +1,6 @@
 {
-  "name": "Universal-Library",
-  "version": "0.0.1",
+  "name": "Oaddo",
+  "version": "0.0.2",
   "private": true,
   "dependencies": {
     "hapi": "2.1.x",
