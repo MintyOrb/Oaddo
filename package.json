@@ -26,8 +26,6 @@
     "url": "https://github.com/bornytm/oaddo"
   },
   "scripts": {
-    "postinstall": "ls",
-    "postinstall": "cd node_modules/.bin ls",
-    "postinstall": "node_modules/.bin/bower install"
+    "postinstall": "./node_modules/.bin/bower install"
   }
 }
