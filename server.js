@@ -8,8 +8,8 @@ var Hapi = require('hapi'),
 
 //server config
 var config = {
-    hostname: '0.0.0.0',
-    port: process.env.PORT || 8000,
+    hostname: 'localhost',
+    port: parseInt(process.env.PORT) || 8000,
     urls: {
         successRedirect:'/loginSuccess',
         failureRedirect:'/loginFailure'
