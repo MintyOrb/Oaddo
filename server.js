@@ -8,7 +8,7 @@ var Hapi = require('hapi'),
 
 //server config
 var config = {
-    hostname: 'localhost',
+    hostname: '0.0.0.0',
     port: parseInt(process.env.PORT) || 8000,
     urls: {
         successRedirect:'/loginSuccess',
@@ -128,5 +128,5 @@ server.route([
 
 // Start the server
 server.start(function () {
-    console.log('!!! server started on port: ', server.info.port);
+    console.log('server started on port: ', server.info.port);
 });
