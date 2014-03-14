@@ -30,6 +30,6 @@
     "angular-route": "*"
   },
   "resolutions": {
-    "angular": "1.2.14"
+    "angular": "1.2.12"
   }
 }
