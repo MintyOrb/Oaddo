@@ -19,9 +19,5 @@
     "async": "0.2.10",
     "webshot": "0.10.0",
     "grunt": "~0.4.2",
-    "bower": "0.6.x"
-  },
-  "scripts": {
-    "postinstall": "./node_modules/bower/bin/bower install"
   }
 }
