@@ -6,12 +6,14 @@
         <!-- diable zoom on mobile devies -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <base href="/">
+        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="app/universalLibrary.css">
         <title ng-bind="'Oaddo &mdash; ' + title">Oaddo</title>
     
-        </head>
+    </head>
     <body class="container" ng-controller="appCtrl">
-  
-        <nav ng-cloak class="navbar navbar-default" role="navigation">
+        <!-- TODO: rather than hide on content page, slide up (slide down on mouse over) -->
+        <nav ng-cloak ng-hide='currentTemplate === "app/exploreContent/contentPage.html"' class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
@@ -52,7 +54,7 @@
                 </div>
             </div>
         </nav>
-    
+
         <div ng-view ></div>
 
         <!-- Scripts & css -->
@@ -69,8 +71,7 @@
         <script type="text/javascript" src="bower_components/angular-resource/angular-resource.min.js"></script>
         <script type="text/javascript" src="bower_components/angular-animate/angular-animate.min.js"></script>
     
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="app/universalLibrary.css">
+        
 
         <!-- freebase search widget -->
         <link type="text/css" rel="stylesheet" href="resources/css/suggest.css"/>

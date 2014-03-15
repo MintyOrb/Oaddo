@@ -268,7 +268,6 @@ controller('termModalInstanceCtrl', ['$scope', '$modalInstance', 'data', 'filter
     };
 }]).
 
-
 directive('focusOn', function() {
    return function(scope, elem, attr) {
       scope.$on('focusOn', function(e, name) {
@@ -283,6 +282,6 @@ factory('focus', function ($rootScope, $timeout) {
   return function(name) {
     $timeout(function (){
       $rootScope.$broadcast('focusOn', name);
-    },10);
+    },20);
   };
 });

@@ -141,13 +141,13 @@
                     <div class="form-group" ng-class="{ 'has-error' : addContentForm.description.$invalid }">
                         <label>description:</label>
                         <span class='text-danger' ng-show="addContentForm.description.$invalid"> must be shorter than 900 characters</span>
-                        <text-angular name="description" ng-maxlength='900' ng-focus="tab.description = true" ta-toolbar="[['bold', 'italics', 'underline'],['redo', 'undo'],['insertLink', 'unlink']]" ng-model="contentObject.meta.description"></text-angular>
+                        <text-angular name="description" ng-maxlength='900' ng-click="tab.description = true" ta-toolbar="[['bold', 'italics', 'underline'],['redo', 'undo'],['insertLink', 'unlink']]" ng-model="contentObject.meta.description"></text-angular>
                     </div>
                     <br>
                     <div class="form-group" ng-class="{ 'has-error' : addContentForm.value.$invalid }">
                         <label>why is this content valuable?</label>
                         <span class='text-danger' ng-show="addContentForm.value.$invalid"> must be shorter than 900 characters</span>
-                        <text-angular name="value" ng-maxlength='900' ng-focus="tab.value = true" ta-toolbar="[['bold', 'italics', 'underline'],['redo', 'undo'],['insertLink', 'unlink']]" ng-model="contentObject.meta.value"></text-angular>
+                        <text-angular name="value" ng-maxlength='900' ng-click="tab.value = true" ta-toolbar="[['bold', 'italics', 'underline'],['redo', 'undo'],['insertLink', 'unlink']]" ng-model="contentObject.meta.value"></text-angular>
                     </div>
 
                    <!--  <div>

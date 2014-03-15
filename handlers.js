@@ -8,8 +8,7 @@ var bcrypt = require('bcrypt'),
     uuid = require('node-uuid'),
     webshot = require('webshot');
 
-console.log("Graphene URL: ");
-console.log(process.env.GRAPHENEDB_URL);
+
 //auth and sessions
 
 exports.authUser = function (email, password, done) {
@@ -588,7 +587,7 @@ exports.addNewContent = function (request, reply){
 
 
 
-exports.findRelatedContent = function (request, reply){
+exports.relatedContent = function (request, reply){
 
     // TODO: handle searches in other languages
     console.log("payload: \n");
@@ -671,7 +670,7 @@ exports.findRelatedContent = function (request, reply){
 };
 
 exports.getContent = function (request, reply){
-    // TODO: handle returning same content in different languages
+    // TODO: handle returning same content in different languages (_lang_uuid)
     console.log("data: "+ request.query);
     console.log("data: "+ JSON.stringify(request.query));
     // TODO: increase view count by one
@@ -685,7 +684,28 @@ exports.getContent = function (request, reply){
         if (err) {console.log("error in db query: " + err);}
         console.log("returned from db: " + JSON.stringify(content));
         if(content[0] === undefined){
-            console.log("none found: " + JSON.stringify(content));
+            reply({ message : 'content not found' });
+        } else {
+            reply(content);
+        }
+    });   
+};
+
+exports.getContentTerms = function (request, reply){
+    
+    console.log("data: "+ JSON.stringify(request.query));
+    
+    var query = "MATCH (metaNode:termMeta)-[:HAS_LANGUAGE { languageCode: { language } }]-(termNode:term)-[:TAGGED_WITH]-(contentNode:content {UUID: {id} }) RETURN metaNode.name AS name, termNode.UUID AS UUID";
+    var properties = { 
+        id: request.query.uuid,
+        language: request.query.language,
+    };
+
+    db.query(query, properties, function (err, content) {
+        if (err) {console.log("error in db query: " + err);}
+        console.log("returned from db: " + JSON.stringify(content));
+        if(content[0] === undefined){
+            console.log("not found: " + JSON.stringify(content));
             reply({ message : 'content not found' });
         } else {
             reply(content);

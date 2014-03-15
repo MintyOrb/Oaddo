@@ -1,29 +1,54 @@
+<button class="btn btn-default openPanel noOutline" ng-click="panel.visible = !panel.visible; wSize={width: '50vw', margin:'3vh 0vh 0 0'}; vSize={height: '50%', width: '50%', top: '10%'}">open<i class='fa fa-chevron-right pull-right'></i>
+</button> 
 
 <div class='center'>
-
-	<button class="btn btn-default openPanelBtn noOutline" ng-click="panelVisible = !panelVisible; wSize={width: '50%', margin:'75px 0% 0% 0%'}; vSize={height: '50%', width: '50%', top: '10%'}">open<i class='fa fa-chevron-right pull-right'></i></button>
 		
 	<!-- TODO: set max/min zoom based on image size -->
-	<zui  ng-if="content.displayType === 'image'" url="img/submittedContent/{{content.savedAs}}"></zui>
+	<zui  ng-if="content.display.displayType === 'image'" url="img/submittedContent.display/{{content.display.savedAs}}"></zui>
 
 	<!-- TODO: modify for mobile (go to full page panel) -->
-	<div ng-if="content.displayType === 'embed'" class="videoWrapper">
-		<iframe ng-style="vSize" class="center" ng-src="{{content.embedSrc}}" allowfullscreen></iframe>
+	<div ng-if="content.display.displayType === 'embed'" class="videoWrapper">
+		<iframe ng-style="vSize" class="center" ng-src="{{content.display.embedSrc}}" allowfullscreen></iframe>
 	</div>
 	<!-- TODO: modify for mobile (go to full page panel) -->
-	<div ng-if="content.displayType === 'webpage'" class="webHolder">
-		<iframe ng-style="wSize" ng-src="{{content.webURL}}"></iframe>
+	<div ng-if="content.display.displayType === 'webpage'" class="webHolder">
+		<iframe ng-style="wSize" ng-src="{{content.display.webURL}}"></iframe>
 	</div>
 
-</div>
+</div> 
 
 <div>
-	<a pageslide="left" auto-close="true" custom-top="75px" custom-height="605px" ps-speed="0.5" ps-target="#metaPanel" size="50%" ps-open="panelVisible" href="#metaPanel"></a>
+	<a pageslide="left" auto-close="true" custom-top="3vh" custom-height="94vh" ps-speed=".5" ps-target="#metaPanel" size="{{panel.size}}" ps-open="panel.visible" href="#metaPanel"></a>
 
-	<div id="metaPanel">     
-	
-		<button class="btn btn-primary" style="z-index: 500;"ng-click="panelVisible = false; wSize={height: '100%', width: '95%'}; vSize={height: '100%' , width: '100%', top: '0'}">close</button>
+	<div id="metaPanel">
 
-	    
+		<div class="pull-right">    
+		
+			<button class="btn btn-default" style="z-index: 500;"ng-click="panel.visible = false; wSize={width: '95vw', margin:'3vh 2.5vw 0 0'}; vSize={height: '100%' , width: '100%', top: '0'}">close</button>
+
+		</div>
+		<br>
+		<div class="f-flexC f-row f-m-around f-c-center">    
+		
+			<div class="metaTab" style="z-index: 500;"ng-click="panel.section = 'about'">about</div>
+			<div class="metaTab" style="z-index: 500;"ng-click="getContentTerms(); panel.section = 'terms'">terms</div>
+			<div class="metaTab" style="z-index: 500;"ng-click="getRelatedTerms(); panel.section = 'related'">related content</div>
+
+		</div>
+
+		<div ng-show="panel.section === 'about'">
+		description
+		</div>
+
+		<div ng-show="panel.section === 'terms'"> 
+			<div class="well f-flexC f-row f-wrap f-m-center margin20">
+				<button ng-repeat="term in content.terms" class="btn btn-default btn-sm margin5 dn-bounce">{{term.name}}</button>
+			</div>
+			<button ng-show="Login.loggedIn" ng-click='openEditTermModal()' class="btn btn-default pull-right margin20">Edit Terms</button>
+		</div>
+
+		<div ng-show="panel.section === 'related'">
+		description
+		</div>
 	</div>
 </div>

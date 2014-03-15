@@ -14,8 +14,7 @@ var universalLibrary = angular.module('universalLibrary',
         'textAngular',
         'chieffancypants.loadingBar',
         'ngAnimate-animate.css',
-        'ngDragDrop',
-        'pageslide-directive'
+        'ngDragDrop'
     ]).
 
 config(function($routeProvider, $locationProvider, $httpProvider) {
@@ -93,10 +92,14 @@ service('appLanguage', ['$cookieStore',function ($cookieStore) {
     this.lang = "";
 }]).
 
-controller('appCtrl', ['$scope', 'appLanguage', 'LoginService', '$modal',function ($scope, appLanguage, LoginService,$modal) {
+controller('appCtrl', ['$scope', 'appLanguage', 'LoginService', '$route',function ($scope, appLanguage, LoginService,$route) {
 
     $scope.displayLanguage = appLanguage;
-    $scope.Login = LoginService;
-
+    $scope.Login = LoginService; 
+    $scope.currentTemplate = "";
+    $scope.$on('$routeChangeSuccess', function(event, info) {
+        $scope.currentTemplate = info.loadedTemplateUrl;
+    });
+    // console.log($route.current.loadedTemplateUrl);
 }]);
 
