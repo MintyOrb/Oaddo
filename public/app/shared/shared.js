@@ -3,17 +3,12 @@
 
 angular.module('universalLibrary').
 
-controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, appLanguage, $modal, filterFactory, $route) {
+controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLanguage, filterFactory, $modal) {
 
     $scope.contentTerms = contentTerms;
     
     $scope.filter = filterFactory();
     $scope.filter.setAll(true);  // initialize filter values to true (include all types)
-
-    $scope.displayOptions = {
-        DBTerm : "",
-        addingNewTerm : false // display freebase input or dbinput depending
-    };
 
     $scope.$watch("filter.groups", function(newValue, oldValue){
         if (newValue !== oldValue) {
@@ -38,7 +33,6 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
             }
         });
     };
-
     var getRelatedTerms = function(){
         // NOTE: dropping term from search into search leads to multiple instances of terms being returned
         // this should be fixed with correct term drop logic (restricting drop zones)
@@ -85,30 +79,6 @@ controller("termSelectionCtrl", function ($scope, focus, contentTerms, $http, ap
             }
             
         });
-    };
-
-    //typeahead from neo4j
-    $scope.findTerm = function()
-    {   
-        return $http.get('/termTypeAhead', { params: { entered: $scope.displayOptions.DBTerm, language: appLanguage.lang } }).
-        then(function(response){
-            if(!response.data.results){
-                if($route.current.templateUrl === "app/addingContent/newContent.html"){
-                    $scope.displayOptions.addingNewTerm = true;
-                    focus('suggest'); // switch focus to freebase typeahead
-                    return [];
-                } else {
-                     return [{name:"- term not found -"}];
-                }
-            } else {
-                return response.data.matches;
-            }
-        });       
-    };
-
-    $scope.addToSelectedFromDB = function(){
-        contentTerms.selected.push({name:$scope.displayOptions.DBTerm.name,UUID:$scope.displayOptions.DBTerm.UUID});
-        $scope.displayOptions.DBTerm = "";
     };
 
     $scope.dropFromHandler = function(index, termArray){  // this method can be replaced by addToFrom()

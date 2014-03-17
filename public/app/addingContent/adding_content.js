@@ -187,7 +187,36 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
 
 
 
-controller("newTermCtrl", function ($scope, focus, $modal) {
+controller("termTypeAheadCtrl", function ($scope, focus, $modal, $http, $route, appLanguage, contentTerms) {
+
+    $scope.displayOptions = {
+        DBTerm : "",
+        addingNewTerm : false // display freebase input or dbinput depending
+    };
+
+    //typeahead from neo4j
+    $scope.findTerm = function()
+    {   
+        return $http.get('/termTypeAhead', { params: { entered: $scope.displayOptions.DBTerm, language: appLanguage.lang } }).
+        then(function(response){
+            if(!response.data.results){
+                if($route.current.templateUrl === "app/addingContent/newContent.html"){
+                    $scope.displayOptions.addingNewTerm = true;
+                    focus('suggest'); // switch focus to freebase typeahead
+                    return [];
+                } else {
+                     return [{name:"- term not found -"}];
+                }
+            } else {
+                return response.data.matches;
+            }
+        });       
+    };
+
+    $scope.addToSelectedFromDB = function(){
+        contentTerms.selected.push({name:$scope.displayOptions.DBTerm.name,UUID:$scope.displayOptions.DBTerm.UUID});
+        $scope.displayOptions.DBTerm = "";
+    };
 
     $scope.openNewTermModal = function (termData) {
         var modalInstance = $modal.open({

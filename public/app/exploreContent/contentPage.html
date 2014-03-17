@@ -1,10 +1,11 @@
-<button class="btn btn-default openPanel noOutline" ng-click="panel.visible = !panel.visible; wSize={width: '50vw', margin:'3vh 0vh 0 0'}; vSize={height: '50%', width: '50%', top: '10%'}">open<i class='fa fa-chevron-right pull-right'></i>
+<button class="btn btn-default openPanel noOutline" ng-click="panel.visible = !panel.visible; wSize={width: '50vw', margin:'3vh 0vh 0 0'}; vSize={height: '50%', width: '50%', top: '10%', marginRight:'-8px'}"><i class='fa fa-chevron-right fa-2x pull-right'></i>
 </button> 
 
+<!-- content display -->
 <div class='center'>
 		
 	<!-- TODO: set max/min zoom based on image size -->
-	<zui  ng-if="content.display.displayType === 'image'" url="img/submittedContent.display/{{content.display.savedAs}}"></zui>
+	<zui  ng-if="content.display.displayType === 'image'" url="img/submittedContent/{{content.display.savedAs}}"></zui>
 
 	<!-- TODO: modify for mobile (go to full page panel) -->
 	<div ng-if="content.display.displayType === 'embed'" class="videoWrapper">
@@ -17,38 +18,85 @@
 
 </div> 
 
-<div>
+<!-- content panel -->
+<div id="metaPanel" >
 	<a pageslide="left" auto-close="true" custom-top="3vh" custom-height="94vh" ps-speed=".5" ps-target="#metaPanel" size="{{panel.size}}" ps-open="panel.visible" href="#metaPanel"></a>
+   
+   	<div class="panelHeading">
+		<button class="btn btn-default pull-right" style="z-index: 500;"ng-click="panel.visible = false; wSize={width: '95vw', margin:'3vh 2.5vw 0 0'}; vSize={height: '100%' , width: '100%', top: '0'}"><i class='fa fa-chevron-left fa-2x'></i></button>
 
-	<div id="metaPanel">
-
-		<div class="pull-right">    
-		
-			<button class="btn btn-default" style="z-index: 500;"ng-click="panel.visible = false; wSize={width: '95vw', margin:'3vh 2.5vw 0 0'}; vSize={height: '100%' , width: '100%', top: '0'}">close</button>
-
+		<div class="f-flexC f-row f-wrap f-m-around f-c-center">    
+			<h3 class="metaTab margin10" style="z-index: 500;" ng-class="{ 'metaTabSelected' : panel.section === 'about' }" ng-click="panel.section = 'about'">about</h3>
+			<h3 class="metaTab margin10" style="z-index: 500;" ng-class="{ 'metaTabSelected' : panel.section === 'terms' }" ng-click="getContentTerms(); panel.section = 'terms'">terms</h3>
+			<h3 class="metaTab margin10" style="z-index: 500;" ng-class="{ 'metaTabSelected' : panel.section === 'related' }" ng-click="getRelatedContent(); panel.section = 'related'">related content</h3>
 		</div>
-		<br>
-		<div class="f-flexC f-row f-m-around f-c-center">    
-		
-			<div class="metaTab" style="z-index: 500;"ng-click="panel.section = 'about'">about</div>
-			<div class="metaTab" style="z-index: 500;"ng-click="getContentTerms(); panel.section = 'terms'">terms</div>
-			<div class="metaTab" style="z-index: 500;"ng-click="getRelatedTerms(); panel.section = 'related'">related content</div>
+	</div>
 
-		</div>
-
+	<div>
 		<div ng-show="panel.section === 'about'">
 		description
 		</div>
 
 		<div ng-show="panel.section === 'terms'"> 
+		
+			<div ng-if="panel.editTerms" ng-controller="termTypeAheadCtrl">
+                <suggest focus-on="suggest" ng-show="displayOptions.addingNewTerm" class='form-control' on-select="openNewTermModal(data)" input-model="displayOptions.DBTerm" lang="{{displayLanguage.get()}}"></suggest>
+                <input focus-on="db" ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="Type term name here" >
+                <button ng-click="displayOptions.addingNewTerm = !displayOptions.addingNewTerm" class='btn btn-default btn-sm'>Change Source</button>
+                <i class='text-muted fa fa-question-circle'></i>
+            </div>		
+
 			<div class="well f-flexC f-row f-wrap f-m-center margin20">
-				<button ng-repeat="term in content.terms" class="btn btn-default btn-sm margin5 dn-bounce">{{term.name}}</button>
+				<div ng-repeat="term in content.terms" class="btn-group margin5">
+					<button ng-if="panel.editTerms" class='btn btn-danger' ><i class="fa fa-times"></i></button>
+	                <button class='btn btn-default noAction'>{{term.name}}</button>
+	                <button ng-if="Login.loggedIn" class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
+	                <!-- TOOD: get menu out of hidden overflow -->
+	                <ul class='dropdown-menu'>
+	                    <li ng-show="Login.loggedIn"><a ng-click="openTermModal(term)" >edit term groups</a></li>
+	                    <li ng-if="panel.editTerms"><a  >remove term</a></li>
+	                </ul>
+	            </div>
 			</div>
-			<button ng-show="Login.loggedIn" ng-click='openEditTermModal()' class="btn btn-default pull-right margin20">Edit Terms</button>
+			<button ng-click="panel.editTerms = true" ng-show="Login.loggedIn" class="btn btn-default pull-right margin20">Edit Terms</button>
 		</div>
 
 		<div ng-show="panel.section === 'related'">
-		description
+
+			<div class="cardsContainer f-flexC f-row f-wrap f-m-around">
+				<div class="f-flexC  f-column f-m-between cardContainer panel panel-default margin5" ng-repeat="contentItem in returnedContent">
+					<div class="panel-heading">
+						<i class="fa fa-flag pull-right"></i>
+						<i class="fa fa-ban pull-right"></i>
+					    <i class="fa fa-eye pull-right"> 0</i>
+		                <br>
+		                <hr ng-show="contentItem.title.length > 0" class="hr">
+					    <h3 class="panel-title">{{contentItem.title}}</h3>
+					</div>
+					<br>
+					<div class="f-flexC f-column f-m-center f-c-center imgContainer">
+						<a ng-href="content/{{contentItem.UUID}}">
+							<img ng-if="contentItem.displayType === 'embed'" ng-src="img/{{contentItem.savedAs}}">			
+							<img ng-if="contentItem.displayType === 'image' || contentItem.displayType === 'webpage'" ng-src="img/submittedContent/{{contentItem.savedAs}}">
+						</a>
+					</div>
+					<tabset class='f-grow-1 f-flexC f-column margin10'>
+						<tab heading="Terms">
+							<div class="f-flexC f-row f-wrap f-m-center ">
+								<button ng-repeat="term in contentItem.terms"class="btn btn-default btn-sm margin5">{{term}}</button>
+							</div>
+						</tab>
+						<tab ng-if="contentItem.description.length > 0" heading="Description">
+							<div ng-bind-html="contentItem.description" class="margin10"></div>
+						</tab>
+						<tab ng-if="contentItem.value.length > 0" heading="value">
+							<div ng-bind-html="contentItem.value" class="margin10"></div>
+						</tab>
+					</tabset>			
+				</div>
+			</div>
+
 		</div>
 	</div>
+	
 </div>

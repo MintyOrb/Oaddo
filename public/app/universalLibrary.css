@@ -49,13 +49,6 @@
 	-webkit-box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
 	box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
 }
-#ng-pageslide {
-	border:1px solid;
-    background: #eee;
-    border-top-right-radius: 6px;
-	border-bottom-right-radius: 6px;
-	overflow: scroll;
-}
 
 .center {
   display: block;
@@ -85,16 +78,55 @@
 .noOutline:focus {
 	outline: 0;
 }
-
+.noAction:hover {
+	background-color: #fff;
+	border-color: #ccc;
+}
+.noAction:focus {
+	background-color: #fff;
+	border-color: #ccc;
+}
 .padding0{
 	padding:0;
 }
 
+#ng-pageslide {
+	border:1px solid rgb(119, 119, 119);
+    background: #eee;
+    border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	overflow: scroll;
+}
+.panelHeading {
+	padding: 10px;
+	outline: 1px solid rgb(119, 119, 119);
+	background-color: white;
+}
+.metaTab{
+	color:black;
+	transition-duration : .5s;
+    webkit-transition-duration : .5s;
+    transition-property : color;
+}
+.metaTab:hover{
+	color:rgb(145, 145, 145);
+	text-decoration: underline;
+	transition-duration : .5s;
+    webkit-transition-duration : .5s;
+    transition-property : color;
+}
+.metaTabSelected {
+	color:rgb(145, 145, 145);
+	text-decoration: underline;
+	transition-duration : .5s;
+    webkit-transition-duration : .5s;
+    transition-property : color;
+}
 
 .openPanel {
 	width: 80px;
 	z-index: 20;
-	margin-top: 6vh;
+	margin-top: 10vh;
 	margin-left: -30px;
 	position: absolute;
 }
@@ -103,9 +135,6 @@
 	padding-bottom: 56.25%; /* 16:9 */
 	padding-top: 25px;
 	top: 3vh;
-
-	max-width: 1000px;
-	max-height: 94vh; /*not doing anything*/
 	margin-left: auto;
 	margin-right: auto;
 }

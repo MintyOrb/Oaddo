@@ -34,7 +34,8 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     $scope.panel = {
         visible : false,
         size : '50%',
-        section : 'about'
+        section : 'about',
+        editTerms : false
     };
 
     $scope.content = {
@@ -66,12 +67,12 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     };
 
     $scope.getRelatedTerms = function(){
-        if($scope.content.terms.length === 0){
-            $http.get('/relatedTerms', {params: {uuid: $routeParams.id, language: appLanguage.get()}})
-            .success(function(data){
-                $scope.content.terms = data;
-            });
-        }
+        // if($scope.content.terms.length === 0){
+        //     $http.get('/relatedTerms', {params: {uuid: $routeParams.id, language: appLanguage.get()}})
+        //     .success(function(data){
+        //         $scope.content.terms = data;
+        //     });
+        // }
 
 // var properties = {
 //         language: request.payload.language ,
@@ -82,14 +83,15 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
 
 //     };
     };
-    $scope.getRelatedContent = function(){
-    //         var properties = {
-//     language: request.payload.language,
-//     includedTerms: [],
-//     userID: id,
-//     numberOfIncluded: count
-// };
-    };
+    // $scope.getRelatedContent = function(){
+    //     $http.post('/explore', { 
+    //         includedTerms: $scope.contentTerms.selected,
+    //         excludedTerms: $scope.contentTerms.discarded, 
+    //         language: appLanguage.lang }).
+    //     success(function(data){
+    //         $scope.returnedContent = data; 
+    //     });
+    // };
 
 
 
@@ -101,7 +103,6 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
 
 
 directive('zui', [function () {
-    console.log("in directive: " );
 	return {
 		restrict: 'E',
 		scope: { url: "@"},
@@ -109,10 +110,7 @@ directive('zui', [function () {
         // TODO: find better solution for centering displayed content - this method allows the user to zoom on the magin 'wings' used for centering
 		template: '<div id="zui" style="z-index:-1;" ><div id="viewport" ><img src="{{imageURL}}" style="display:block; margin-left: auto; margin-right: auto; max-height: 400px;"></div></div>',
 		link: function (scope, element, attrs) {
-			console.log("url: " );
-            console.log(scope.url);
             scope.imageURL = scope.url;
-            // TODO: find alternative to doc.getbyID for zui initilization
 			var zui = new ZUI53.Viewport( document.getElementById('zui') );
             zui.addSurface( new ZUI53.Surfaces.CSS( document.getElementById('viewport') ) );
             

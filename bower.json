@@ -27,7 +27,8 @@
     "angular-animate": "*",
     "angular-cookies": "*",
     "angular-resource": "*",
-    "angular-route": "*"
+    "angular-route": "*",
+    "intro.js": "~0.7.1"
   },
   "resolutions": {
     "angular": "1.2.14"

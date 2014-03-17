@@ -2,13 +2,13 @@
 
  <div ng-controller="exploreCtrl">
  	<!-- <input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang"> -->
-	<div ng-controller='termSelectionCtrl' ui-on-Drop="" >
-		<div class="input-group col-sm-3 col-sm-offset-7">
+	<div  ui-on-Drop="" >
+		<div ng-controller="termTypeAheadCtrl" class="input-group col-sm-3 col-sm-offset-7">
 		    <input type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">
 		    <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
 		</div>
 
-	   	<ng-include class="col-sm-8 col-sm-offset-2 padding0" src="'app/shared/termSelectionPartial.html'"></ng-include>
+	   	<ng-include ng-controller='termSelectionCtrl' class="col-sm-8 col-sm-offset-2 padding0" src="'app/shared/termSelectionPartial.html'"></ng-include>
 	   	
 	</div>
 	<br>
