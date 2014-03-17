@@ -102,6 +102,10 @@
 	outline: 1px solid rgb(119, 119, 119);
 	background-color: white;
 }
+.panelContent {
+	overflow: scroll;
+	margin:20px;
+}
 .metaTab{
 	color:black;
 	transition-duration : .5s;

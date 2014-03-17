@@ -507,10 +507,13 @@ exports.addContentFromURL = function (request, reply){
                 //TODO: send screenshot back to user for preivew
                 //take screenshot of webpage that is not a video
                 webshot(request.payload.url, './public/img/submittedContent/' + identifier + lang + generatedName + '.png',function(err) {
-                    if(err){console.log("error taking webshot: " + err);}
-                    console.log("screenshot now saved");
-                    reply({savedAs: identifier + lang + generatedName + '.png', embedSrc: "",id: generatedName, displayType: "webpage"});
-
+                    if(err){
+                        console.log("error taking webshot: " + err);
+                        reply('error');
+                    } else {
+                        console.log("screenshot now saved");
+                        reply({savedAs: identifier + lang + generatedName + '.png', embedSrc: "",id: generatedName, displayType: "webpage"});
+                    }
                 });
             }
         } 

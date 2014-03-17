@@ -4,7 +4,7 @@
  	<!-- <input type='text' ng-blur="displayLanguage.set(lang)" ng-model="lang"> -->
 	<div  ui-on-Drop="" >
 		<div ng-controller="termTypeAheadCtrl" class="input-group col-sm-3 col-sm-offset-7">
-		    <input type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">
+		    <input type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB(contentTerms.selected)" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">
 		    <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
 		</div>
 

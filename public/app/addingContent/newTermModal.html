@@ -8,15 +8,13 @@
             <label> 
                 <h2>{{newTermMeta.name}}</h2>
             </label>
-            <br>
             <span>Add your term to relevant term groups:</span>
+            (click each group that applies)
+            <br>
             <br>
             <div class="well well-sm col-sm-8 f-flexC f-row f-wrap f-m-around f-c-center">
                 <button ng-repeat="group in newTermMeta.type" btn-checkbox class="btn btn-sm btn-default margin5 noOutline" type="button" ng-model="group.included">{{group.name}}</button>
             </div>
-            <br>
-            <span>Optional:</span>
-            <br>
             <label> Enter a concise (at most one sentence) definition for this term:</label>
             <input class="form-control width80p" type="text" ng-model="newTermMeta.definition">
         </form>

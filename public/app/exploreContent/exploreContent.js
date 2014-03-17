@@ -42,6 +42,7 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
         editTerms : false,
         UUID : $routeParams.id,
         terms: [],
+        editedTerms: [],
         relatedContent:[]
     };
 

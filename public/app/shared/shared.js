@@ -163,6 +163,10 @@ factory('filterFactory', ['$http',function ($http) {
                     included: false,
                     name: 'technology',
                 },
+                people: {
+                    included: false,
+                    name: 'person',
+                },
                 organizations: {
                     included: false,
                     name: 'organization',
