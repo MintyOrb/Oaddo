@@ -107,7 +107,12 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     $scope.saveNewTerms = function(){
         $http.put('/contentTerms',{newTerms:$scope.content.terms, contentID:$scope.content.UUID})
         .success(function(){
-            console.log("back: " );
+            $scope.content.changesNotMade = true;
+            $scope.panel.editTerms = false;
+            $scope.content.originalTerms=[];
+            for (var ii = 0; ii < $scope.content.terms.length; ii++) {
+                $scope.content.originalTerms.push($scope.content.terms[ii]);
+            }
         });
     };
 
