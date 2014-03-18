@@ -163,9 +163,9 @@ exports.addTerm = function (request, reply) {
 
 
     // generate array of term group names
-    for (var group in request.payload.group) {
-        if(request.payload.group[group].included) {
-            termGroupProperties.groups.push(request.payload.group[group].name);
+    for (var group in request.payload.groups) {
+        if(request.payload.groups[group].included) {
+            termGroupProperties.groups.push(request.payload.groups[group].name);
         }
     }
     console.log("groups: " + JSON.stringify(termGroupProperties.groups));
@@ -277,9 +277,9 @@ exports.termTypeAhead = function (request, reply){
     //TODO: use english as default if not found in preferred language
     //TODO: use users secondary languge choice if first not found?
     var query = [
-        "MATCH (core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) ",
+        "MATCH (contentNode:content)-[:TAGGED_WITH]-(core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) ",
         "WHERE langNode.name =~ {match} ",
-        "RETURN core.UUID as UUID, langNode.name as name, core.contentConnections as connections LIMIT 8"
+        "RETURN core.UUID as UUID, langNode.name as name, count(DISTINCT contentNode) AS connections LIMIT 8"
     ].join('\n');
     
     console.log("match: " + properties.match);
@@ -326,7 +326,7 @@ exports.relatedTerms = function (request, reply) {
             'WHERE',
                 'groupNode.name IN {groups} ',
                 'AND NOT matched.UUID IN {ignoreTerms} ',
-            'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
+            'RETURN DISTINCT count(DISTINCT contentNode) AS connections, termMeta.name AS name, matched.UUID AS UUID ',
             'ORDER BY connections DESC LIMIT 10'
         ].join('\n');
 
@@ -340,7 +340,7 @@ exports.relatedTerms = function (request, reply) {
                 'MATCH (groupNode:termGroup)<-[:IN_GROUP]-(matched:term)<-[:TAGGED_WITH]-contentNode, ',
                 'matched-[:HAS_LANGUAGE {languageCode: {language} }]->(termMeta:termMeta) ',
                 'WHERE groupNode.name IN {groups} AND NOT matched.UUID IN {ignoreTerms} ',    
-                'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
+                'RETURN DISTINCT count(DISTINCT contentNode) AS connections, termMeta.name AS name, matched.UUID AS UUID ',
                 'ORDER BY connections DESC LIMIT 10'
             ].join('\n');
         } else {
@@ -351,7 +351,7 @@ exports.relatedTerms = function (request, reply) {
                     'groupNode.name IN {groups} ',
                     'AND searchTerms.UUID IN {searchTerms} ',
                     'AND NOT matched.UUID IN {ignoreTerms} ',
-                'RETURN DISTINCT termMeta.name AS name, matched.UUID AS UUID, matched.contentConnections AS connections ',
+                'RETURN DISTINCT count(DISTINCT contentNode) AS connections, termMeta.name AS name, matched.UUID AS UUID ',
                 'ORDER BY connections DESC LIMIT 10'
             ].join('\n');
         }
@@ -376,13 +376,12 @@ exports.relatedTerms = function (request, reply) {
 
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
+        console.log("results: ");
+        console.log(results);
         reply({results: results});
     });
 };
 
-exports.getTerm = function(request, reply){
-
-};
 
 exports.getTermGroups = function(request, reply){
 
@@ -552,7 +551,6 @@ exports.addNewContent = function (request, reply){
         "CREATE (contentNode:content:testContent:testtest {contentParams})-[r:HAS_META {languageCode: {lang} }]->(metaNode:contentMeta {metaParams}) ",
         "WITH contentNode MATCH (termNode:term) ",
         "WHERE termNode.UUID IN {taggedTermsUUID} ",
-        "SET termNode.contentConnections = termNode.contentConnections + 1 ",
         "CREATE (contentNode)-[:TAGGED_WITH]->(termNode)"
     ].join('\n');
 
@@ -714,4 +712,42 @@ exports.getContentTerms = function (request, reply){
             reply(content);
         }
     });   
+};
+exports.updateContentTerms = function (request, reply){
+    // TODO: log changes made and by whom - record date, user id, changes
+    console.log("update: ");
+    console.log(request.payload);
+    var properties = {
+        contentID: request.payload.contentID,
+        termIDs: [],
+        date: new Date(),
+        userID: request.user[0].id
+    };
+
+    // TODO: strip lang from UUID if present
+
+
+    for(var term in request.payload.newTerms) {
+        properties.termIDs.push(request.payload.newTerms[term].UUID);
+    }
+    var query = [
+        "MATCH (contentNode:content {UUID: {contentID} }), (newTermNode:term) ",
+        "WHERE newTermNode.UUID IN {termIDs} ",
+        "CREATE UNIQUE contentNode-[:TAGGED_WITH]->newTermNode ",
+        "WITH DISTINCT contentNode",
+        "MATCH contentNode-[r:TAGGED_WITH]->(oldTermNode:term) ",
+        "WHERE NOT oldTermNode.UUID IN {termIDs} ",
+        "DELETE r ",
+    ].join('\n');  
+
+    db.query(query, properties, function (err, results) {
+        if (err) {
+            reply({success:false});
+            throw err;
+        } else {
+            console.log("results");
+            console.log(results);
+            reply({success:true});
+        }
+    });
 };

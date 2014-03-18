@@ -41,6 +41,7 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     };
 
     $scope.content = {
+        changesNotMade: true, // disable/enable save changes
         editTerms : false,
         UUID : $routeParams.id,
         originalTerms: [],
@@ -51,6 +52,7 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
 
     // console.log($window.outerWidth); use for changeing css for mobile
 
+    // needed for term suggestions when editing content terms
     // $scope.filter = filterFactory();
     // $scope.filter.setAll(true);  // initialize filter values to true (include all types)
 
@@ -79,15 +81,34 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     $scope.getContentTerms = function(){
         if($scope.content.terms.length === 0){
             $http.get('/contentTerms', {params: {uuid: $scope.content.UUID, language: appLanguage.get()}})
-            .success(function(data){
-                $scope.content.terms = data;
-                $scope.content.originalTerms = data;
+            .success(function(returned){
+                for (var ii = 0; ii < returned.length; ii++) {
+                    $scope.content.terms.push(returned[ii]);
+                    $scope.content.originalTerms.push(returned[ii]);
+                }
             });
         }
     };
 
     $scope.remove = function (index){
+        $scope.content.changesNotMade = false;
         $scope.content.terms.splice(index,1);
+    };
+
+    $scope.cancelEdit = function(){
+        $scope.content.changesNotMade = true;
+        $scope.panel.editTerms = false;
+        $scope.content.terms=[];
+        for (var ii = 0; ii < $scope.content.originalTerms.length; ii++) {
+            $scope.content.terms.push($scope.content.originalTerms[ii]);
+        }
+    };
+
+    $scope.saveNewTerms = function(){
+        $http.put('/contentTerms',{newTerms:$scope.content.terms, contentID:$scope.content.UUID})
+        .success(function(){
+            console.log("back: " );
+        });
     };
 
     // $scope.getPossibleTerms = function(){

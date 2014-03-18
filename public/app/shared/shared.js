@@ -96,6 +96,63 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
 
 }).
 
+controller("termTypeAheadCtrl", function ($scope, focus, $modal, $http, $route, appLanguage, contentTerms) {
+
+    $scope.contentTerms = contentTerms;
+    $scope.displayOptions = {
+        DBTerm : "",
+        addingNewTerm : false // display freebase input or dbinput depending
+    };
+
+    //typeahead from neo4j
+    $scope.findTerm = function()
+    {   
+        return $http.get('/termTypeAhead', { params: { entered: $scope.displayOptions.DBTerm, language: appLanguage.lang } }).
+        then(function(response){
+            if(!response.data.results){
+                if($route.current.templateUrl === "app/addingContent/newContent.html" || $route.current.templateUrl === "app/exploreContent/contentPage.html"){
+                    $scope.displayOptions.addingNewTerm = true;
+                    focus('suggest'); // switch focus to freebase typeahead
+                    return [];
+                } else {
+                     return [{name:"- term not found -"}];
+                }
+            } else {
+                return response.data.matches;
+            }
+        });       
+    };
+
+    $scope.addToSelectedFromDB = function(selected){
+        if($scope.displayOptions.DBTerm.name !== "- term not found -") {
+            selected.push({name:$scope.displayOptions.DBTerm.name,UUID:$scope.displayOptions.DBTerm.UUID});
+        }
+        $scope.displayOptions.DBTerm = "";
+    };
+
+    $scope.openNewTermModal = function (termData, selected) {
+        console.log("about to open modal: " );
+        var modalInstance = $modal.open({
+            templateUrl: 'app/addingContent/newTermModal.html',
+            controller: 'newTermModalInstanceCtrl',
+            windowClass: "",
+            resolve: {
+                data: function () {
+                    return {termData:termData, selected: selected};
+                }
+            }
+        });
+    };
+
+    $scope.$watch('displayOptions.DBTerm', function(){
+        if($scope.displayOptions.DBTerm.length === 0){
+            $scope.displayOptions.addingNewTerm = false;
+            focus('db');
+        }
+    });
+
+}).
+
 service('contentTerms', [function () {
     this.emptyAll = function(){
         this.selected = [];  
@@ -207,7 +264,7 @@ factory('filterFactory', ['$http',function ($http) {
 }]).
 
 controller('termModalInstanceCtrl', ['$scope', '$modalInstance', 'data', 'filterFactory', '$http',function ($scope, $modalInstance, data, filterFactory, $http) {
-
+    console.log("in modal: " );
     $scope.term = data;
     $scope.term.groupObj = filterFactory();
     $scope.term.groups = $scope.term.groupObj.groups;

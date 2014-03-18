@@ -105,8 +105,6 @@ server.route([
 
     { method: 'POST', path: '/term', config: {auth: 'passport'}, handler: handlers.addTerm},
 
-    { method: 'GET', path: '/term', handler: handlers.getTerm},
-
     { method: 'GET', path: '/termGroups', handler: handlers.getTermGroups},
 
     { method: 'POST', path: '/termGroups', config: {auth: 'passport'}, handler: handlers.setTermGroups},
@@ -126,6 +124,9 @@ server.route([
     { method: 'GET', path: '/content', handler: handlers.getContent},
 
     { method: 'GET', path: '/contentTerms', handler: handlers.getContentTerms},
+
+    { method: 'PUT', path: '/contentTerms', handler: handlers.updateContentTerms},
+
 ]);     
 
 // Start the server
