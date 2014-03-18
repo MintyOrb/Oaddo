@@ -42,30 +42,33 @@
 		<div class="f-flexC f-column f-m-center f-c-center" ng-show="panel.section === 'terms'"> 
 		
 			<div ng-if="panel.editTerms" ng-controller="termTypeAheadCtrl">
-                <suggest focus-on="suggest" ng-show="displayOptions.addingNewTerm" class='form-control' on-select="openNewTermModal(data, )" input-model="displayOptions.DBTerm" lang="{{displayLanguage.get()}}"></suggest>
-                <input focus-on="db" ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB()" typeahead="term as term.name for term in findTerm()" placeholder="Type term name here" >
+                <suggest focus-on="suggest" ng-show="displayOptions.addingNewTerm" class='form-control' on-select="openNewTermModal(data, content.terms)" input-model="displayOptions.DBTerm" lang="{{displayLanguage.get()}}"></suggest>
+                <input focus-on="db" ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB(content.terms)" typeahead="term as term.name for term in findTerm()" placeholder="Type term name here" >
                 <button ng-click="displayOptions.addingNewTerm = !displayOptions.addingNewTerm" class='btn btn-default btn-sm'>Change Source</button>
                 <i class='text-muted fa fa-question-circle'></i>
             </div>		
-            <div ng-controller="termSelectionCtrl">
-				<div class="well well-sm f-flexC f-row f-wrap f-m-center marginTop10">
+            <div>
+				<div class="well well-sm f-flexC f-row f-wrap f-m-center marginTop10 termBox">
+					<div class="termWellLabel text-center">tagged terms</div>
 					<div ng-repeat="term in content.terms" class="btn-group margin5">
-						<button ng-if="panel.editTerms" ng-class="{ 'btn-sm' : panel.editTerms }" class='btn btn-danger' ><i class="fa fa-times"></i></button>
+						<button ng-click="remove($index)" ng-if="panel.editTerms" ng-class="{ 'btn-sm' : panel.editTerms }" class='btn btn-danger' ><i class="fa fa-times"></i></button>
 		                <button ng-class="{ 'btn-sm' : panel.editTerms }" class='btn btn-default noAction'>{{term.name}}</button>
 		                <button ng-if="Login.loggedIn" ng-class="{ 'btn-sm' : panel.editTerms }" class='dropdown-toggle btn btn-default'><i class="fa fa-chevron-down"></i></button>
-		                <!-- TOOD: get menu out of hidden overflow -->
+		               
 		                <ul class='dropdown-menu'>
 		                    <li ng-show="Login.loggedIn"><a ng-click="openTermModal(term)" >edit term groups</a></li>
-		                    <li ng-if="panel.editTerms"><a  >remove term</a></li>
+		                    <li ng-if="panel.editTerms"><a ng-click="remove($index)">remove term</a></li>
 		                </ul>
 		            </div>
 				</div>
-				<div ng-if="panel.editTerms">
-					<button ng-hide="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Hide Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
-					<button ng-show="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Show Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
+				<!-- TODO: write up better query for related terms -->
+
+				<!-- <div ng-if="panel.editTerms">
+					<button ng-hide="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10 termContainerBtn" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Hide Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
+					<button ng-show="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10 termContainerBtn" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Show Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
 
 					<div collapse="filter.isCollapsed">
-					    <div  class="f-flexC f-column f-m-between f-c-center panel panel-default marginBottom0">
+					    <div  class="f-flexC f-column f-m-between f-c-center panel panel-default marginBottom0 termGroupBox">
 					        <div class="marginTop10 f-flexC f-row f-wrap f-m-center f-c-center">
 					            <div ng-repeat="group in filter.groups" class="btn-group btn-group-xs margin5">
 					                <button ng-class="{ 'buttonSelected' : group.included }" ng-click="filter.selectGroup(group.name)" class="btn noOutline btn-default" type="button">{{group.name}}</button>
@@ -81,27 +84,27 @@
 					        </div> 
 					    </div>
 					</div>
-					<div class='well well-sm height170'>
+					<div class='well well-sm termBox'>
+						<div class="termWellLabel text-center">related</div>
 					    <i class='pull-right text-muted fa fa-question-circle'></i>
 					    <div class="f-flexC f-row f-m-around f-wrap">
-					        <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">no related terms</span>
-					        <div ng-repeat="term in contentTerms.related" class="dropdown dn-bounce">
+					        <span ng-hide="content.relatedTerms.length > 0" class="dn-fade text-muted background h3">no related terms</span>
+					        <div ng-repeat="term in content.relatedTerms" class="dropdown dn-bounce">
 					            <div class="btn-group margin5">
 					            
-					                <button ng-click="addToFrom(contentTerms.selected,contentTerms.related,term,$index)" class='btn btn-default btn-sm'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
+					                <button ng-click="addToNewTerms(contentTerms.selected,contentTerms.related,term,$index)" class='btn btn-default btn-sm'>{{term.name}} <span class="badge">{{term.connections}}</span></button>
 					                <button class='dropdown-toggle btn btn-sm btn-default'><i class="fa fa-chevron-down"></i></button>
-					                <!-- TOOD: get menu out of hidden overflow -->
+					                
 					                <ul class='dropdown-menu'>
 					                    <li><a ng-click="addToFrom(contentTerms.selected,contentTerms.related,term,$index)">add to search</a></li>
 					                    <li><a ng-click="addToFrom(contentTerms.discarded,contentTerms.related,term,$index)">discard</a></li>
-					                    <li ng-show="Login.loggedIn"><a ng-click="openTermModal(term)" >edit term groups</a></li>
 					                </ul>
 					            </div>
 					        </div>
 					    </div>
 					</div> 
 				</div>
-			</div>
+			</div> -->
 			<button ng-click="panel.editTerms = !panel.editTerms" ng-show="Login.loggedIn" class="btn btn-default noOutline">Edit Terms</button>
 		</div>
 

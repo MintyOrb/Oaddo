@@ -29,7 +29,9 @@ service('viewContent', [function () {
 }]).
 
 
-controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewContent", "appLanguage", '$window',function ($sce, $http, $routeParams, $scope, viewContent, appLanguage, $window) {
+controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewContent", "appLanguage", '$window', 'filterFactory',function ($sce, $http, $routeParams, $scope, viewContent, appLanguage, $window, filterFactory) {
+
+// TODO: refactor. A lot of this code is the same as in the termSelectionCtrl (in shared)
 
     $scope.panel = {
         visible : false,
@@ -41,12 +43,28 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     $scope.content = {
         editTerms : false,
         UUID : $routeParams.id,
+        originalTerms: [],
         terms: [],
-        editedTerms: [],
+        relatedTerms: [],
         relatedContent:[]
     };
 
     // console.log($window.outerWidth); use for changeing css for mobile
+
+    // $scope.filter = filterFactory();
+    // $scope.filter.setAll(true);  // initialize filter values to true (include all types)
+
+    // $scope.$watch("filter.groups", function(newValue, oldValue){
+    //     if (newValue !== oldValue && $scope.content.editTerms) {
+    //         $scope.getPossibleTerms();
+    //     }
+    // }, true); // true as second parameter sets up deep watch
+
+    // $scope.$watchCollection('content.terms', function(){
+    //     if($scope.content.editTerms){
+    //         $scope.getPossibleTerms();
+    //     }
+    // });
 
     // TODO: handle error - if content with UUID not found, display error
     $http.get('/content', {params: {uuid: $scope.content.UUID, language: appLanguage.get()}})
@@ -60,30 +78,31 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
 
     $scope.getContentTerms = function(){
         if($scope.content.terms.length === 0){
-            $http.get('/contentTerms', {params: {uuid: $routeParams.id, language: appLanguage.get()}})
+            $http.get('/contentTerms', {params: {uuid: $scope.content.UUID, language: appLanguage.get()}})
             .success(function(data){
                 $scope.content.terms = data;
+                $scope.content.originalTerms = data;
             });
         }
     };
 
-    $scope.getRelatedTerms = function(){
-        // if($scope.content.terms.length === 0){
-        //     $http.get('/relatedTerms', {params: {uuid: $routeParams.id, language: appLanguage.get()}})
-        //     .success(function(data){
-        //         $scope.content.terms = data;
-        //     });
-        // }
-
-// var properties = {
-//         language: request.payload.language ,
-//         ignoreTerms: [],
-//         searchTerms: [],
-//         groups: [],
-//         searchTermsCount: 0
-
-//     };
+    $scope.remove = function (index){
+        $scope.content.terms.splice(index,1);
     };
+
+    // $scope.getPossibleTerms = function(){
+    //     $http.post('/relatedTerms', 
+    //         {
+    //             matchAll: false, 
+    //             uuid: $scope.content.UUID, 
+    //             language: appLanguage.get(),
+    //             keyTerms: $scope.content.terms,
+    //             groups: $scope.filter.groups
+    //         })
+    //     .success(function(data){
+    //         $scope.content.relatedTerms = data.results;
+    //     });
+    // };
     // $scope.getRelatedContent = function(){
     //     $http.post('/explore', { 
     //         includedTerms: $scope.contentTerms.selected,
@@ -155,7 +174,7 @@ directive('pageslide', [
                 /* Style setup */
                 slider.style.transitionDuration = param.speed + 's';
                 slider.style.webkitTransitionDuration = param.speed + 's';
-                slider.style.zIndex = 1000;
+                slider.style.zIndex = 499;
                 slider.style.position = 'fixed';
                 slider.style.width = 0;
                 slider.style.height = 0;

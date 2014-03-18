@@ -6,7 +6,6 @@
 /**{outline: solid 1px;}*/
 
 
-
 /* override bootstrap 3 css*/
 .hr{margin:5px; border-top: 1px solid #D8D8D8;}*/
 .row{margin:0px;}
@@ -171,30 +170,16 @@
 	float:right;
 }
 
-.background {
-	color:#d1d1d1; 
-	cursor: default; 
-	z-index: 0;
-	position: absolute; 
- 	top: 0; 
-	left: 10;
- 	margin-top: 15px;
-}
 
 .marginBottom0 {margin-bottom: 0px;}
 .margin5 {margin:5px;}
 .margin10 {margin:10px;}
 .marginTop10 {margin-top: 10px}
 .margin20 {margin:20px;}
-.height170 {
-	height: 170px;
-	overflow:scroll;
-}
+
 .width80p {min-width: 80%}
 .width100p {min-width: 100%}
 
-.droppable{background-color:#e0e0e0;}
-.above{z-index: 2;position: relative;}
 
 .ta-toolbar {
 	margin-top: 5px;
@@ -205,6 +190,40 @@
 	width:100%;
 	height:110px;
 	overflow: auto;
+}
+
+.droppable{background-color:#e0e0e0;}
+.above{z-index: 2;position: relative;}
+.termBox {
+	min-height: 120px;
+	padding-bottom: 20px;
+}
+.background {
+	color:#d1d1d1; 
+	cursor: default; 
+	z-index: 0;
+	position: absolute; 
+ 	top: 0; 
+	left: 10;
+ 	margin-top: 15px;
+}
+.termWellLabel {
+	position: absolute;
+	right: 10px;
+	border-radius: 5px 5px 0 0 ;
+	border: 1px solid #e3e3e3;
+	background-color: white;
+	bottom: -1px;
+	padding: 0 5px 0 5px;
+}
+.termContainerBtn {
+	border-bottom: none;
+	border-radius: 5px 5px 0 0;
+	margin-bottom: -1px;
+}
+.termGroupBox {
+	border-radius: 0 5px 0 0;
+	margin-bottom: -2px;
 }
 
 .fileUpload {
