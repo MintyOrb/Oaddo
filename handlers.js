@@ -751,3 +751,22 @@ exports.updateContentTerms = function (request, reply){
         }
     });
 };
+exports.getContentAbout = function (request, reply){
+    
+    console.log("data: "+ JSON.stringify(request.query));
+    
+    var query = "MATCH (contentNode:content {UUID: {id} })-[:HAS_META { languageCode: { language } }]-(metaNode:contentMeta) RETURN metaNode.value AS value, metaNode.description AS description";
+    var properties = { 
+        id: request.query.uuid,
+        language: request.query.language,
+    };
+
+    db.query(query, properties, function (err, about) {
+        if (err) {console.log("error in db query: " + err);}
+        
+            console.log("about: " );
+            console.log(about);
+            reply({value:about[0].value || "No value statement found. Create an account or login to add one!",description:about[0].description || "No description found. Create an account or signin to add one!"});
+        
+    });   
+};

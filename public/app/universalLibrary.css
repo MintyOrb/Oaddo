@@ -14,7 +14,6 @@
 	display:inline;
 	width:auto;
 }
-
 .well {
   position: relative;
   min-height: 70px;
@@ -40,6 +39,28 @@
 	margin-top: 10px
 }
 
+
+.introjs-showElement{
+	background-color: white;
+}
+
+
+
+.content {
+	height: 100%;
+
+}
+.footer {
+	height: 100px;
+	position: fixed;
+	border-top: 1px solid;
+	border-color: rgb(175, 175, 175);
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	margin-top: 90px;
+	background-color: rgba(228, 228, 228, 0.28);
+}
 .buttonSelected {
 	color: #333;
 	background-color: #ebebeb;
@@ -75,9 +96,11 @@
 }
 
 .noOutline:focus {
+	cursor: pointer;
 	outline: 0;
 }
 .noAction:hover {
+	cursor: pointer;
 	background-color: #fff;
 	border-color: #ccc;
 }
@@ -210,20 +233,27 @@
 .termWellLabel {
 	position: absolute;
 	right: 10px;
-	border-radius: 5px 5px 0 0 ;
+	border-radius: 4px 4px 0 0 ;
 	border: 1px solid #e3e3e3;
 	background-color: white;
 	bottom: -1px;
 	padding: 0 5px 0 5px;
 }
 .termContainerBtn {
+	border-color: #e3e3e3;
+	z-index: 1;
 	border-bottom: none;
-	border-radius: 5px 5px 0 0;
-	margin-bottom: -1px;
+	border-radius: 4px 4px 0 0;
+	margin-bottom: -2px;
 }
 .termGroupBox {
-	border-radius: 0 5px 0 0;
+	border-radius: 0 4px 0 0;
 	margin-bottom: -2px;
+}
+.whiteWellWithBtn {
+	border-top-left-radius: 0px;
+	background: white;
+
 }
 
 .fileUpload {

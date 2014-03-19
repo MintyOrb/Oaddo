@@ -1,4 +1,4 @@
-<button class="btn btn-default openPanel noOutline" ng-click="panel.visible = !panel.visible; wSize={width: '50vw', margin:'3vh 0vh 0 0'}; vSize={height: '50%', width: '50%', top: '10%', marginRight:'-8px'}"><i class='fa fa-chevron-right fa-2x pull-right'></i>
+<button class="btn btn-default openPanel noOutline" ng-click="getAbout(); panel.visible = !panel.visible; wSize={width: '50vw', margin:'3vh 0vh 0 0'}; vSize={height: '50%', width: '50%', top: '10%', marginRight:'-8px'}"><i class='fa fa-chevron-right fa-2x pull-right'></i>
 </button> 
 
 <!-- content display -->
@@ -27,16 +27,30 @@
 		<button class="btn btn-default pull-right" style="z-index: 500;"ng-click="panel.visible = false; wSize={width: '95vw', margin:'3vh 2.5vw 0 0'}; vSize={height: '100%' , width: '100%', top: '0'}"><i class='fa fa-chevron-left fa-2x'></i></button>
 
 		<div class="f-flexC f-row f-wrap f-m-around f-c-center">    
-			<h3 class="metaTab margin10" style="z-index: 500;" ng-class="{ 'metaTabSelected' : panel.section === 'about' }" ng-click="panel.section = 'about'">about</h3>
+			<h3 class="metaTab margin10" style="z-index: 500;" ng-class="{ 'metaTabSelected' : panel.section === 'about' }" ng-click="getAbout(); panel.section = 'about'">about</h3>
 			<h3 class="metaTab margin10" style="z-index: 500;" ng-class="{ 'metaTabSelected' : panel.section === 'terms' }" ng-click="getContentTerms(); panel.section = 'terms'">terms</h3>
-			<h3 class="metaTab margin10" style="z-index: 500;" ng-class="{ 'metaTabSelected' : panel.section === 'related' }" ng-click="getRelatedContent(); panel.section = 'related'">related content</h3>
-		</div>
+<!-- 		<h3 class="metaTab margin10" style="z-index: 500;" ng-class="{ 'metaTabSelected' : panel.section === 'related' }" ng-click="getRelatedContent(); panel.section = 'related'">related content</h3> -->
+     	</div>
 	</div>
 
 	<!-- panel sections -->
 	<div class="panelContent">
 		<div ng-show="panel.section === 'about'">
-		description
+
+			<div class="col-md-12">
+				<button class="btn btn-xs  btn-default noOutline noAction termContainerBtn col-md-2 col-md-offset-1"><strong>description</strong></button>
+				<div class="col-md-10 col-md-offset-1 well whiteWellWithBtn">
+					{{content.about.description}} 
+					<button ng-show="Login.loggedIn" class="btn btn-xs  btn-default noOutline termWellLabel">edit</button>
+				</div>
+
+				<button class="btn btn-xs  btn-default noOutline noAction termContainerBtn col-md-2 col-md-offset-1"><strong>value</strong></button>
+				<div class="col-md-10 col-md-offset-1 well whiteWellWithBtn">
+					{{content.about.value}} 
+					<button ng-show="Login.loggedIn" class="btn btn-xs  btn-default noOutline termWellLabel">edit</button>
+				</div>
+			</div>
+
 		</div>
 
 		<div class="f-flexC f-column f-m-center f-c-center" ng-show="panel.section === 'terms'"> 
@@ -106,12 +120,12 @@
 					</div> 
 				</div>
 			</div> -->
-			<button ng-click="panel.editTerms = true" ng-hide="panel.editTerms" ng-show="Login.loggedIn" class="btn btn-default noOutline">Edit Terms</button>
+			<button ng-click="panel.editTerms = true" ng-hide="panel.editTerms" ng-show="Login.loggedIn"  class="btn btn-default noOutline">Edit Terms</button>
 			<button ng-click="saveNewTerms()" ng-disabled="content.changesNotMade" ng-show="panel.editTerms" class="btn btn-default noOutline">Save Changes</button>
 			<button ng-click="cancelEdit()" ng-show="panel.editTerms" class="btn btn-primary noOutline">Cancel</button>
 		</div>
 
-		<div ng-show="panel.section === 'related'">
+		<!-- <div ng-show="panel.section === 'related'">
 
 			<div class="cardsContainer f-flexC f-row f-wrap f-m-around">
 				<div class="f-flexC  f-column f-m-between cardContainer panel panel-default margin5" ng-repeat="contentItem in returnedContent">
@@ -146,7 +160,7 @@
 				</div>
 			</div>
 
-		</div>
+		</div> -->
 	</div>
 	
 </div>

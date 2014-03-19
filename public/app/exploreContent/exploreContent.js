@@ -21,6 +21,76 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
             $scope.returnedContent = data; 
         });
     };
+
+    // intro
+    $scope.BeforeChangeEvent = function (section) { 
+    console.log("Before Change Event called");
+        console.log(angular.element(section)[0].id);
+
+        if(angular.element(section)[0].id === 'step5'){
+            $scope.filter.isCollapsed = false;
+            $scope.$apply();
+            console.log("present: " );
+        }
+        
+        console.log("Before Change Event called"); 
+    };
+    $scope.ExitEvent = function (section) { 
+        
+        $scope.filter.isCollapsed = true;
+        $scope.$apply();
+        
+        console.log("exit Event called"); 
+    };
+    $scope.IntroOptions = {
+        steps:[
+            {
+                element: '#step1',
+                intro: "This tutorial will show you how to navigate the content exploration page.",
+                position: 'top',
+            },
+            {
+                element: '#step2',
+                intro: "This is the search term container. The terms in this container determine what content is returned below.",
+                position: 'top'
+            },
+            {
+                element: '#step3',
+                intro: 'You can manually add terms to the search container by typing them here. Or...',
+                position: 'bottom'
+            },
+            {
+                element: '#step4',
+                intro: "...you can select terms from this container, which is automatically filled with terms related to those in the search container. To add a term, just click on it or drag it into the search container.",
+                position: 'bottom'
+            },
+            {
+                element: '#step5',
+                intro: 'You can filter the related terms by selecting one or more terms groups. Only terms in the selected groups will be returned.',
+                position: 'bottom'
+            },
+            {
+                element: '#step6',
+                intro: 'This is the container for discarded terms. Terms in this container will not show up in the related terms container- you can use it to free up space for terms you might be more interested in.',
+                position: 'top'
+            },
+            {
+                element: '#step7',
+                intro: 'Content related to terms in the search container will appear here. Click on the content to go to its individual page.<br><br>Thats it!',
+                position: 'top'
+            }
+        ],
+        showStepNumbers: false,
+        autoStart: false,
+        exitOnOverlayClick: true,
+        exitOnEsc: true,
+        showBullets: true,
+        nextLabel: '<strong>next</strong>',
+        prevLabel: 'Previous',
+        skipLabel: 'Exit',
+        doneLabel: 'Start exploring!',
+        scrollToElement: false
+   };
 }).
 
 
@@ -47,7 +117,12 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
         originalTerms: [],
         terms: [],
         relatedTerms: [],
-        relatedContent:[]
+        relatedContent:[],
+        about:{
+            notRequested:true,
+            description:"",
+            value:""
+        }
     };
 
     // console.log($window.outerWidth); use for changeing css for mobile
@@ -86,6 +161,17 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
                     $scope.content.terms.push(returned[ii]);
                     $scope.content.originalTerms.push(returned[ii]);
                 }
+            });
+        }
+    };
+    $scope.getAbout = function(){
+        if($scope.content.about.notRequested){
+            $http.get('/contentAbout', {params: {uuid: $scope.content.UUID, language: appLanguage.get()}})
+            .success(function(returned){
+                console.log("returned: " );
+                console.log(returned);
+                    $scope.content.about.description = returned.description;
+                    $scope.content.about.value = returned.value;
             });
         }
     };

@@ -12,7 +12,8 @@
     
     </head>
     <body class="container" ng-controller="appCtrl">
-        <!-- TODO: rather than hide on content page, slide up (slide down on mouse over) -->
+        
+            <!-- TODO: rather than hide on content page, slide up (slide down on mouse over) -->
         <nav ng-cloak ng-hide='currentTemplate === "app/exploreContent/contentPage.html"' class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -54,56 +55,65 @@
                 </div>
             </div>
         </nav>
+        
+
+       
 
         <div ng-view ></div>
 
-        <!-- Scripts & css -->
-  
-
-        <!-- file upload shim - needs to be loaded before angular -->
-        <script type="text/javascript" src="resources/angular-file-upload-shim.min.js"></script>
-    
-        <!-- angular -->
-        <script type="text/javascript" src="bower_components/angular/angular.js"></script>
-        <script type="text/javascript" src="bower_components/angular-cookies/angular-cookies.min.js"></script>
-        <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
-        <script type="text/javascript" src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
-        <script type="text/javascript" src="bower_components/angular-resource/angular-resource.min.js"></script>
-        <script type="text/javascript" src="bower_components/angular-animate/angular-animate.min.js"></script>
-    
         
 
-        <!-- freebase search widget -->
-        <link type="text/css" rel="stylesheet" href="resources/css/suggest.css"/>
-        <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>
-        <script type="text/javascript" src="https://www.gstatic.com/freebase/suggest/4_2/suggest.min.js"></script>
-
-
-        <!-- resources -->  
-        <script src="resources/angular-pageslide-directive.js"></script>    
-        <link href="resources/css/animate.min.css" rel="stylesheet">
-        <script type="text/javascript" src="bower_components/ngAnimate-animate.css/animate.js"></script>
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-        <script type="text/javascript" src='bower_components/textAngular/textAngular.min.js'></script>
-
-
-        <!-- temp work around: ui popover template modifed to accept html -->
-        <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-        <script type="text/javascript" src="bower_components/angular-http-auth/src/http-auth-interceptor.js"></script>
-        <script type="text/javascript" src="resources/angular-file-upload.min.js"></script>
-        <script type="text/javascript" src="bower_components/angular-loading-bar/src/loading-bar.js"></script>
-        <link rel="stylesheet" href="bower_components/angular-loading-bar/src/loading-bar.css"></link>
-        <script type="text/javascript" src="resources/draganddrop.js"></script>
-        <script type="text/javascript" src="resources/zui53.js"></script>
-
         
-    
-        <!-- app -->
-        <script type="text/javascript" src="app/main/universalLibrary.js"></script>
-        <script type="text/javascript" src="app/addingContent/adding_content.js"></script>
-        <script type="text/javascript" src="app/loginAndSessions/login_and_sessions.js"></script>
-        <script type="text/javascript" src="app/exploreContent/exploreContent.js"></script>
-        <script type="text/javascript" src="app/shared/shared.js"></script>
+        <!-- Scripts & css --> 
+        <div>
+            <!-- file upload shim - needs to be loaded before angular -->
+            <script type="text/javascript" src="resources/angular-file-upload-shim.min.js"></script>
+        
+            <!-- angular -->
+            <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+            <script type="text/javascript" src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+            <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
+            <script type="text/javascript" src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+            <script type="text/javascript" src="bower_components/angular-resource/angular-resource.min.js"></script>
+            <script type="text/javascript" src="bower_components/angular-animate/angular-animate.min.js"></script>
+        
+            
 
+            <!-- freebase search widget -->
+            <link type="text/css" rel="stylesheet" href="resources/css/suggest.css"/>
+            <script type="text/javascript" src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>
+            <script type="text/javascript" src="https://www.gstatic.com/freebase/suggest/4_2/suggest.min.js"></script>
+
+
+            <!-- resources -->  
+            <script src="resources/angular-pageslide-directive.js"></script>    
+            <link href="resources/css/animate.min.css" rel="stylesheet">
+            <script type="text/javascript" src="bower_components/ngAnimate-animate.css/animate.js"></script>
+            <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+            <script type="text/javascript" src='bower_components/textAngular/textAngular.min.js'></script>
+
+            <!-- temp work around: ui popover template modifed to accept html -->
+            <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+
+            <script type="text/javascript" src="bower_components/angular-http-auth/src/http-auth-interceptor.js"></script>
+            <script type="text/javascript" src="resources/angular-file-upload.min.js"></script>
+            <script type="text/javascript" src="bower_components/angular-loading-bar/src/loading-bar.js"></script>
+            <link rel="stylesheet" href="bower_components/angular-loading-bar/src/loading-bar.css"></link>
+            <script type="text/javascript" src="resources/draganddrop.js"></script>
+            <script type="text/javascript" src="resources/zui53.js"></script>
+            <script type="text/javascript" src="resources/angular-intro.min.js"></script>
+            <script type="text/javascript" src="bower_components/intro.js/minified/intro.min.js"></script>
+            <link rel="stylesheet" href="bower_components/intro.js/minified/introjs.min.css"></link>
+
+
+            
+        
+            <!-- app -->
+            <script type="text/javascript" src="app/main/universalLibrary.js"></script>
+            <script type="text/javascript" src="app/addingContent/adding_content.js"></script>
+            <script type="text/javascript" src="app/loginAndSessions/login_and_sessions.js"></script>
+            <script type="text/javascript" src="app/exploreContent/exploreContent.js"></script>
+            <script type="text/javascript" src="app/shared/shared.js"></script>
+        </div>
     </body>
 </html>

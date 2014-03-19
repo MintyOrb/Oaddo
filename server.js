@@ -125,7 +125,10 @@ server.route([
 
     { method: 'GET', path: '/contentTerms', handler: handlers.getContentTerms},
 
-    { method: 'PUT', path: '/contentTerms', handler: handlers.updateContentTerms},
+    { method: 'PUT', path: '/contentTerms', config: {auth: 'passport'}, handler: handlers.updateContentTerms},
+
+    { method: 'GET', path: '/contentAbout', handler: handlers.getContentAbout},
+
 
 ]);     
 

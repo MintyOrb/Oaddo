@@ -6,7 +6,7 @@
 
    <p><strong>{{term.name}}</strong> is connected to <strong>{{term.connections}}</strong> pieces of content and is in the following groups:</p>
     <div ng-repeat="group in term.groups" class="btn-group btn-group-xs margin5">
-      <button ng-class="{ 'buttonSelected' : group.included }" class="btn noOutline btn-default" type="button">{{group.name}}</button>
+      <button ng-class="{ 'buttonSelected' : group.included }" class="btn noOutline btn-default noAction" type="button">{{group.name}}</button>
       <button ng-if="group.included" ng-click="display.changesNotMade = false; term.groupObj.removeGroup(group.name)" class="btn btn-default">-</button>
       <button ng-if="!group.included" ng-click="display.changesNotMade = false; term.groupObj.addGroup(group.name)" class="btn btn-default">+</button>
     </div>
