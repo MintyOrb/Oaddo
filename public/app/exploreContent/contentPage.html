@@ -126,7 +126,7 @@
 					</div> 
 				</div>
 			</div> -->
-			<button ng-click="panel.editTerms = true" ng-hide="panel.editTerms" ng-show="Login.loggedIn"  class="btn btn-default noOutline">Edit Terms</button>
+			<button ng-click="panel.editTerms = true" ng-show="Login.loggedIn && !panel.editTerms"  class="btn btn-default noOutline">Edit Terms</button>
 			<button ng-click="saveNewTerms()" ng-disabled="content.changesNotMade" ng-show="panel.editTerms" class="btn btn-default noOutline">Save Changes</button>
 			<button ng-click="cancelEdit()" ng-show="panel.editTerms" class="btn btn-primary noOutline">Cancel</button>
 		</div>

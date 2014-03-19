@@ -144,7 +144,7 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     //     }
     // });
 
-    // TODO: handle error - if content with UUID not found, display error
+    // TODO: handle error - if content with UUID not found, display error - just do 404?
     $http.get('/content', {params: {uuid: $scope.content.UUID, language: appLanguage.get()}})
     .success(function(data){
         viewContent.selected = data[0];  
@@ -258,6 +258,7 @@ directive('zui', [function () {
 
 
 // TODO: trim unneeded functionality
+// taken from https://github.com/dpiccone/ng-pageslide and modified
 directive('pageslide', [
      function (){
         var defaults = {};
