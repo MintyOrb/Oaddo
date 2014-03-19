@@ -1,7 +1,7 @@
 <div id="step1">
 
-    <button ng-hide="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10 termContainerBtn" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Hide Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
-    <button ng-show="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10 termContainerBtn" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Show Term Groups  <i class=' text-muted fa fa-question-circle'></i></button>
+    <button ng-hide="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10 termContainerBtn" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Hide Term Groups </button>
+    <button ng-show="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10 termContainerBtn" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Show Term Groups </button>
 
     <div  collapse="filter.isCollapsed">
         <div id="step5" class="f-flexC f-column f-m-between f-c-center panel panel-default marginBottom0 termGroupBox">
@@ -24,7 +24,6 @@
 
     <div id="step4" ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm termBox'>
         <div class="termWellLabel text-center">related</div>
-        <i class='pull-right text-muted fa fa-question-circle'></i>
         <div class="f-flexC f-row f-m-around f-wrap">
             <span ng-hide="contentTerms.related.length > 0" class="dn-fade text-muted background h3">no related</span>
             <div ng-repeat="term in contentTerms.related" class="dropdown dn-bounce">
@@ -46,7 +45,6 @@
     <div id="step2" ui-on-Drop="recievingHandler($data, contentTerms.selected)" drag-enter-class="droppable" class="well well-sm">
         <div class="termWellLabel text-center">search</div>
         
-        <i class='pull-right text-muted fa fa-question-circle'></i>
         
         <div class="f-flexC f-row f-m-center">
             <span ng-hide="contentTerms.selected.length > 0"class="dn-fade text-muted background h3">search terms</span>
@@ -69,7 +67,6 @@
     </div>
     <div id="step6" ui-on-Drop="recievingHandler($data, contentTerms.discarded)" drag-enter-class="droppable" class="well well-sm">
         <div class="termWellLabel text-center">discarded</div>
-        <i class='pull-right text-muted fa fa-question-circle'></i>
         <div class="f-flexC f-row f-m-center">
             <span ng-hide="contentTerms.discarded.length > 0" class="dn-fade text-muted background h3">discarded terms</span>
 

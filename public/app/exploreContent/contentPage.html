@@ -38,6 +38,12 @@
 		<div ng-show="panel.section === 'about'">
 
 			<div class="col-md-12">
+				<button class="btn btn-xs  btn-default noOutline noAction termContainerBtn col-md-2 col-md-offset-1"><strong>title</strong></button>
+				<div class="col-md-10 col-md-offset-1 well whiteWellWithBtn">
+					{{content.about.title}} 
+					<button ng-show="Login.loggedIn" class="btn btn-xs  btn-default noOutline termWellLabel">edit</button>
+				</div>
+
 				<button class="btn btn-xs  btn-default noOutline noAction termContainerBtn col-md-2 col-md-offset-1"><strong>description</strong></button>
 				<div class="col-md-10 col-md-offset-1 well whiteWellWithBtn">
 					{{content.about.description}} 

@@ -121,7 +121,8 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
         about:{
             notRequested:true,
             description:"",
-            value:""
+            value:"",
+            title:""
         }
     };
 
@@ -172,6 +173,7 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
                 console.log(returned);
                     $scope.content.about.description = returned.description;
                     $scope.content.about.value = returned.value;
+                    $scope.content.about.title = returned.title;
             });
         }
     };
