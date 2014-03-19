@@ -29,8 +29,9 @@
 
                     <!-- collapsed nav components -->
                     <ul class="width100p dropdown-menu">
-                        <li><a href="/explore">Explore</a></li>
-                        <li ng-show="Login.loggedIn"><a href="addContent">Add Content</a></li>
+                        <li><a href="/meta">meta</a></li>
+                        <li><a href="/explore">explore</a></li>
+                        <li ng-show="Login.loggedIn"><a href="addContent">add content</a></li>
                         <hr class="hr">
                         <li>
                             <a ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn">Login</a>
@@ -45,12 +46,15 @@
                
                     
                     <ul class="nav navbar-nav navbar-right">
+
                         <form class="navbar-form navbar-right">
                             <button ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn"class="btn btn-default noOutline">Login</button>
                             <button ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn" class="btn btn-default noOutline">Logout</button>
                         </form>
-                        <li ng-show="Login.loggedIn"><a href="addContent">Add Content</a></li>
-                       <li><a href="explore">Explore</a></li>
+                        <li><a href="/meta">meta</a></li>
+                        <li ng-show="Login.loggedIn"><a href="addContent">add content</a></li>
+                        <li><a href="explore">explore</a></li>
+                        
                     </ul>
                 </div>
             </div>
