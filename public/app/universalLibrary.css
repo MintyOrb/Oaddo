@@ -45,20 +45,25 @@
 }
 
 
-
-.content {
+html, body {
 	height: 100%;
-
+}
+.page-wrap {
+  min-height: 100%;
+  /* equal to footer height */
+  margin-bottom: -150px; 
+}
+.page-wrap:after {
+  content: "";
+  display: block;
+}
+.footer, .page-wrap:after {
+  /* .push must be the same height as footer */
+  height: 200px;
 }
 .footer {
-	height: 100px;
-	position: fixed;
 	border-top: 1px solid;
 	border-color: rgb(175, 175, 175);
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	margin-top: 90px;
 	background-color: rgba(228, 228, 228, 0.28);
 }
 .buttonSelected {

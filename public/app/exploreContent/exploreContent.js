@@ -18,6 +18,7 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
             excludedTerms: $scope.contentTerms.discarded, 
             language: appLanguage.lang }).
         success(function(data){
+            console.log(data);
             $scope.returnedContent = data; 
         });
     };
@@ -258,7 +259,7 @@ directive('zui', [function () {
 
 
 // TODO: trim unneeded functionality
-// taken from https://github.com/dpiccone/ng-pageslide and modified
+// taken from https://github.com/dpiccone/ng-pageslide and modifiedc
 directive('pageslide', [
      function (){
         var defaults = {};

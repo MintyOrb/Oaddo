@@ -11,64 +11,68 @@
         <title ng-bind="'Oaddo &mdash; ' + title">Oaddo</title>
     
     </head>
-    <body class="container" ng-controller="appCtrl">
-        
-            <!-- TODO: rather than hide on content page, slide up (slide down on mouse over) -->
-        <nav ng-cloak ng-hide='currentTemplate === "app/exploreContent/contentPage.html"' class="navbar navbar-default" role="navigation">
-            <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header">
-                    <a class='dropdown-toggle'>
-                        <button type="button" class="navbar-toggle noOutline" data-toggle="collapse">
-                          <span class="sr-only">Toggle navigation</span>
-                          <span class="icon-bar"></span>
-                          <span class="icon-bar"></span>
-                          <span class="icon-bar"></span>
-                        </button>
-                    </a>
-
-                    <!-- collapsed nav components -->
-                    <ul class="width100p dropdown-menu">
-                        <li><a href="/meta">meta</a></li>
-                        <li><a href="/explore">explore</a></li>
-                        <li ng-show="Login.loggedIn"><a href="addContent">add content</a></li>
-                        <hr class="hr">
-                        <li>
-                            <a ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn">Login</a>
-                            <a ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn">Logout</a>
-                        </li>
-                      </ul>
-                    <a class="navbar-brand" href="#"><span class="h3">Oaddo</span><span class="h6 text-danger"> alpha</span></a>
-                </div>
-        
-                <!-- full page nave bar components -->
-                <div class="collapse navbar-collapse">
-               
-                    
-                    <ul class="nav navbar-nav navbar-right">
-
-                        <form class="navbar-form navbar-right">
-                            <button ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn"class="btn btn-default noOutline">Login</button>
-                            <button ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn" class="btn btn-default noOutline">Logout</button>
-                        </form>
-                        <li><a href="/meta">meta</a></li>
-                        <li ng-show="Login.loggedIn"><a href="addContent">add content</a></li>
-                        <li><a href="explore">explore</a></li>
-                        
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        
-
+    <body ng-controller="appCtrl">
        
+        <div class="page-wrap container">
+            <!-- TODO: rather than hide on content page, slide up (slide down on mouse over) -->
+            <nav ng-cloak ng-hide='currentTemplate === "app/exploreContent/contentPage.html"' class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <a class='dropdown-toggle'>
+                            <button type="button" class="navbar-toggle noOutline" data-toggle="collapse">
+                              <span class="sr-only">Toggle navigation</span>
+                              <span class="icon-bar"></span>
+                              <span class="icon-bar"></span>
+                              <span class="icon-bar"></span>
+                            </button>
+                        </a>
 
-        <div ng-view ></div>
+                        <!-- collapsed nav components -->
+                        <ul class="width100p dropdown-menu">
+                            <li><a href="/meta">meta</a></li>
+                            <li><a href="/explore">explore</a></li>
+                            <li ng-show="Login.loggedIn"><a href="addContent">add content</a></li>
+                            <hr class="hr">
+                            <li>
+                                <a ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn">Login</a>
+                                <a ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn">Logout</a>
+                            </li>
+                          </ul>
+                        <a class="navbar-brand" href="#"><span class="h3">Oaddo</span><span class="h6 text-danger"> alpha</span></a>
+                    </div>
+            
+                    <!-- full page nave bar components -->
+                    <div class="collapse navbar-collapse">
+                   
+                        
+                        <ul class="nav navbar-nav navbar-right">
+
+                            <form class="navbar-form navbar-right">
+                                <button ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn"class="btn btn-default noOutline">Login</button>
+                                <button ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn" class="btn btn-default noOutline">Logout</button>
+                            </form>
+                            <li><a href="/meta">meta</a></li>
+                            <li ng-show="Login.loggedIn"><a href="addContent">add content</a></li>
+                            <li><a href="explore">explore</a></li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            
+            <div ng-view ></div>
+
+        </div>
+        
+        <div class="footer">testing</div>
 
         
 
         
-        <!-- Scripts & css --> 
+       
+    </body>
+     <!-- Scripts & css --> 
         <div>
             <!-- file upload shim - needs to be loaded before angular -->
             <script type="text/javascript" src="resources/angular-file-upload-shim.min.js"></script>
@@ -119,5 +123,4 @@
             <script type="text/javascript" src="app/exploreContent/exploreContent.js"></script>
             <script type="text/javascript" src="app/shared/shared.js"></script>
         </div>
-    </body>
 </html>
