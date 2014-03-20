@@ -3,7 +3,7 @@
 /*Original Bootstrap's CSS depends on empty href attributes to style cursors for several components (pagination, tabs etc.). But in AngularJS adding empty href attributes to link tags will cause unwanted route changes. This is why we need to remove empty href attributes from directive templates and as a result styling is not applied correctly.*/
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
-/**{outline: solid 1px;}*/
+*{outline: solid 1px;}
 
 
 /* override bootstrap 3 css*/
@@ -19,7 +19,8 @@
   min-height: 70px;
 }
 .navbar {
-	border-radius: 5px;
+	z-index: 501; /*needs to be above content panel*/
+	border-radius: 4px;
 	margin-top: 10px;
 }
 .btn-default .badge {
@@ -39,33 +40,29 @@
 	margin-top: 10px
 }
 
-
+/* overwrite well default colored background to make the intro looks less funny*/
 .introjs-showElement{
 	background-color: white;
 }
 
 
-html, body {
-	height: 100%;
+.noOutline:focus {
+	cursor: pointer;
+	outline: 0;
 }
-.page-wrap {
-  min-height: 100%;
-  /* equal to footer height */
-  margin-bottom: -150px; 
+.noAction:hover {
+	cursor: pointer;
+	background-color: #fff;
+	border-color: #ccc;
 }
-.page-wrap:after {
-  content: "";
-  display: block;
+.noAction:focus {
+	background-color: #fff;
+	border-color: #ccc;
 }
-.footer, .page-wrap:after {
-  /* .push must be the same height as footer */
-  height: 200px;
+.padding0{
+	padding:0;
 }
-.footer {
-	border-top: 1px solid;
-	border-color: rgb(175, 175, 175);
-	background-color: rgba(228, 228, 228, 0.28);
-}
+
 .buttonSelected {
 	color: #333;
 	background-color: #ebebeb;
@@ -80,6 +77,52 @@ html, body {
   margin-left: auto;
   margin-right: auto;
 }
+
+/* home page jumbotron classes */
+h4 {display: inline;}
+#omniParen {
+	margin-top: -2px;
+	margin-left: -40px;
+	margin-right: -25px;
+	height: 100px;
+	overflow: hidden;
+	transform: scaleX(1);
+	-ms-transform: scaleX(1);
+	-webkit-transform: scaleX(1);
+}
+#everything {display: inline;}
+#plusDiv{
+	margin: 10px 50px -5px 50px;
+}
+@media (max-width: 650px) { #plusDiv {margin: 10px 200px -5px 200px;} }
+#addoParen {
+	margin-top: -2px;
+	margin-left: -97px;
+	margin-right: -77px;
+	overflow: hidden;
+	transform: scaleX(1);
+	-ms-transform: scaleX(1);
+	-webkit-transform: scaleX(1);
+}
+#addoList {margin-top: 2px;}
+#jumboDiv {
+	margin-top: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 600px;
+	background: rgb(250, 250, 250);
+}
+#jumboDiv p {
+	height: 18px
+}
+#jumboDiv h4 {
+	color: rgb(219, 31, 31);
+}
+#addoDiv {
+	height: 205px;
+}
+
+
 
 .cardsContainer {
 	width:100%;
@@ -100,22 +143,31 @@ html, body {
 	margin-right: auto;
 }
 
-.noOutline:focus {
-	cursor: pointer;
-	outline: 0;
+
+/* css for sticky footer*/
+html, body {
+	height: 100%;
 }
-.noAction:hover {
-	cursor: pointer;
-	background-color: #fff;
-	border-color: #ccc;
+.page-wrap {
+  min-height: 100%;
+  margin-bottom: -50px; /*padding above margin*/
 }
-.noAction:focus {
-	background-color: #fff;
-	border-color: #ccc;
+.page-wrap:after {
+  content: "";
+  display: block;
 }
-.padding0{
-	padding:0;
+.footer, .page-wrap:after {
+  /* .push must be the same height as footer */
+  height: 100px;
 }
+.footer {
+	margin: 0 20px 0 20px;
+	border-radius: 4px 4px 0 0;
+	border: 1px solid;
+	border-color: rgb(226, 226, 226);
+	background-color: rgba(228, 228, 228, 0.28);
+}
+
 
 #ng-pageslide {
 	border:1px solid rgb(119, 119, 119);

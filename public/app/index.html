@@ -15,7 +15,7 @@
        
         <div class="page-wrap container">
             <!-- TODO: rather than hide on content page, slide up (slide down on mouse over) -->
-            <nav ng-cloak ng-hide='currentTemplate === "app/exploreContent/contentPage.html"' class="navbar navbar-default" role="navigation">
+            <nav ng-cloak ng-hide='getCurrentTemplate() === "app/exploreContent/contentPage.html"' class="navbar navbar-default" role="navigation">
                 <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                     <div class="navbar-header">
@@ -65,7 +65,7 @@
 
         </div>
         
-        <div class="footer">testing</div>
+        <div ng-hide='getCurrentTemplate() === "app/exploreContent/contentPage.html"' class="footer"></div>
 
         
 

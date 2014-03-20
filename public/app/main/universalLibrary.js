@@ -93,14 +93,18 @@ service('appLanguage', ['$cookieStore',function ($cookieStore) {
     this.lang = "";
 }]).
 
-controller('appCtrl', ['$scope', 'appLanguage', 'LoginService', '$route',function ($scope, appLanguage, LoginService,$route) {
+controller('appCtrl', ['$scope', 'appLanguage', 'LoginService', '$route',function ($scope, appLanguage, LoginService, $route) {
 
     $scope.displayLanguage = appLanguage;
     $scope.Login = LoginService; 
-    $scope.currentTemplate = "";
-    $scope.$on('$routeChangeSuccess', function(event, info) {
-        $scope.currentTemplate = info.loadedTemplateUrl;
-    });
+    $scope.getCurrentTemplate = function(){
+        if($route.current) {
+            return $route.current.loadedTemplateUrl;
+        }
+    };
+    // $scope.$on('$routeChangeSuccess', function(event, info) {
+    //     $scope.currentTemplate = info.loadedTemplateUrl;
+    // });
     // console.log($route.current.loadedTemplateUrl);
 }]);
 

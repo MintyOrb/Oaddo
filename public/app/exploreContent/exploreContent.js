@@ -243,7 +243,7 @@ directive('zui', [function () {
 		scope: { url: "@"},
         // NOTE: changed overlay style of .zui div to visible and added 'left':'0', 'right':'0' to viewport div in prototype in zui53.js
         // TODO: find better solution for centering displayed content - this method allows the user to zoom on the magin 'wings' used for centering
-		template: '<div id="zui" style="z-index:-1;" ><div id="viewport" ><img src="{{imageURL}}" style="display:block; margin-left: auto; margin-right: auto; max-height: 400px;"></div></div>',
+		template: '<div id="zui" ><div id="viewport" ><img src="{{imageURL}}" style="display:block; margin-left: auto; margin-right: auto; max-height: 400px;"></div></div>',
 		link: function (scope, element, attrs) {
             scope.imageURL = scope.url;
 			var zui = new ZUI53.Viewport( document.getElementById('zui') );

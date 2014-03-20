@@ -96,7 +96,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
 
 }).
 
-controller("termTypeAheadCtrl", function ($scope, focus, $modal, $http, $route, appLanguage, contentTerms) {
+controller("termTypeAheadCtrl", function ($scope, focus, $modal, $http, appLanguage, contentTerms) {
 
     $scope.contentTerms = contentTerms;
     $scope.displayOptions = {
@@ -110,7 +110,7 @@ controller("termTypeAheadCtrl", function ($scope, focus, $modal, $http, $route, 
         return $http.get('/termTypeAhead', { params: { entered: $scope.displayOptions.DBTerm, language: appLanguage.lang } }).
         then(function(response){
             if(!response.data.results){
-                if($route.current.templateUrl === "app/addingContent/newContent.html" || $route.current.templateUrl === "app/exploreContent/contentPage.html"){
+                if($scope.getCurrentTemplate() === "app/addingContent/newContent.html" || $scope.getCurrentTemplate() === "app/exploreContent/contentPage.html"){
                     $scope.displayOptions.addingNewTerm = true;
                     focus('suggest'); // switch focus to freebase typeahead
                     return [];
