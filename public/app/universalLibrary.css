@@ -96,13 +96,14 @@ h4 {display: inline;}
 }
 @media (max-width: 650px) { #plusDiv {margin: 10px 200px -5px 200px;} }
 #addoParen {
-	margin-top: -2px;
-	margin-left: -97px;
-	margin-right: -77px;
+	height: 193px;
+	margin-top: 3px;
+	margin-left: -81px;
+	margin-right: -64px;
 	overflow: hidden;
-	transform: scaleX(1);
-	-ms-transform: scaleX(1);
-	-webkit-transform: scaleX(1);
+	transform: scaleX(.5);
+	-ms-transform: scaleX(.5);
+	-webkit-transform: scaleX(.5);
 }
 #addoList {margin-top: 2px;}
 #jumboDiv {
