@@ -29,7 +29,7 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
     };
 
     $scope.contentObject = {
-        language: appLanguage.lang,
+        language: appLanguage.languageCode,
         // language specific
         meta: {
             // source: {
@@ -129,7 +129,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
             $upload.upload({
                 url: '/newImage',
                 file: file[0],
-                data: {name: file[0].name, language: appLanguage.lang},
+                data: {name: file[0].name, language: appLanguage.languageCode},
                 progress: function(evt){
                 //TODO show upload progress to user
                     console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
@@ -153,7 +153,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
             $scope.displaySettings.optionSelected = true;  //display cancel button
             $scope.displaySettings.disableFileSelection = true;
 
-            $http.post('/addContentFromURL', {url: $scope.contentObject.webURL, language: appLanguage.lang}).
+            $http.post('/addContentFromURL', {url: $scope.contentObject.webURL, language: appLanguage.languageCode}).
             success(function(response){
 
                 if(response.displayType === "image"){

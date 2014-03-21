@@ -130,6 +130,7 @@ exports.addAccount = function (request, reply) {
 exports.addTerm = function (request, reply) {
 
     // TODO: determine how to handle def in case en/en-gb - remove region specification (gb)?
+    // right now its just adding all as they come in
     
     console.log("req.payload: " + JSON.stringify(request.payload));
     console.log("req.session: " + JSON.stringify(request.session));

@@ -16,7 +16,7 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
         $http.post('/explore', { 
             includedTerms: $scope.contentTerms.selected,
             excludedTerms: $scope.contentTerms.discarded, 
-            language: appLanguage.lang }).
+            language: appLanguage.languageCode }).
         success(function(data){
             console.log(data);
             $scope.returnedContent = data; 
@@ -210,7 +210,7 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     //         {
     //             matchAll: false, 
     //             uuid: $scope.content.UUID, 
-    //             language: appLanguage.get(),
+    //             language: appLanguage.languageCode,
     //             keyTerms: $scope.content.terms,
     //             groups: $scope.filter.groups
     //         })
@@ -222,7 +222,7 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     //     $http.post('/explore', { 
     //         includedTerms: $scope.contentTerms.selected,
     //         excludedTerms: $scope.contentTerms.discarded, 
-    //         language: appLanguage.lang }).
+    //         language: appLanguage.languageCode }).
     //     success(function(data){
     //         $scope.returnedContent = data; 
     //     });

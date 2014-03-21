@@ -62,7 +62,7 @@
 		<div class="f-flexC f-column f-m-center f-c-center" ng-show="panel.section === 'terms'"> 
 		
 			<div class="dn-bounce" ng-if="panel.editTerms" ng-controller="termTypeAheadCtrl">
-                <suggest focus-on="suggest" ng-show="displayOptions.addingNewTerm" class='form-control' on-select="content.changesNotMade=false;openNewTermModal(data, content.terms)" input-model="displayOptions.DBTerm" lang="{{displayLanguage.get()}}"></suggest>
+                <suggest focus-on="suggest" ng-show="displayOptions.addingNewTerm" class='form-control' on-select="content.changesNotMade=false;openNewTermModal(data, content.terms)" input-model="displayOptions.DBTerm" lang="{{displayLanguage.languageCode}}"></suggest>
                 <input focus-on="db" ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="content.changesNotMade=false;addToSelectedFromDB(content.terms)" typeahead="term as term.name for term in findTerm()" placeholder="Type term name here" >
                 <button ng-click="displayOptions.addingNewTerm = !displayOptions.addingNewTerm" class='btn btn-default btn-sm'>Change Source</button>
                 <i class='text-muted fa fa-question-circle'></i>

@@ -75,22 +75,233 @@ run(function ($rootScope, LoginService, $cookieStore, appLanguage) {
         var lang = window.navigator.userLanguage || window.navigator.language;
         lang = lang.substr(0,2); // get two letter language code
         console.log("language from window.nav: " + lang);
-        appLanguage.set(lang);
+        appLanguage.setByCode(lang);
     } else {
-        appLanguage.set($cookieStore.get('languagePreference'));
+        appLanguage.setLanguage($cookieStore.get('languagePreference'));
     }
-    
 }).
 
 service('appLanguage', ['$cookieStore',function ($cookieStore) {
-    this.set = function(code){
-        $cookieStore.put('languagePreference', code);
-        this.lang = code;
+    
+    this.languageCode = "";
+    this.name = "";
+    this.nativeName = "";
+
+    this.setByCode = function(code){
+        var languageObj = this.findMatchingLanguage(code);
+        languageObj.languageCode = code;
+        this.setLanguage(languageObj);
     };
+
+    this.setLanguage = function(langObj){
+        this.languageCode = langObj.languageCode;
+        this.name = langObj.name;
+        this.nativeName = langObj.nativeName;
+        $cookieStore.put('languagePreference', langObj);
+    };
+
     this.get = function(){
         return $cookieStore.get('languagePreference');
     };
-    this.lang = "";
+
+    this.dropdownSelect = function(key, langObj){
+        var lang = langObj;
+        lang.languageCode = key;
+        console.log(key);
+        console.log(langObj);
+        this.setLanguage(lang);
+    };
+
+    this.findMatchingLanguage = function(code){
+        for(var lang in this.languages){
+            console.log("lang: " + lang);
+            console.log("code: " + code);
+            console.log("lang.name: ");
+                console.log(this.languages[lang].name);
+            if(lang === code){
+                return {
+                    nativeName: this.languages[lang].nativeName,
+                    name: this.languages[lang].name
+                };
+            }
+        }
+    };
+
+    this.languages = {
+        "ar":{
+            "name":"Arabic",
+            "nativeName":"العربية"
+        },
+        "bg":{
+            "name":"Bulgarian",
+            "nativeName":"български език"
+        },
+        "ca":{
+            "name":"Catalan; Valencian",
+            "nativeName":"Català"
+        },
+        "cs":{
+            "name":"Czech",
+            "nativeName":"česky, čeština"
+        },
+        "da":{
+            "name":"Danish",
+            "nativeName":"dansk"
+        },
+        "de":{
+            "name":"German",
+            "nativeName":"Deutsch"
+        },
+        "el":{
+            "name":"Greek, Modern",
+            "nativeName":"Ελληνικά"
+        },
+        "en":{
+            "name":"English",
+            "nativeName":"English"
+        },
+        "eo":{
+            "name":"Esperanto",
+            "nativeName":"Esperanto"
+        },
+        "es":{
+            "name":"Spanish; Castilian",
+            "nativeName":"español, castellano"
+        },
+        "es-419":{
+            "name":"Latin America Spanish",
+            "nativeName":"espanol de America Latina"
+        },
+        "et":{
+            "name":"Estonian",
+            "nativeName":"eesti, eesti keel"
+        },
+        "fa":{
+            "name":"Persian",
+            "nativeName":"فارسی"
+        },
+        "fi":{
+            "name":"Finnish",
+            "nativeName":"suomi, suomen kieli"
+        },
+        "fr":{
+            "name":"French",
+            "nativeName":"français, langue française"
+        },
+        "gd":{
+            "name":"Scottish Gaelic; Gaelic",
+            "nativeName":"Gàidhlig"
+        },
+        "he":{
+            "name":"Hebrew (modern)",
+            "nativeName":"עברית"
+        },
+        "hi":{
+            "name":"Hindi",
+            "nativeName":"हिन्दी, हिंदी"
+        },
+        "hr":{
+            "name":"Croatian",
+            "nativeName":"hrvatski"
+        },
+        "hu":{
+            "name":"Hungarian",
+            "nativeName":"Magyar"
+        },
+        "id":{
+            "name":"Indonesian",
+            "nativeName":"Bahasa Indonesia"
+        },
+        "it":{
+            "name":"Italian",
+            "nativeName":"Italiano"
+        },
+        "ja":{
+            "name":"Japanese",
+            "nativeName":"日本語 (にほんご／にっぽんご)"
+        },
+        "ko":{
+            "name":"Korean",
+            "nativeName":"한국어 (韓國語), 조선말 (朝鮮語)"
+        },
+        "lt":{
+            "name":"Lithuanian",
+            "nativeName":"lietuvių kalba"
+        },
+        "lv":{
+            "name":"Latvian",
+            "nativeName":"latviešu valoda"
+        },
+        "ms":{
+            "name":"Malay",
+            "nativeName":"bahasa Melayu, بهاس ملايو‎"
+        },
+        "nl":{
+            "name":"Dutch",
+            "nativeName":"Nederlands, Vlaams"
+        },
+        "no":{
+            "name":"Norwegian",
+            "nativeName":"Norsk"
+        },
+        "pl":{
+            "name":"Polish",
+            "nativeName":"polski"
+        },
+        "pt":{
+            "name":"Portuguese",
+            "nativeName":"Português"
+        },
+        "ro":{
+            "name":"Romanian, Moldavian, Moldovan",
+            "nativeName":"română"
+        },
+        "ru":{
+            "name":"Russian",
+            "nativeName":"русский язык"
+        },
+        "sk":{
+            "name":"Slovak",
+            "nativeName":"slovenčina"
+        },
+        "sl":{
+            "name":"Slovene",
+            "nativeName":"slovenščina"
+        },
+        "sr":{
+            "name":"Serbian",
+            "nativeName":"српски језик"
+        },
+        "sv":{
+            "name":"Swedish",
+            "nativeName":"svenska"
+        },
+        "th":{
+            "name":"Thai",
+            "nativeName":"ไทย"
+        },
+        "tr":{
+            "name":"Turkish",
+            "nativeName":"Türkçe"
+        },
+        "uk":{
+            "name":"Ukrainian",
+            "nativeName":"українська"
+        },
+        "vi":{
+            "name":"Vietnamese",
+            "nativeName":"Tiếng Việt"
+        },
+        "zh":{
+            "name":"Chinese",
+            "nativeName":"中文 (Zhōngwén), 汉语, 漢語"
+        },
+        "zh-hant":{
+            "name":"traditional Chinese",
+            "nativeName":"中文（繁體)"
+        }
+    };
+
 }]).
 
 controller('appCtrl', ['$scope', 'appLanguage', 'LoginService', '$route',function ($scope, appLanguage, LoginService, $route) {
@@ -102,9 +313,5 @@ controller('appCtrl', ['$scope', 'appLanguage', 'LoginService', '$route',functio
             return $route.current.loadedTemplateUrl;
         }
     };
-    // $scope.$on('$routeChangeSuccess', function(event, info) {
-    //     $scope.currentTemplate = info.loadedTemplateUrl;
-    // });
-    // console.log($route.current.loadedTemplateUrl);
-}]);
 
+}]);

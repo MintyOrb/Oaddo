@@ -20,6 +20,11 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
     $scope.$watchCollection("contentTerms.selected", function(){
         getRelatedTerms();
     });
+    
+    // fetch terms on language switch
+    $scope.$watch("displayLanguage.languageCode", function(){
+        getRelatedTerms();
+    });
 
     $scope.openTermModal = function (termData) {
         var modalInstance = $modal.open({
@@ -41,7 +46,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
             ignoreTerms: $scope.contentTerms.discarded,
             keyTerms: $scope.contentTerms.selected,
             groups: $scope.filter.groups,
-            language: appLanguage.lang }).
+            language: appLanguage.languageCode }).
         success(function(data){
             
             if($scope.contentTerms.related.length > 0){
@@ -107,7 +112,7 @@ controller("termTypeAheadCtrl", function ($scope, focus, $modal, $http, appLangu
     //typeahead from neo4j
     $scope.findTerm = function()
     {   
-        return $http.get('/termTypeAhead', { params: { entered: $scope.displayOptions.DBTerm, language: appLanguage.lang } }).
+        return $http.get('/termTypeAhead', { params: { entered: $scope.displayOptions.DBTerm, language: appLanguage.languageCode } }).
         then(function(response){
             if(!response.data.results){
                 if($scope.getCurrentTemplate() === "app/addingContent/newContent.html" || $scope.getCurrentTemplate() === "app/exploreContent/contentPage.html"){

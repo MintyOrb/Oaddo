@@ -78,6 +78,17 @@
   margin-right: auto;
 }
 
+/* lang icon */
+#langIcon {
+	margin-top: -8px;
+	margin-bottom: -5px;
+	margin-right: 10px;
+	width: 28px;
+}
+#langDropdown {
+	overflow: scroll;
+	max-height: 400px
+}
 /* home page jumbotron classes */
 h4 {display: inline;}
 #omniParen {
@@ -92,9 +103,9 @@ h4 {display: inline;}
 }
 #everything {display: inline;}
 #plusDiv{
-	margin: 10px 50px -5px 50px;
+	margin: 10px 50px 5px 50px;
 }
-@media (max-width: 650px) { #plusDiv {margin: 10px 200px -5px 200px;} }
+@media (max-width: 650px) { #plusDiv {margin: 0px 235px 0px 200px;} }
 #addoParen {
 	height: 193px;
 	margin-top: 3px;
@@ -107,6 +118,7 @@ h4 {display: inline;}
 }
 #addoList {margin-top: 2px;}
 #jumboDiv {
+	border-radius: 15px;
 	margin-top: 20px;
 	margin-left: auto;
 	margin-right: auto;
