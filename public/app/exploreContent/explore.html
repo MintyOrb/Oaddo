@@ -1,7 +1,6 @@
 <!-- NOTE: the only reason the termselection controller is wrapping the explore controller is to get access to be able to open the term filter within the tutorial. This is probably bad practice and ought to be changed  -->
 <div ng-controller='termSelectionCtrl'>
 <div ng-controller="exploreCtrl" ng-intro-options="IntroOptions" ng-intro-onbeforechange="BeforeChangeEvent"  ng-intro-onexit="ExitEvent" ng-intro-oncomplete="ExitEvent" ng-intro-method="startIntro">
-{{langCode}} - {{displayLanguage.languageCode}}
     <button class="btn btn-primary col-sm-offset-2" ng-click="startIntro()">start tutorial</button>
 	<div ui-on-Drop="" >
 		<div id="step3" ng-controller="termTypeAheadCtrl" class="input-group col-sm-3 col-sm-offset-7">

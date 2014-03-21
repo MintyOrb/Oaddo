@@ -74,7 +74,6 @@ run(function ($rootScope, LoginService, $cookieStore, appLanguage) {
     if (appLanguage.get() === undefined){
         var lang = window.navigator.userLanguage || window.navigator.language;
         lang = lang.substr(0,2); // get two letter language code
-        console.log("language from window.nav: " + lang);
         appLanguage.setByCode(lang);
     } else {
         appLanguage.setLanguage($cookieStore.get('languagePreference'));
@@ -107,17 +106,11 @@ service('appLanguage', ['$cookieStore',function ($cookieStore) {
     this.dropdownSelect = function(key, langObj){
         var lang = langObj;
         lang.languageCode = key;
-        console.log(key);
-        console.log(langObj);
         this.setLanguage(lang);
     };
 
     this.findMatchingLanguage = function(code){
         for(var lang in this.languages){
-            console.log("lang: " + lang);
-            console.log("code: " + code);
-            console.log("lang.name: ");
-                console.log(this.languages[lang].name);
             if(lang === code){
                 return {
                     nativeName: this.languages[lang].nativeName,
