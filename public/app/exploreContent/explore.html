@@ -33,7 +33,7 @@
 			<tabset class='f-grow-1 f-flexC f-column margin10'>
 				<tab heading="Terms">
 					<div class="f-flexC f-row f-wrap f-m-center ">
-						<button ng-repeat="term in content.terms"class="noAction noOutline btn btn-default btn-sm margin5">{{term}}</button>
+						<button ng-repeat="term in content.terms"class="noAction noOutline btn btn-default btn-sm margin5">{{term.meta.name}}</button>
 					</div>
 				</tab>
 				<tab ng-if="content.description.length > 0" heading="Description">

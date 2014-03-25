@@ -103,9 +103,9 @@ h4 {display: inline;}
 }
 #everything {display: inline;}
 #plusDiv{
-	margin: 10px 50px 5px 50px;
+	margin: 10px 50px -5px 50px;
 }
-@media (max-width: 650px) { #plusDiv {margin: 0px 235px 0px 200px;} }
+@media (max-width: 650px) { #plusDiv {margin: 0px 235px -27px 200px;} }
 #addoParen {
 	height: 193px;
 	margin-top: 3px;

@@ -23,6 +23,8 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
     
     // fetch terms on language switch
     $scope.$watch("displayLanguage.languageCode", function(){
+        contentTerms.selected = [];
+        contentTerms.discarded = [];
         getRelatedTerms();
     });
 

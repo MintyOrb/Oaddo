@@ -12,14 +12,18 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
         getRelatedContent();
     });
 
+    // re-fetch content on language switch
+    $scope.$watch("displayLanguage.languageCode", function(){
+        getRelatedContent();
+    });
+
     var getRelatedContent = function(){
         $http.post('/explore', { 
             includedTerms: $scope.contentTerms.selected,
             excludedTerms: $scope.contentTerms.discarded, 
             language: appLanguage.languageCode }).
         success(function(data){
-            console.log(data);
-            $scope.returnedContent = data; 
+            $scope.returnedContent = data;
         });
     };
 
@@ -31,17 +35,12 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
         if(angular.element(section)[0].id === 'step5'){
             $scope.filter.isCollapsed = false;
             $scope.$apply();
-            console.log("present: " );
-        }
-        
-        console.log("Before Change Event called"); 
+        }    
     };
     $scope.ExitEvent = function (section) { 
         
         $scope.filter.isCollapsed = true;
-        $scope.$apply();
-        
-        console.log("exit Event called"); 
+        $scope.$apply();  
     };
     $scope.IntroOptions = {
         steps:[

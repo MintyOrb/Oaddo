@@ -6,6 +6,7 @@
         <!-- diable zoom on mobile devies -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <base href="/">
+        <!-- load styles before content -->
         <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="app/universalLibrary.css">
         <title ng-bind="'Oaddo &mdash; ' + title">Oaddo</title>
@@ -26,10 +27,20 @@
                               <span class="icon-bar"></span>
                             </button>
                         </a>
-
                         <!-- collapsed nav components -->
                         <ul class="width100p dropdown-menu">
                             <li><a href="meta">meta</a></li>
+                            <!-- use collapse to make this work? -->
+                            <li>
+                                <a ng-click="isCollapsed = !isCollapsed">
+                                    <img id="langIcon" ng-cloak src="img/langIcon.png">
+                                    {{displayLanguage.nativeName}}
+                                    <i class='fa fa-chevron-down pull-right'></i>
+                                </a>
+                                <!-- <ul collapse="isCollapsed" id="langDropdown" class='dropdown-menu width100p'>
+                            <li ng-repeat="(key, lang) in displayLanguage.languages"><a ng-click="displayLanguage.dropdownSelect(key, lang)">{{lang.nativeName}}</a></li>
+                        </ul> -->
+                            </li>
                             <li><a href="explore">explore</a></li>
                             <li ng-show="Login.loggedIn"><a href="addContent">add content</a></li>
                             <hr class="hr">
@@ -37,7 +48,8 @@
                                 <a ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn">Login</a>
                                 <a ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn">Logout</a>
                             </li>
-                          </ul>
+                        </ul>
+
                         <a class="navbar-brand" href="#"><span class="h3">Oaddo</span><span class="h6 text-danger"> alpha</span></a>
                     </div>
             
@@ -48,7 +60,7 @@
         
                             <form class="navbar-form navbar-right">
                                 <div class="btn-group">
-                                    <button class="btn btn-default noAction"><img id="langIcon" src="img/langIcon.png">{{displayLanguage.nativeName}}</button> 
+                                    <button class="btn btn-default noAction"><img id="langIcon" ng-cloak src="img/langIcon.png">{{displayLanguage.nativeName}}</button> 
                                     <button class="btn btn-default dropdown-toggle"><i class='fa fa-chevron-down'></i></button>
                                     <ul id="langDropdown" class='dropdown-menu'>
                                         <li ng-repeat="(key, lang) in displayLanguage.languages"><a ng-click="displayLanguage.dropdownSelect(key, lang)">{{lang.nativeName}}</a></li>

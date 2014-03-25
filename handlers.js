@@ -345,6 +345,7 @@ exports.relatedTerms = function (request, reply) {
                 'ORDER BY connections DESC LIMIT 10'
             ].join('\n');
         } else {
+            // match any 
             query = [
                 'MATCH (groupNode:termGroup)<-[:IN_GROUP]-(matched:term)<-[:TAGGED_WITH]-(contentNode:content)-[:TAGGED_WITH]->(searchTerms:term), ',
                     '(matched)-[:HAS_LANGUAGE {languageCode: {language} }]-(termMeta:termMeta) ',
@@ -377,8 +378,6 @@ exports.relatedTerms = function (request, reply) {
 
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
-        console.log("results: ");
-        console.log(results);
         reply({results: results});
     });
 };
@@ -591,7 +590,7 @@ exports.addNewContent = function (request, reply){
 
 exports.relatedContent = function (request, reply){
 
-    // TODO: handle searches in other languages
+    
     console.log("payload: \n");
     console.log(request.payload);
 
@@ -605,14 +604,13 @@ exports.relatedContent = function (request, reply){
     var count = 0;
 
     if(request.user !== undefined){
-        console.log("logged in: "  );
-        console.log(request.user[0].id);
         id = request.user[0].id;
         member = true;
     }
 
     var properties = {
-        language: request.payload.language,
+        language: request.payload.language,  // first choice
+        defaultLanguage: 'en',               // default to english
         includedTerms: [],
         userID: id,
         numberOfIncluded: count
@@ -622,21 +620,28 @@ exports.relatedContent = function (request, reply){
     // TODO: consider merging filesystemID, weburl, and embedSrc into one property
     if(request.payload.includedTerms.length === 0){
         query = [
-            "MATCH (meta:contentMeta)<-[metaLang:HAS_META {languageCode: {language} }]-(content:content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+            "MATCH (meta:contentMeta)<-[metaLang:HAS_META]-(content:content)-[:TAGGED_WITH]->(termNode:term)-[lang:HAS_LANGUAGE]->(langNode:termMeta) ",
+            "WHERE ",
+                "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
+                "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
+            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: langNode.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
+        //  meta.description AS description, meta.title AS title, meta.value AS value
     } else if(member){
         query = [
-            "MATCH (user:member {UUID: {userID} }), (meta:contentMeta)<-[metaLang:HAS_META {languageCode: {language} }]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
+            "MATCH (user:member {UUID: {userID} }), (meta:contentMeta)<-[metaLang:HAS_META]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",
-                "NOT (user)-[:BLOCKED]-(content) ",
+                "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
+                "AND NOT (user)-[:BLOCKED]-(content) ",
                 'AND termNode.UUID IN {includedTerms} ',
             "WITH content, count(*) AS connected, meta ",
-            "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[metaLang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
-            "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+            "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[metaLang:HAS_LANGUAGE]-(langNode:termMeta) ",
+            "WHERE ",
+                "connected = {numberOfIncluded} ",
+                "AND metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
+            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: langNode.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
@@ -645,11 +650,13 @@ exports.relatedContent = function (request, reply){
         query = [
             "MATCH (meta:contentMeta)<-[metaLang:HAS_META {languageCode: {language} }]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",
-                'termNode.UUID IN {includedTerms} ',
+                "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
+                "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
+                'AND termNode.UUID IN {includedTerms} ',
             "WITH content, count(*) AS connected, meta ",
             "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT collect(langNode.name) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: langNode.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
@@ -661,11 +668,12 @@ exports.relatedContent = function (request, reply){
         count += 1;
     }
     properties.numberOfIncluded = count;
-
+    console.log("props: ");
+    console.log(properties);
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
         console.log("done with query: ");
-        console.log(results);
+        console.log(JSON.stringify(results));
         reply(results);
     });
 
@@ -676,7 +684,11 @@ exports.getContent = function (request, reply){
     console.log("data: "+ request.query);
     console.log("data: "+ JSON.stringify(request.query));
     // TODO: increase view count by one
-    var query = "MATCH (meta:contentMeta)-[:HAS_META { languageCode: { language } }]-(contentNode:content {UUID: {id} }) RETURN contentNode.displayType AS displayType, contentNode.savedAs AS savedAs, contentNode.webURL AS webURL, contentNode.embedSrc AS embedSrc";
+    var query = [
+        "MATCH (meta:contentMeta)-[r:HAS_META]-(contentNode:content {UUID: {id} }) ",
+        'WHERE r.languageCode IN [{language}, "en"]',
+        'RETURN contentNode.displayType AS displayType, contentNode.savedAs AS savedAs, contentNode.webURL AS webURL, contentNode.embedSrc AS embedSrc '
+        ].join('\n');
     var properties = { 
         id: request.query.uuid,
         language: request.query.language,
@@ -756,7 +768,11 @@ exports.getContentAbout = function (request, reply){
     
     console.log("data: "+ JSON.stringify(request.query));
     
-    var query = "MATCH (contentNode:content {UUID: {id} })-[:HAS_META { languageCode: { language } }]-(metaNode:contentMeta) RETURN metaNode.value AS value, metaNode.description AS description, metaNode.title AS title";
+    var query = [
+        "MATCH (contentNode:content {UUID: {id} })-[r:HAS_META]-(metaNode:contentMeta) ",
+        'WHERE r.languageCode IN [{language}, "en"]',
+        "RETURN metaNode.value AS value, metaNode.description AS description, metaNode.title AS title "
+        ].join('\n'); 
     var properties = { 
         id: request.query.uuid,
         language: request.query.language,

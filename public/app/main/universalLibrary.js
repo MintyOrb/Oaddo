@@ -118,6 +118,11 @@ service('appLanguage', ['$cookieStore',function ($cookieStore) {
                 };
             }
         }
+        // default to english if code not found
+        return {
+                    nativeName: 'English',
+                    name: 'English'
+                };
     };
 
     this.languages = {
