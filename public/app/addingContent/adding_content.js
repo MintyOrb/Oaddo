@@ -47,11 +47,16 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
         displayType: "",
         embedSrc: "",
         webURL: "",
-        assignedTerms: contentTerms.selected
+        assignedTerms: $scope.contentTerms.selected
     };
 
     $scope.submitNewContent = function(){
         // TODO: validate that necessary fields are filled out before POSTing
+        // console.log($scope.contentTerms.selected);
+        // console.log(contentTerms.selected);
+        console.log($scope.contentObject);
+        $scope.contentObject.assignedTerms = $scope.contentTerms.selected; // for some reason the content object only recieves the selected terms if this is present. It seems to recieve them even before this assignment is made though.
+        console.log($scope.contentObject);
         $http.post('/newContent', $scope.contentObject).
         success(function(response){
             console.log(response);

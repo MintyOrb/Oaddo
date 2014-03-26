@@ -98,13 +98,13 @@
                     <div class="row margin5 f-flexC f-m-center margin20">
                         <div ng-controller="termTypeAheadCtrl">
                             <suggest focus-on="suggest" ng-show="displayOptions.addingNewTerm" class='form-control' on-select="openNewTermModal(data, contentTerms.selected)" input-model="displayOptions.DBTerm" lang="{{displayLanguage.languageCode}}"></suggest>
-                            <input focus-on="db" ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB(contentTerms.selected)" typeahead="term as term.name for term in findTerm()" placeholder="Type term name here" >
+                            <input focus-on="db" ng-show="!displayOptions.addingNewTerm" type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB(contentTerms.selected)" typeahead="term as term.name for term in findTerm()" placeholder="Type term name here">
                             <button ng-click="displayOptions.addingNewTerm = !displayOptions.addingNewTerm" class='btn btn-default btn-sm'>Change Source</button>
                             <i class='text-muted fa fa-question-circle'></i>
                         </div>
                     </div>
                     <div ui-on-Drop="" class="col-sm-12">
-
+    
                         <div ng-controller="termSelectionCtrl" ng-include="'app/shared/termSelectionPartial.html'"></div>
                        
                     </div>

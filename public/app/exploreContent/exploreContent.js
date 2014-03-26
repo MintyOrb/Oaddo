@@ -23,6 +23,7 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
             excludedTerms: $scope.contentTerms.discarded, 
             language: appLanguage.languageCode }).
         success(function(data){
+            console.log(data);
             $scope.returnedContent = data;
         });
     };
@@ -93,6 +94,18 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
    };
 }).
 
+filter('language', function() {
+    // TODO: find a way to include the english name if the term is not found in the chosen language
+    // this will probably require manipulating the db query
+    return function(input, currentCode) {
+       
+        if(input.language !== currentCode){
+            input.name = "";
+        }
+
+        return input.name;
+    };
+}).
 
 service('viewContent', [function () {
     this.selected = {};

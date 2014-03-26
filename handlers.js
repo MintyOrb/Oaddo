@@ -147,7 +147,6 @@ exports.addTerm = function (request, reply) {
 
     var createProperties = {
             "coreProps" : {
-                "contentConnections": 0,
                 "MID": request.payload.mid,
                 "dateAdded": new Date(),
                 "addedBy" : request.user.id,
@@ -574,8 +573,11 @@ exports.addNewContent = function (request, reply){
     for (var i = 0; i < request.payload.assignedTerms.length; i++) {
         params.taggedTermsUUID.push(request.payload.assignedTerms[i].UUID);
     }
-
-    //remove identifier from file name
+    console.log("request.payload: ");
+    console.log(request.payload);
+    console.log("params: ");
+    console.log(params);
+    // remove identifier from file name
     fs.rename("./public/img/submittedContent/" + request.payload.savedAs, "./public/img/submittedContent/" + modifiedName, function(){
         // add content node and connect to terms
         db.query(query, params, function (err, results) {
@@ -624,11 +626,12 @@ exports.relatedContent = function (request, reply){
             "WHERE ",
                 "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
                 "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
-            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: langNode.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+            // 'RETURN DISTINCT  collect( [{termID: termNode.UUID, name: langNode.name, language: langNode.languageCode }] ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+
+            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
-        //  meta.description AS description, meta.title AS title, meta.value AS value
     } else if(member){
         query = [
             "MATCH (user:member {UUID: {userID} }), (meta:contentMeta)<-[metaLang:HAS_META]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
@@ -641,7 +644,7 @@ exports.relatedContent = function (request, reply){
             "WHERE ",
                 "connected = {numberOfIncluded} ",
                 "AND metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
-            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: langNode.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
@@ -656,7 +659,7 @@ exports.relatedContent = function (request, reply){
             "WITH content, count(*) AS connected, meta ",
             "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
             "WHERE connected = {numberOfIncluded} ",
-            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: langNode.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
