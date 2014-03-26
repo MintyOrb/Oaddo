@@ -586,11 +586,12 @@ exports.relatedContent = function (request, reply){
             "MATCH (meta:contentMeta)<-[metaLang:HAS_META {languageCode: {language} }]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",
                 "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
-                "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
                 'AND termNode.UUID IN {includedTerms} ',
             "WITH content, count(*) AS connected, meta ",
             "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE {languageCode: {language} }]-(langNode:termMeta) ",
-            "WHERE connected = {numberOfIncluded} ",
+            "WHERE ",
+                "connected = {numberOfIncluded} ",
+                "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
             'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
