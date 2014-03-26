@@ -559,6 +559,8 @@ exports.relatedContent = function (request, reply){
                 "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
                 "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
             'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+            // "WITH collect(DISTINCT termNode.UUID) AS termIDs, collect(langNode.name) as names, collect(lang.languageCode) as codes, content, meta ",            
+            // 'RETURN DISTINCT  {termID: termIDs, name: names, language: codes } AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
         ].join('\n');
@@ -570,10 +572,10 @@ exports.relatedContent = function (request, reply){
                 "AND NOT (user)-[:BLOCKED]-(content) ",
                 'AND termNode.UUID IN {includedTerms} ',
             "WITH content, count(*) AS connected, meta ",
-            "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[metaLang:HAS_LANGUAGE]-(langNode:termMeta) ",
+            "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE]-(langNode:termMeta) ",
             "WHERE ",
                 "connected = {numberOfIncluded} ",
-                "AND metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
+                "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
             'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
             'LIMIT 15'
@@ -603,6 +605,8 @@ exports.relatedContent = function (request, reply){
     properties.numberOfIncluded = count;
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
+        console.log("results: " );
+        console.log(results);
         reply(results);
     });
 
