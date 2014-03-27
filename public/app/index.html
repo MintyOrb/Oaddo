@@ -32,7 +32,7 @@
                             <li><a href="meta">meta</a></li>
                             <!-- use collapse to make this work? -->
                             <li>
-                                <a ng-click="isCollapsed = !isCollapsed">
+                                <a ng-cloak ng-click="isCollapsed = !isCollapsed">
                                     <img id="langIcon" ng-cloak src="img/langIcon.png">
                                     {{displayLanguage.nativeName}}
                                     <i class='fa fa-chevron-down pull-right'></i>
@@ -60,7 +60,7 @@
         
                             <form class="navbar-form navbar-right">
                                 <div class="btn-group">
-                                    <button class="btn btn-default noAction"><img id="langIcon" ng-cloak src="img/langIcon.png">{{displayLanguage.nativeName}}</button> 
+                                    <button ng-cloak class="btn btn-default noAction"><img id="langIcon" ng-cloak src="img/langIcon.png">{{displayLanguage.nativeName}}</button> 
                                     <button class="btn btn-default dropdown-toggle"><i class='fa fa-chevron-down'></i></button>
                                     <ul id="langDropdown" class='dropdown-menu'>
                                         <li ng-repeat="(key, lang) in displayLanguage.languages"><a ng-click="displayLanguage.dropdownSelect(key, lang)">{{lang.nativeName}}</a></li>
@@ -79,7 +79,7 @@
             </nav>
             <div ng-controller="alphaAlertCtrl">
                 <alert ng-if="showAlphaAlert" type="'danger'" close="close()">
-                    <span class="pull-right">{{options.dontShowAgain}}
+                    <span class="pull-right">
                         don't show again <input type='checkbox' ng-model="options.dontShowAgain">
                     </span>
                     <h3>NOTICE:</h3>

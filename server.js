@@ -62,7 +62,6 @@ Passport.deserializeUser(function (obj, done) {
 server.route([        
 
 	//resource routes
-    // { method: 'GET', path: '/public/{path*}', handler: { directory: { path: './public/' } } }, 
     { method: 'GET', path: '/bower_components/{path*}', handler: { directory: { path: './public/bower_components/' } } },
     { method: 'GET', path: '/resources/{path*}', handler: { directory: { path: './public/resources/' } } }, 
     { method: 'GET', path: '/app/{path*}', handler: { directory: { path: './public/app/' } } },
@@ -101,7 +100,9 @@ server.route([
     //api routes
     { method: 'POST', path: '/user', handler: handlers.addAccount },
 
-    { method: 'POST', path: '/logout', handler: handlers.logout},
+    { method: 'POST', path: '/logout', config: {auth: 'passport'}, handler: handlers.logout},
+
+    { method: 'POST', path: '/requestCode', handler: handlers.requestCode},
 
     { method: 'POST', path: '/term', config: {auth: 'passport'}, handler: handlers.addTerm},
 

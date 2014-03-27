@@ -9,12 +9,19 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, LoginSer
     $scope.display = {
         validEmail: true,
         validPass: true,
-        returningUser: true
+        returningUser: true,
+        requestCode: false
     };
     $scope.user = {
         email : "",
         password : "",
         checkPassword: ""
+    };
+
+    // for alpha code request
+    $scope.request = {
+        email:"",
+        reason:""
     };
 
     $scope.$on('$routeChangeStart', function(event, current, previous) {
@@ -57,6 +64,13 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, LoginSer
                 
             });
         }
+    };
+
+    $scope.requestCode = function() {
+        $http.post('/requestCode', {email:$scope.request.email,reason:$scope.request.reason}).
+        success(function(data){
+            $scope.message = data.message;
+        });
     };
 
     $scope.login = function (email, password) {

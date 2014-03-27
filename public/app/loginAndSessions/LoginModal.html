@@ -27,12 +27,31 @@
                     <input tabindex='3' class="form-control" ng-blur="checkPass()" type="password" ng-model="user.checkPassword">
                 </label>
             </div>
+            <div>
+                <label ng-hide="display.returningUser">alpha test code (required)
+                    <br>
+                    <input tabindex='3' class="form-control" ng-blur="checkCode()" type="text" ng-model="user.code">
+                </label>
+            </div>
         </div>
         <div class="f-flexC f-column f-m-center f-c-center col-sm-6">
             <h4>Don't have an account?</h4> 
             <br>
             <span ng-show="display.returningUser" ng-click="display.returningUser = false;" class="btn btn-primary">Click here to sign up</span>
-            <span ng-hide="display.returningUser" ng-click="display.returningUser = true;" class="btn btn-primary">I have an account</span>
+            <span ng-hide="display.returningUser" ng-click="display.returningUser = true;display.requestCode = false;" class="btn btn-primary">I have an account</span>
+            <br>
+            <button ng-click="display.requestCode = true" ng-hide="display.returningUser || display.requestCode" class='btn btn-default'> request alpha code</button>
+            <div id="requestCodeWidth" class="f-flexC f-column f-m-center f-c-center"  ng-show="display.requestCode">
+                <label class="width100p">Email:
+                <input ng-model='request.email' class="form-control width100p" type='email'>
+                </label>
+                <br>
+                <textarea id="requestCodeWidth" ng-model="request.reason" class="form-control width100p" placeholder="Why are you interested in being an alpha tester?"></textarea>
+                <br>
+                <button ng-click="requestCode();display.requestCode = false" class="btn btn-primary">request code</button>
+                <br>
+                Note: not all requests will be granted, response will be issued within three days.
+            </div>
             <br>
             <p class="text-danger">{{message}}</p>
             <p class="text-danger" ng-hide="display.validEmail">invalid email address</p>

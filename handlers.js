@@ -706,3 +706,27 @@ exports.getContentAbout = function (request, reply){
             reply({value:about[0].value || "No value statement found. Create an account or login to add one!",description:about[0].description || "No description found. Create an account or signin to add one!",title:about[0].title || "No title found. Create an account or login to add one!"});
     });   
 };
+
+
+
+
+
+
+
+
+exports.requestCode = function(request, reply){
+
+    var query = 'CREATE (n:requestCode {reason: {reason}, email:{email}} ) RETURN n';
+    var properties = { 
+        reason: request.payload.reason,
+        email: request.payload.email,
+    };
+    db.query(query, properties, function (err, node) {
+        if (err) {
+            console.log("error in db query: " + err);
+            reply({message:"request error"});
+        } else {
+            reply({message:"successful request"});
+        }
+    }); 
+};
