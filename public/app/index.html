@@ -77,7 +77,19 @@
                     </div>
                 </div>
             </nav>
+            <div ng-controller="alphaAlertCtrl">
+                <alert ng-if="showAlphaAlert" type="'danger'" close="close()">
+                    <span class="pull-right">{{options.dontShowAgain}}
+                        don't show again <input type='checkbox' ng-model="options.dontShowAgain">
+                    </span>
+                    <h3>NOTICE:</h3>
+
+                    <p>Oaddo is early alpha stage software and is subject to frequent and possibly drastic changes and bugs.</p>
+                    <p>This site only supports the most recent versions of chrome and safari browsers at this time.</p>
+                </alert>
+            </div>
             
+
             <div ng-view ></div>
 
         </div>

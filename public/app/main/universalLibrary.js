@@ -302,6 +302,27 @@ service('appLanguage', ['$cookieStore',function ($cookieStore) {
 
 }]).
 
+controller('alphaAlertCtrl', ['$scope', '$cookieStore', function ($scope, $cookieStore) {
+    $scope.options = {dontShowAgain: false};
+    if($cookieStore.get('showAlphaAlert') === undefined){
+         $scope.showAlphaAlert = true;
+    } else {
+        $scope.showAlphaAlert = $cookieStore.get('showAlphaAlert');   
+    }
+    
+
+    $scope.close = function(){
+        console.log("dont show agian: " + $scope.options.dontShowAgain);
+        if($scope.options.dontShowAgain){
+            console.log("saving as false: ");
+            $cookieStore.put('showAlphaAlert', false);
+        } else {
+            console.log("saving as true: ");
+            $cookieStore.put('showAlphaAlert', true);
+        }
+        $scope.showAlphaAlert = false;
+    };
+}]).
 controller('appCtrl', ['$scope', 'appLanguage', 'LoginService', '$route',function ($scope, appLanguage, LoginService, $route) {
 
     $scope.displayLanguage = appLanguage;
