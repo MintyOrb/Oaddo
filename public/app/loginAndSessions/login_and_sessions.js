@@ -15,7 +15,8 @@ controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, LoginSer
     $scope.user = {
         email : "",
         password : "",
-        checkPassword: ""
+        checkPassword: "",
+        code: ""
     };
 
     // for alpha code request

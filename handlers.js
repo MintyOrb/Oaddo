@@ -40,15 +40,21 @@ exports.logout = function (request, reply) {
 //new user
 exports.addAccount = function (request, reply) {
 
-    var createProperties = {props: {} };
-    createProperties.props.primaryEmail = request.payload.email;
-    createProperties.props.dateJoined = new Date();
-    createProperties.props.UUID = uuid.v4();
+    var createProperties = {
+        props: {
+            primaryEmail : request.payload.email,
+            dateJoined : new Date(),
+            UUID : uuid.v4(),
+            codeUsed : request.payload.code
+        } 
+    };
     var createQuery = 'CREATE (memberNode:member:temp { props } )';
     
+    var codeProp = {code: request.payload.code};
+    var codeQuery = "MATCH (n:codeNode {code: {code} }) SET n.count = n.count + 1 RETURN n";
+
     var checkProperites = {email: request.payload.email};
     var checkQuery = 'MATCH (memberNode:member:temp { primaryEmail: {email} } ) RETURN memberNode.primaryEmail as email';
-
 
     async.series([
 
@@ -61,6 +67,21 @@ exports.addAccount = function (request, reply) {
                 } else{
                     reply({message: "email address already registered."});
                     callback(true); //passing 'true' stops async series execution
+                }
+            });
+        },
+
+        //check if code is valid
+        function(callback){
+            db.query(codeQuery, codeProp, function (err, results) {
+                if (err) {console.log("error: " + err);}
+                console.log("results: ");
+                console.log(results);
+                if (results[0] === undefined){ // reply with error if code is not found
+                    reply({message: "code not recognized."});
+                    callback(true);
+                } else{
+                    callback();
                 }
             });
         },
