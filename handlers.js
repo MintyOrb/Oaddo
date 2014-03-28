@@ -75,8 +75,6 @@ exports.addAccount = function (request, reply) {
         function(callback){
             db.query(codeQuery, codeProp, function (err, results) {
                 if (err) {console.log("error: " + err);}
-                console.log("results: ");
-                console.log(results);
                 if (results[0] === undefined){ // reply with error if code is not found
                     reply({message: "code not recognized."});
                     callback(true);
@@ -627,8 +625,6 @@ exports.relatedContent = function (request, reply){
     properties.numberOfIncluded = count;
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
-        console.log("results: " );
-        console.log(results);
         reply(results);
     });
 

@@ -19,7 +19,8 @@
     "async": "0.2.10",
     "webshot": "0.10.0",
     "grunt": "0.4.2",
-    "bower": "1.3.1"
+    "bower": "1.3.1",
+    "aws-sdk": "~2.0.0-rc13"
   },
   "repository": {
     "type": "git",
