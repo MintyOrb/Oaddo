@@ -130,12 +130,13 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
             $scope.imageDisplaySettings.fileSelected = true;  //display image preview and selected file name
             $scope.displaySettings.optionSelected = true;     //display cancel button
             $scope.displaySettings.fileName = file[0].name;   //place file name in exposed input
-
+            console.log(";LAKJDF;LAJEIEEII: ");
+            console.log(file[0]);
             // wait until submit...
             $upload.upload({
                 url: '/newImage',
                 file: file[0],
-                data: {name: file[0].name, language: appLanguage.languageCode},
+                data: {name: file[0].name, language: appLanguage.languageCode, type:file[0].type},
                 progress: function(evt){
                 //TODO show upload progress to user
                     console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));

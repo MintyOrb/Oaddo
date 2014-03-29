@@ -497,7 +497,7 @@ exports.addContentFromURL = function (request, reply){
                 }
                 reply({savedAs:'videoIcon.png',embedSrc: embedURL, id: "", displayType: "embed"});
             } else {
-                //TODO: send screenshot back to user for preivew...
+                //TODO: send screenshot back to user for preivew...or send link
                 //take screenshot of webpage that is not a video
                 webshot(request.payload.url, './public/img/temp/' + lang + generatedName + '.png',function(err, data) {
                     if(err){
@@ -505,18 +505,18 @@ exports.addContentFromURL = function (request, reply){
                     } else {
                         console.log("data?: ");
                         console.log(data);
-                        //TODO: PUT ON S3
+                        
                         s3.putObject({
                             Bucket: "submitted_images",
                             Key:  lang + generatedName + '.png',
                             Body: data,
-                            ACL: 'public-read', // set to private first, change when content is actually added
-                            ContentType: response.headers['content-type'],
+                            ACL: 'public-read',
+                            ContentType: 'image/png',
                         }, function(err, data) {
                             if (err) {
                                 console.log(err, err.stack);
                             } else {
-                                console.log('success! ' + data);           // successful response
+                                console.log('success! ' + data);
                                 reply({savedAs: lang + generatedName + '.png', embedSrc: "",id: generatedName, displayType: "webpage"});
                             } 
                         });
@@ -529,31 +529,35 @@ exports.addContentFromURL = function (request, reply){
 
 exports.addImageFile = function (request, reply){
     // uploaded from members computer
-    //TODO: look into saving into S3 buckets?
     //TODO: validate incoming file is an image
     //TODO: look into converting gifs to html5 videos (gfycat...)
-    var identifier = '-noAccociatedContent-';           //to be removed when associated content is added to db.
     var ext = request.payload.name.split('.').pop();    //get extension from orignal filename
     var generatedName = uuid.v1();                      //NOTE: is uuid the best option for unique file names?
     var lang = "_" + request.payload.language + "_";    //allows for adding same content in different languages (keep same UUID)
-
-    // S3 storage here!
-    // fs.writeFile("./public/img/submittedContent/" + identifier + lang + generatedName + '.' + ext, request.payload.file, function (err) {
-    //     if(err){console.log("error saving: " + err);}
-    //     //return generated name and full name
-    //     reply({displayType:"image", savedAs:identifier + lang + generatedName + '.' + ext, id: generatedName});
-    // });
+    console.log("file recieved: " );
+    console.log(request.payload.file);
+    console.log("type: ");
+    console.log(request.payload);
+    s3.putObject({
+        Bucket: "submitted_images",
+        Key:  lang + generatedName + '.' + ext,
+        Body: request.payload.file,
+        ACL: 'public-read',
+        ContentType: request.payload.type,
+    }, function(err, data) {
+        if (err) {
+            console.log(err, err.stack);
+        } else {
+            console.log('success! ' + data);
+            reply({displayType:"image", savedAs: lang + generatedName + '.' + ext, id: generatedName});
+        } 
+    });
+    
 };
 
 exports.addNewContent = function (request, reply){
 
     var genUUID = uuid.v4();
-
-    // var modifiedName = request.payload.savedAs; // will be changed unless displaytype is embed
-
-    // if(request.payload.displayType !== "embed"){
-    //     modifiedName = request.payload.savedAs.slice(21); // name without identifier  
-    // }
     
     //query for creating the content and relationships to tagged terms
     var query = [
@@ -583,16 +587,12 @@ exports.addNewContent = function (request, reply){
     for (var i = 0; i < request.payload.assignedTerms.length; i++) {
         params.taggedTermsUUID.push(request.payload.assignedTerms[i].UUID);
     }
-   
-   // TODO: set permission to public on S3!
-    // remove identifier from file name
-    // fs.rename("./public/img/submittedContent/" + request.payload.savedAs, "./public/img/submittedContent/" + modifiedName, function(){
-        // add content node and connect to terms
-        db.query(query, params, function (err, results) {
-            if (err) {console.log("neo4j error: " + err);}
-            reply({UUID:genUUID}); 
-        });
-    // });
+
+    db.query(query, params, function (err, results) {
+        if (err) {console.log("neo4j error: " + err);}
+        reply({UUID:genUUID}); 
+    });
+
 };
 
 

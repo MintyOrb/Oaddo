@@ -5,7 +5,7 @@
 <div class='center'>
 		
 	<!-- TODO: set max/min zoom based on image size -->
-	<zui  ng-if="content.display.displayType === 'image'" url="img/submittedContent/{{content.display.savedAs}}"></zui>
+	<zui  ng-if="content.display.displayType === 'image'" url="http://s3.amazonaws.com/submitted_images/{{content.display.savedAs}}"></zui>
 
 	<!-- TODO: modify for mobile (go to full page panel) -->
 	<div ng-if="content.display.displayType === 'embed'" class="videoWrapper">
