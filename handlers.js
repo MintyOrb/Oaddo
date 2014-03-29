@@ -6,7 +6,9 @@ var bcrypt = require('bcrypt'),
     freebase = require('freebase'),
     async = require('async'),
     uuid = require('node-uuid'),
-    webshot = require('webshot');
+    webshot = require('webshot'),
+    AWS = require('aws-sdk'),
+    s3 = new AWS.S3();
 
 
 //auth and sessions
@@ -424,7 +426,6 @@ exports.setTermGroups = function(request, reply){
 //new content
 exports.addContentFromURL = function (request, reply){  
 
-    var identifier = '-noAccociatedContent-';           // to be removed when associated content is added to db.
     var ext = request.payload.url.split('.').pop();     // get extension from orignal filename
     var generatedName = uuid.v1();                      // is uuid the best option for file names?
     var lang = "_" + request.payload.language + "_";    // allows for adding same content in different languages
@@ -436,12 +437,40 @@ exports.addContentFromURL = function (request, reply){
         if(error){console.log("error on head request: " + error);}
 
         if(response.statusCode !== 200){
-            //TODO: handle non 200 responsee - what is the best way?
+            console.log("Error getting content head ");
+            reply().code(500);
         } else if (response.headers['content-type'].indexOf('image') > -1){
-            //NOTE: is it necessary to wait to make sure the stream was successful? (with req.on('end', function () {}) )
-            //stream image to server
-            requestModule(request.payload.url).pipe(fs.createWriteStream("./public/img/submittedContent/" + identifier + lang + generatedName + '.' + ext));
-            reply({savedAs: identifier + lang + generatedName + '.' + ext, embedSrc: "", id: generatedName, displayType: "image"});
+            // save to s3
+            console.log("detected as image: " );
+            console.log(response.headers['content-type']);
+            requestModule(request.payload.url).pipe(fs.createWriteStream("./public/img/temp/" + identifier + lang + generatedName + '.' + ext)
+            .on('finish', function(){ 
+                fs.readFile("./public/img/temp/" + lang + generatedName + '.' + ext, function(err, data){
+                    if (err) { console.warn(err); }
+                    else {
+
+                        console.log("read the file! Trying to save to budket... ");
+                        s3.putObject({
+                            Bucket: "submitted_images",
+                            Key:  lang + generatedName + '.' + ext,
+                            Body: data,
+                            ACL: 'public-read', 
+                            ContentType: response.headers['content-type'],
+                        }, function(err, data) {
+                            if (err) {
+                                console.log(err, err.stack);
+                            } else {
+                                console.log('success! ' + data);
+                                reply({savedAs: lang + generatedName + '.' + ext, embedSrc: "", id: generatedName, displayType: "image"});
+                            }
+                        });
+                        
+                    }
+                });  
+
+            }));
+
+          
         } else {
             // determine if video and host
             // NOTE: is this the best way to make the source determination?
@@ -468,13 +497,29 @@ exports.addContentFromURL = function (request, reply){
                 }
                 reply({savedAs:'videoIcon.png',embedSrc: embedURL, id: "", displayType: "embed"});
             } else {
-                //TODO: send screenshot back to user for preivew
+                //TODO: send screenshot back to user for preivew...
                 //take screenshot of webpage that is not a video
-                webshot(request.payload.url, './public/img/submittedContent/' + identifier + lang + generatedName + '.png',function(err) {
+                webshot(request.payload.url, './public/img/temp/' + lang + generatedName + '.png',function(err, data) {
                     if(err){
-                        reply('error');
+                        reply('error').code(500);
                     } else {
-                        reply({savedAs: identifier + lang + generatedName + '.png', embedSrc: "",id: generatedName, displayType: "webpage"});
+                        console.log("data?: ");
+                        console.log(data);
+                        //TODO: PUT ON S3
+                        s3.putObject({
+                            Bucket: "submitted_images",
+                            Key:  lang + generatedName + '.png',
+                            Body: data,
+                            ACL: 'public-read', // set to private first, change when content is actually added
+                            ContentType: response.headers['content-type'],
+                        }, function(err, data) {
+                            if (err) {
+                                console.log(err, err.stack);
+                            } else {
+                                console.log('success! ' + data);           // successful response
+                                reply({savedAs: lang + generatedName + '.png', embedSrc: "",id: generatedName, displayType: "webpage"});
+                            } 
+                        });
                     }
                 });
             }
@@ -483,7 +528,7 @@ exports.addContentFromURL = function (request, reply){
 };
 
 exports.addImageFile = function (request, reply){
-
+    // uploaded from members computer
     //TODO: look into saving into S3 buckets?
     //TODO: validate incoming file is an image
     //TODO: look into converting gifs to html5 videos (gfycat...)
@@ -492,22 +537,23 @@ exports.addImageFile = function (request, reply){
     var generatedName = uuid.v1();                      //NOTE: is uuid the best option for unique file names?
     var lang = "_" + request.payload.language + "_";    //allows for adding same content in different languages (keep same UUID)
 
-    fs.writeFile("./public/img/submittedContent/" + identifier + lang + generatedName + '.' + ext, request.payload.file, function (err) {
-        if(err){console.log("error saving: " + err);}
-        //return generated name and full name
-        reply({displayType:"image", savedAs:identifier + lang + generatedName + '.' + ext, id: generatedName});
-    });
+    // S3 storage here!
+    // fs.writeFile("./public/img/submittedContent/" + identifier + lang + generatedName + '.' + ext, request.payload.file, function (err) {
+    //     if(err){console.log("error saving: " + err);}
+    //     //return generated name and full name
+    //     reply({displayType:"image", savedAs:identifier + lang + generatedName + '.' + ext, id: generatedName});
+    // });
 };
 
 exports.addNewContent = function (request, reply){
 
     var genUUID = uuid.v4();
-    var modifiedName = request.payload.savedAs; // will be changed unless displaytype is embed
 
-    if(request.payload.displayType !== "embed"){
-        modifiedName = request.payload.savedAs.slice(21); // name without identifier
-        
-    }
+    // var modifiedName = request.payload.savedAs; // will be changed unless displaytype is embed
+
+    // if(request.payload.displayType !== "embed"){
+    //     modifiedName = request.payload.savedAs.slice(21); // name without identifier  
+    // }
     
     //query for creating the content and relationships to tagged terms
     var query = [
@@ -526,7 +572,7 @@ exports.addNewContent = function (request, reply){
             fileSystemID: request.payload.fileSystemID, 
             embedSrc: request.payload.embedSrc, 
             webURL: request.payload.webURL,
-            savedAs: modifiedName, 
+            savedAs: request.payload.savedAs, 
         },
         taggedTermsUUID: [],
         lang: request.payload.language,
@@ -538,14 +584,15 @@ exports.addNewContent = function (request, reply){
         params.taggedTermsUUID.push(request.payload.assignedTerms[i].UUID);
     }
    
+   // TODO: set permission to public on S3!
     // remove identifier from file name
-    fs.rename("./public/img/submittedContent/" + request.payload.savedAs, "./public/img/submittedContent/" + modifiedName, function(){
+    // fs.rename("./public/img/submittedContent/" + request.payload.savedAs, "./public/img/submittedContent/" + modifiedName, function(){
         // add content node and connect to terms
         db.query(query, params, function (err, results) {
             if (err) {console.log("neo4j error: " + err);}
             reply({UUID:genUUID}); 
         });
-    });
+    // });
 };
 
 

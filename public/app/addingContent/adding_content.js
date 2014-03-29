@@ -131,6 +131,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
             $scope.displaySettings.optionSelected = true;     //display cancel button
             $scope.displaySettings.fileName = file[0].name;   //place file name in exposed input
 
+            // wait until submit...
             $upload.upload({
                 url: '/newImage',
                 file: file[0],
@@ -158,6 +159,7 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
             $scope.displaySettings.optionSelected = true;  //display cancel button
             $scope.displaySettings.disableFileSelection = true;
 
+            // wait until submit...?
             $http.post('/addContentFromURL', {url: $scope.contentObject.webURL, language: appLanguage.languageCode}).
             success(function(response){
 

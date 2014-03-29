@@ -77,7 +77,7 @@
                     </div>
                 </div>
             </nav>
-            <div ng-controller="alphaAlertCtrl">
+            <div ng-cloak ng-controller="alphaAlertCtrl">
                 <alert ng-if="showAlphaAlert" type="'danger'" close="close()">
                     <span class="pull-right">
                         don't show again <input type='checkbox' ng-model="options.dontShowAgain">
