@@ -437,19 +437,16 @@ exports.addContentFromURL = function (request, reply){
         if(error){console.log("error on head request: " + error);}
 
         if(response.statusCode !== 200){
-            console.log("Error getting content head ");
             reply().code(500);
         } else if (response.headers['content-type'].indexOf('image') > -1){
             // save to s3
-            console.log("detected as image: " );
-            console.log(response.headers['content-type']);
-            requestModule(request.payload.url).pipe(fs.createWriteStream("./public/img/temp/" + identifier + lang + generatedName + '.' + ext)
+           
+            requestModule(request.payload.url).pipe(fs.createWriteStream("./public/img/temp/" + lang + generatedName + '.' + ext)
             .on('finish', function(){ 
                 fs.readFile("./public/img/temp/" + lang + generatedName + '.' + ext, function(err, data){
                     if (err) { console.warn(err); }
                     else {
 
-                        console.log("read the file! Trying to save to budket... ");
                         s3.putObject({
                             Bucket: "submitted_images",
                             Key:  lang + generatedName + '.' + ext,
@@ -460,7 +457,6 @@ exports.addContentFromURL = function (request, reply){
                             if (err) {
                                 console.log(err, err.stack);
                             } else {
-                                console.log('success! ' + data);
                                 reply({savedAs: lang + generatedName + '.' + ext, embedSrc: "", id: generatedName, displayType: "image"});
                             }
                         });
@@ -503,8 +499,6 @@ exports.addContentFromURL = function (request, reply){
                     if(err){
                         reply('error').code(500);
                     } else {
-                        console.log("data?: ");
-                        console.log(data);
                         
                         s3.putObject({
                             Bucket: "submitted_images",
@@ -534,10 +528,7 @@ exports.addImageFile = function (request, reply){
     var ext = request.payload.name.split('.').pop();    //get extension from orignal filename
     var generatedName = uuid.v1();                      //NOTE: is uuid the best option for unique file names?
     var lang = "_" + request.payload.language + "_";    //allows for adding same content in different languages (keep same UUID)
-    console.log("file recieved: " );
-    console.log(request.payload.file);
-    console.log("type: ");
-    console.log(request.payload);
+   
     s3.putObject({
         Bucket: "submitted_images",
         Key:  lang + generatedName + '.' + ext,
@@ -548,7 +539,6 @@ exports.addImageFile = function (request, reply){
         if (err) {
             console.log(err, err.stack);
         } else {
-            console.log('success! ' + data);
             reply({displayType:"image", savedAs: lang + generatedName + '.' + ext, id: generatedName});
         } 
     });
