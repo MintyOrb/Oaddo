@@ -23,15 +23,13 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
             excludedTerms: $scope.contentTerms.discarded, 
             language: appLanguage.languageCode }).
         success(function(data){
-            console.log(data);
+
             $scope.returnedContent = data;
         });
     };
 
     // intro
     $scope.BeforeChangeEvent = function (section) { 
-    console.log("Before Change Event called");
-        console.log(angular.element(section)[0].id);
 
         if(angular.element(section)[0].id === 'step5'){
             $scope.filter.isCollapsed = false;
@@ -182,8 +180,6 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
         if($scope.content.about.notRequested){
             $http.get('/contentAbout', {params: {uuid: $scope.content.UUID, language: appLanguage.languageCode}})
             .success(function(returned){
-                console.log("returned: " );
-                console.log(returned);
                     $scope.content.about.description = returned.description;
                     $scope.content.about.value = returned.value;
                     $scope.content.about.title = returned.title;

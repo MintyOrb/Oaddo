@@ -27,7 +27,7 @@ var options = {
 var plugins = {
     yar: {
         cookieOptions: {
-            password: 'WOWOWOWSOSECRET', // cookie secret // process.env.COOKIE_SECRET || 'DEV',
+            password: 'WOWOWOWSOSECRET', // cookie secret // process.env.COOKIE_SECRET || 'DEV', 
             isSecure: false // required for non-https applications
         }
     },

@@ -22,10 +22,12 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
     });
     
     // fetch terms on language switch
-    $scope.$watch("displayLanguage.languageCode", function(){
-        contentTerms.selected = [];
-        contentTerms.discarded = [];
-        getRelatedTerms();
+    $scope.$watch("displayLanguage.languageCode", function(newValue, oldValue){
+        if (newValue !== oldValue) {
+            contentTerms.selected = [];
+            contentTerms.discarded = [];
+            getRelatedTerms();
+        }
     });
 
     $scope.openTermModal = function (termData) {
@@ -138,7 +140,6 @@ controller("termTypeAheadCtrl", function ($scope, focus, $modal, $http, appLangu
     };
 
     $scope.openNewTermModal = function (termData, selected) {
-        console.log("about to open modal: " );
         var modalInstance = $modal.open({
             templateUrl: 'app/addingContent/newTermModal.html',
             controller: 'newTermModalInstanceCtrl',
@@ -271,7 +272,6 @@ factory('filterFactory', ['$http',function ($http) {
 }]).
 
 controller('termModalInstanceCtrl', ['$scope', '$modalInstance', 'data', 'filterFactory', '$http',function ($scope, $modalInstance, data, filterFactory, $http) {
-    console.log("in modal: " );
     $scope.term = data;
     $scope.term.groupObj = filterFactory();
     $scope.term.groups = $scope.term.groupObj.groups;
