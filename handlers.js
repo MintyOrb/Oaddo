@@ -468,7 +468,7 @@ exports.addContentFromURL = function (request, reply){
 
           
         } else {
-            // determine if video and host
+            // determine if video and host or website
             // NOTE: is this the best way to make the source determination?
             // TODO: incorporate youtube, vimeo, and TED (when available) apis to get thumbnail images
             // 
@@ -495,24 +495,28 @@ exports.addContentFromURL = function (request, reply){
             } else {
                 //TODO: send screenshot back to user for preivew...or send link
                 //take screenshot of webpage that is not a video
-                webshot(request.payload.url, './public/img/temp/' + lang + generatedName + '.png',function(err, data) {
+                webshot(request.payload.url, './public/img/temp/' + lang + generatedName + '.png',function(err) {
                     if(err){
                         reply('error').code(500);
                     } else {
-                        
-                        s3.putObject({
-                            Bucket: "submitted_images",
-                            Key:  lang + generatedName + '.png',
-                            Body: data,
-                            ACL: 'public-read',
-                            ContentType: 'image/png',
-                        }, function(err, data) {
-                            if (err) {
-                                console.log(err, err.stack);
-                            } else {
-                                console.log('success! ' + data);
-                                reply({savedAs: lang + generatedName + '.png', embedSrc: "",id: generatedName, displayType: "webpage"});
-                            } 
+                        console.log("website here: ");
+                        fs.readFile("./public/img/temp/" + lang + generatedName + '.png', function(err, data){
+                            if (err) { console.warn(err); } else {
+                                s3.putObject({
+                                    Bucket: "submitted_images",
+                                    Key:  lang + generatedName + '.png',
+                                    Body: data,
+                                    ACL: 'public-read',
+                                    ContentType: 'image/png',
+                                }, function(err, data) {
+                                    if (err) {
+                                        console.log(err, err.stack);
+                                    } else {
+                                        console.log('success! ' + data);
+                                        reply({savedAs: lang + generatedName + '.png', embedSrc: "",id: generatedName, displayType: "webpage"});
+                                    } 
+                                });
+                            }
                         });
                     }
                 });
