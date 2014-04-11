@@ -313,7 +313,7 @@ exports.relatedTerms = function (request, reply) {
                 'WITH contentNode, COUNT(searchTerms) as count ',
                 'WHERE count = {searchTermsCount} ',
                 'MATCH (groupNode:termGroup)<-[:IN_GROUP]-(matched:term)<-[:TAGGED_WITH]-contentNode, ',
-                'matched-[:HAS_LANGUAGE {languageCode: {language} }]->(termMeta:termMeta) ',
+                    'matched-[:HAS_LANGUAGE {languageCode: {language} }]->(termMeta:termMeta) ',
                 'WHERE groupNode.name IN {groups} AND NOT matched.UUID IN {ignoreTerms} ',    
                 'RETURN DISTINCT count(DISTINCT contentNode) AS connections, termMeta.name AS name, matched.UUID AS UUID ',
                 'ORDER BY connections DESC LIMIT 10'
@@ -365,7 +365,7 @@ exports.getTermGroups = function(request, reply){
 
     var query = [
         "MATCH (termNode:term {UUID: {id} })-[r:IN_GROUP]->(groupNode:termGroup) ",
-        "return groupNode.name AS name"
+        "RETURN groupNode.name AS name"
     ].join('\n');
 
     db.query(query, properties, function (err, results) {
