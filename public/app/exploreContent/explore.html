@@ -26,8 +26,7 @@
 			<br>
 			<div class="f-flexC f-column f-m-center f-c-center imgContainer">
 				<a ng-href="content/{{content.UUID}}">
-					<img ng-if="content.displayType === 'embed'" ng-src="img/{{content.savedAs}}">			
-					<img ng-if="content.displayType === 'image' || content.displayType === 'webpage'" ng-src="http://s3.amazonaws.com/submitted_images/{{content.savedAs}}">
+					<img ng-src="http://s3.amazonaws.com/submitted_images/{{content.savedAs}}">
 				</a>
 			</div>
 			<tabset class='f-grow-1 f-flexC f-column margin10'>
