@@ -507,8 +507,10 @@ exports.addContentFromURL = function (request, reply){
                     },   
                     // save thumb data to disk in temp folder
                     function(callback){
+                        console.log("about to try to get thumb from url: " );
                         requestModule(thumbURL).pipe(fs.createWriteStream("./public/img/temp/" + lang + generatedName + ".jpg")
                             .on('finish', function(){ 
+                                console.log("successfully saved thumb to disk: " );
                                 callback();
                             })
                         );
@@ -521,6 +523,7 @@ exports.addContentFromURL = function (request, reply){
                                 console.warn(err); 
                                 //TODO: reply with error?
                             } else {
+                                console.log("reading the thumbnail data from disk: ");
                                 thumbData = data;
                                 callback();
                             }
@@ -529,7 +532,7 @@ exports.addContentFromURL = function (request, reply){
 
                     //save thumbnail to s3
                     function(callback){
-                        console.log("in s3 save function: ");
+                        console.log("about to try and save to s3: ");
                         s3.putObject({
                             Bucket: "submitted_images",
                             Key:  lang + generatedName + '.jpg',
@@ -541,6 +544,7 @@ exports.addContentFromURL = function (request, reply){
                                 console.log(err, err.stack);
                                 // TODO: reply w/ error?
                             } else {
+                                console.log("successfully saved: ");
                                 callback();
                             }
                         });
