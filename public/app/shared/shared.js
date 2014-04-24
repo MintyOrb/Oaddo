@@ -175,7 +175,7 @@ service('contentTerms', [function () {
     this.search = [];       // find terms related to these
 }]).
 
-// TODO: refactory- this seems really messy as a factory
+// TODO: refactory- this is really messy as a factory
 factory('filterFactory', ['$http',function ($http) {
     // non-singlton factory
     return function(){

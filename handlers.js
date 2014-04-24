@@ -1,5 +1,6 @@
 var bcrypt = require('bcrypt'),
 	requestModule = require("request"),
+    querystring = require('querystring'),
     fs = require("fs"),
     neo4j = require('neo4j'),
     db = new neo4j.GraphDatabase(process.env.GRAPHENEDB_URL || 'http://localhost:7474'),
@@ -7,9 +8,11 @@ var bcrypt = require('bcrypt'),
     async = require('async'),
     uuid = require('node-uuid'),
     webshot = require('webshot'),
+    youtube = require('youtube-node'),
     AWS = require('aws-sdk'),
     s3 = new AWS.S3();
 
+youtube.setKey('AIzaSyCrHUlKm60rk271WLK58cZJxEnzqNwVCw4');
 
 //auth and sessions
 
@@ -426,11 +429,14 @@ exports.setTermGroups = function(request, reply){
 //new content
 exports.addContentFromURL = function (request, reply){  
 
-    var ext = request.payload.url.split('.').pop();     // get extension from orignal filename
+    var ext = request.payload.url.split('.').pop();     // get extension from orignal filename image files only)
     var generatedName = uuid.v1();                      // is uuid the best option for file names?
     var lang = "_" + request.payload.language + "_";    // allows for adding same content in different languages
 
     var embedURL = ""; // for setting embedded video source urls
+    var parsedQuerystring = ""; //for extracting youtube video id
+    var thumbURL = ""; // holds url of thumbnail
+    var thumbData; // for holding video thumbnail data
 
     //get response header to determine type of url
     requestModule.head({uri:request.payload.url}, function (error, response) {
@@ -452,7 +458,7 @@ exports.addContentFromURL = function (request, reply){
                             Key:  lang + generatedName + '.' + ext,
                             Body: data,
                             ACL: 'public-read', 
-                            ContentType: response.headers['content-type'],
+                            ContentType: response.headers['content-type'], //save gifs as text for gif scrolling?
                         }, function(err, data) {
                             if (err) {
                                 console.log(err, err.stack);
@@ -483,17 +489,73 @@ exports.addContentFromURL = function (request, reply){
                 embedURL += response.request.uri.path;
                 reply({savedAs:'videoIcon.png',embedSrc: embedURL, id: "", displayType: "embed"});
             } else if(response.request.uri.host.indexOf('youtube.com') > -1){
+                parsedQuerystring = querystring.parse(response.request.uri.query);
                 //embed - //www.youtube.com/embed/:id
-                embedURL = "//www.youtube.com/embed/";
-                embedURL += response.request.uri.path.slice(9);
-                //TODO: remove other extra parameters (e.g. if pasted from playlist url will contain '&LIST=XXX')
-                if(embedURL.indexOf('&') > -1){
-                    var position = embedURL.indexOf('&');
-                    embedURL = embedURL.substring(position, -1);
-                }
-                reply({savedAs:'videoIcon.png',embedSrc: embedURL, id: "", displayType: "embed"});
+                embedURL = "//www.youtube.com/embed/?v=";
+                embedURL += parsedQuerystring.v;
+
+                // if it's a youtube video, use youtube api to save a thumbnail for the image
+                async.series([
+            
+                    // get video thumbnail url
+                    function(callback){
+                        youtube.getById(parsedQuerystring.v, function(resultData) {
+                            console.log(resultData.items[0].snippet.thumbnails.medium.url);
+                            thumbURL = resultData.items[0].snippet.thumbnails.medium.url;
+                            callback();
+                        });
+                    },   
+                    // save thumb data to disk in temp folder
+                    function(callback){
+                        requestModule(thumbURL).pipe(fs.createWriteStream("./public/img/temp/" + lang + generatedName + ".jpg")
+                            .on('finish', function(){ 
+                                callback();
+                            })
+                        );
+                    }, 
+
+                    // get the image data of the thumbnail
+                    function(callback){
+                        fs.readFile("./public/img/temp/" + lang + generatedName + '.jpg', function(err, data){
+                            if (err) { 
+                                console.warn(err); 
+                                //TODO: reply with error?
+                            } else {
+                                thumbData = data;
+                                callback();
+                            }
+                        });
+                    }, 
+
+                    //save thumbnail to s3
+                    function(callback){
+                        console.log("in s3 save function: ");
+                        s3.putObject({
+                            Bucket: "submitted_images",
+                            Key:  lang + generatedName + '.' + ext,
+                            Body: thumbData,
+                            ACL: 'public-read', 
+                            ContentType: response.headers['content-type'],
+                        }, function(err, data) {
+                            if (err) {
+                                console.log(err, err.stack);
+                                // TODO: reply w/ error?
+                            } else {
+                                callback();
+                            }
+                        });
+                    },
+
+                    // send reply to user
+                    function(callback){
+                        console.log("embedurl: " + embedURL);
+                        reply({savedAs: lang + generatedName + '.jpg', embedSrc: embedURL, id: generatedName, displayType: "embed"});
+                    }
+
+                ]);
+
             } else {
-                //TODO: send screenshot back to user for preivew...or send link
+    
                 //take screenshot of webpage that is not a video
                 webshot(request.payload.url, './public/img/temp/' + lang + generatedName + '.png',function(err) {
                     if(err){

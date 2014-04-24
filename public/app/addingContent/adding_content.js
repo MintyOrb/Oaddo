@@ -25,7 +25,7 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
         optionSelected : false,
         disableFileSelection : false,
         uploadNonImage : false,
-        webShotURL: false
+        s3URL: false
     };
 
     $scope.contentObject = {
@@ -72,7 +72,7 @@ controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLang
             optionSelected : false,
             disableFileSelection : false,
             uploadNonImage : false,
-            webShotURL : false
+            s3URL : false
         };
         $scope.imageDisplaySettings = {
             fileSelected : false,
@@ -130,9 +130,8 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
             $scope.imageDisplaySettings.fileSelected = true;  //display image preview and selected file name
             $scope.displaySettings.optionSelected = true;     //display cancel button
             $scope.displaySettings.fileName = file[0].name;   //place file name in exposed input
-            console.log(";LAKJDF;LAJEIEEII: ");
-            console.log(file[0]);
-            // wait until submit...
+            
+            // wait until submit...?
             $upload.upload({
                 url: '/newImage',
                 file: file[0],
@@ -167,8 +166,8 @@ controller("fileSelectionCtrl", function ($timeout, $scope, $http, $upload, appL
                 if(response.displayType === "image"){
                     $scope.imageDisplaySettings.imageURLPresent = true; //display preivew of linked image
                 }
-                if(response.displayType === "webpage"){
-                    $scope.imageDisplaySettings.webShotURL = true;
+                if(response.displayType === "webpage" || (response.displayType === "embed" && response.embedSrc.indexOf("youtube") > -1)){
+                    $scope.imageDisplaySettings.s3URL = true;
                 }
                 $scope.contentObject.savedAs = response.savedAs;
                 $scope.contentObject.embedSrc = response.embedSrc;

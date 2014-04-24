@@ -55,7 +55,7 @@
                         <img height="300px" ng-src="{{contentObject.webURL}}">
                     </div>
 
-                    <div ng-if="imageDisplaySettings.webShotURL">
+                    <div ng-if="imageDisplaySettings.s3URL">
                         <label>Preview:</label>
                         <br>
                         <img height="300px" ng-src="http://s3.amazonaws.com/submitted_images/{{contentObject.savedAs}}">
@@ -211,7 +211,7 @@
             </div>
             <br>
             <div class="f-flexC f-column f-m-center f-c-center imgContainer">    
-                <img ng-if="imageDisplaySettings.webShotURL" ng-src="http://s3.amazonaws.com/submitted_images/{{contentObject.savedAs}}">          
+                <img ng-if="imageDisplaySettings.s3URL" ng-src="http://s3.amazonaws.com/submitted_images/{{contentObject.savedAs}}">          
                 <img ng-if="imageDisplaySettings.fileSelected" ng-src="{{imageDisplaySettings.dataUrl.image}}">
                 <img ng-if="imageDisplaySettings.imageURLPresent" ng-src="{{contentObject.webURL}}">                    
             </div>
