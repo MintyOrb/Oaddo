@@ -491,7 +491,7 @@ exports.addContentFromURL = function (request, reply){
             } else if(response.request.uri.host.indexOf('youtube.com') > -1){
                 parsedQuerystring = querystring.parse(response.request.uri.query);
                 //embed - //www.youtube.com/embed/:id
-                embedURL = "//www.youtube.com/embed/?v=";
+                embedURL = "//www.youtube.com/embed/";
                 embedURL += parsedQuerystring.v;
 
                 // if it's a youtube video, use youtube api to save a thumbnail for the image
@@ -500,14 +500,12 @@ exports.addContentFromURL = function (request, reply){
                     // get video thumbnail url
                     function(callback){
                         youtube.getById(parsedQuerystring.v, function(resultData) {
-                            console.log(resultData.items[0].snippet.thumbnails.medium.url);
                             thumbURL = resultData.items[0].snippet.thumbnails.medium.url;
                             callback();
                         });
                     },   
                     // save thumb data to disk in temp folder
                     function(callback){
-                        console.log("about to try to get thumb from url: " );
                         requestModule(thumbURL).pipe(fs.createWriteStream("./public/img/temp/" + lang + generatedName + ".jpg")
                             .on('finish', function(){ 
                                 console.log("successfully saved thumb to disk: " );
@@ -523,7 +521,6 @@ exports.addContentFromURL = function (request, reply){
                                 console.warn(err); 
                                 //TODO: reply with error?
                             } else {
-                                console.log("reading the thumbnail data from disk: ");
                                 thumbData = data;
                                 callback();
                             }
@@ -532,7 +529,6 @@ exports.addContentFromURL = function (request, reply){
 
                     //save thumbnail to s3
                     function(callback){
-                        console.log("about to try and save to s3: ");
                         s3.putObject({
                             Bucket: "submitted_images",
                             Key:  lang + generatedName + '.jpg',
@@ -544,7 +540,6 @@ exports.addContentFromURL = function (request, reply){
                                 console.log(err, err.stack);
                                 // TODO: reply w/ error?
                             } else {
-                                console.log("successfully saved: ");
                                 callback();
                             }
                         });
