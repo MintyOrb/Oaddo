@@ -1,9 +1,9 @@
 <!-- NOTE: the only reason the termselection controller is wrapping the explore controller is to get access to be able to open the term filter within the tutorial. This is probably bad practice and ought to be changed  -->
 <div ng-controller='termSelectionCtrl'>
-<div ng-controller="exploreCtrl" ng-intro-options="IntroOptions" ng-intro-onbeforechange="BeforeChangeEvent"  ng-intro-onexit="ExitEvent" ng-intro-oncomplete="ExitEvent" ng-intro-method="startIntro">
-    <button class="btn btn-primary col-sm-offset-2" ng-click="startIntro()">start tutorial</button>
+<div ng-controller="exploreCtrl" ng-intro-options="IntroOptions" ng-intro-method="startIntro">
+    <button class="btn btn-primary col-sm-offset-2 marginBottom10" ng-click="startIntro()">start tutorial</button>
 	<div ui-on-Drop="" >
-		<div id="step3" ng-controller="termTypeAheadCtrl" class="input-group col-sm-3 col-sm-offset-7">
+		<div id="step3" ng-controller="termTypeAheadCtrl" class="input-group col-sm-3 col-sm-offset-7 marginBottom20">
 		    <input type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB(contentTerms.selected)" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">
 		    <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
 		</div>

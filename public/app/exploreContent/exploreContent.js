@@ -28,19 +28,7 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
         });
     };
 
-    // intro
-    $scope.BeforeChangeEvent = function (section) { 
-
-        if(angular.element(section)[0].id === 'step5'){
-            $scope.filter.isCollapsed = false;
-            $scope.$apply();
-        }    
-    };
-    $scope.ExitEvent = function (section) { 
-        
-        $scope.filter.isCollapsed = true;
-        $scope.$apply();  
-    };
+    
     $scope.IntroOptions = {
         steps:[
             {
@@ -65,7 +53,7 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
             },
             {
                 element: '#step5',
-                intro: 'You can filter the related terms by selecting one or more terms groups. Only terms in the selected groups will be returned.',
+                intro: 'You can filter the related terms by selecting a term group. Only terms in the selected group will be returned.',
                 position: 'bottom'
             },
             {

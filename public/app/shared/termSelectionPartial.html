@@ -1,27 +1,18 @@
 <div id="step1">
 
-    <button ng-hide="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10 termContainerBtn" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Hide Term Groups </button>
-    <button ng-show="filter.isCollapsed" class="noOutline btn btn-xs btn-default marginTop10 termContainerBtn" ng-click="filter.isCollapsed = !filter.isCollapsed"> <i class="fa fa-filter"></i>  Show Term Groups </button>
-
-    <div  collapse="filter.isCollapsed">
-        <div id="step5" class="f-flexC f-column f-m-between f-c-center panel panel-default marginBottom0 termGroupBox">
-            <div class="marginTop10 f-flexC f-row f-wrap f-m-center f-c-center">
-                <div ng-repeat="group in filter.groups" class="btn-group btn-group-xs margin5">
-                    <button ng-class="{ 'buttonSelected' : group.included }" ng-click="filter.selectGroup(group.name)" class="btn noOutline btn-default" type="button">{{group.name}}</button>
-                    <button ng-if="group.included" ng-click="filter.removeGroup(group.name)" class="btn btn-default">-</button>
-                    <button ng-if="!group.included" ng-click="filter.addGroup(group.name)" class="btn btn-default">+</button>
-                </div>
-            </div>
-            <div class="">
-                <div class='margin10'>
-                    <button ng-click="filter.setAll(true)" class=" btn btn-xs btn-primary">Select All</button>
-                    <button ng-click="filter.setAll(false)" class="btn btn-xs btn-primary">De-select All</button>
-                </div>
-            </div> 
-        </div>
+    <!-- NOTE: this is a temporary solution to be changed when the database is improved -->
+    <div id="step5" class="f-flexC f-wrapReverse f-m-around ">
+        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-click="filter.setAll(true)" > All </button>
+        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-click="filter.selectGroup('content type')" > Content Types </button>
+        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-click="filter.selectGroup('discipline')" > Disciplines </button>
+        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-click="filter.selectGroup('science')" > The Sciences </button>
+        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-click="filter.selectGroup('humanities')" > Humanities </button>
+        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-click="filter.selectGroup('physical object')" > Physical Objects </button>
+        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-click="filter.selectGroup('location')" > Locations </button>
+        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-click="filter.selectGroup('concept')" > Concepts </button>
+        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-click="filter.selectGroup('jargon')" > Jargon </button>
+        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-click="filter.selectGroup('activity')" > Activities </button>
     </div>
-
-
     <div id="step4" ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm termBox'>
         <div class="termWellLabel text-center">related</div>
         <div class="f-flexC f-row f-m-around f-wrap">
