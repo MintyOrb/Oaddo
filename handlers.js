@@ -532,10 +532,10 @@ exports.addContentFromURL = function (request, reply){
                         console.log("in s3 save function: ");
                         s3.putObject({
                             Bucket: "submitted_images",
-                            Key:  lang + generatedName + '.' + ext,
+                            Key:  lang + generatedName + '.jpg',
                             Body: thumbData,
                             ACL: 'public-read', 
-                            ContentType: response.headers['content-type'],
+                            ContentType: "image/jpeg",
                         }, function(err, data) {
                             if (err) {
                                 console.log(err, err.stack);
