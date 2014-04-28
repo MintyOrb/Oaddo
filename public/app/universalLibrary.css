@@ -8,7 +8,7 @@
 
 /* override bootstrap 3 css*/
 .hr{margin:5px; border-top: 1px solid #D8D8D8;}*/
-.row{margin:0px;}
+/*.row{margin:0px;}*/
 .container {width:auto;}
 .form-control{
 	display:inline;
@@ -25,6 +25,12 @@
 }
 .btn-default .badge {
 	background-color: #B3B3B3;
+}
+.media-heading {
+	font-weight: 200;
+}
+.media-object {
+	margin-top: 1px
 }
 .tab-content{
 	height: 110px;
@@ -76,6 +82,10 @@
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+.offTheSide {
+	left: 20vw;
+	width:60wv;
 }
 
 /* lang icon */
@@ -131,7 +141,7 @@ h4 {display: inline;}
 #jumboDiv p {
 	height: 18px
 }
-#jumboDiv h4 {
+.red {
 	color: rgb(219, 31, 31);
 }
 #addoDiv {
@@ -272,8 +282,10 @@ html, body {
 .marginBottom20 {margin-bottom: 20px;}
 .margin5 {margin:5px;}
 .margin10 {margin:10px;}
-.marginTop10 {margin-top: 10px}
 .margin20 {margin:20px;}
+.marginTop10 {margin-top: 10px}
+.marginTop50 {margin-top: 50px}
+
 
 .width80p {min-width: 80%}
 .width100p {min-width: 100%}

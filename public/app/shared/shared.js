@@ -52,7 +52,7 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
             groups: $scope.filter.groups,
             language: appLanguage.languageCode }).
         success(function(data){
-            
+            // TODO: update # of term connections if term is not being replaced
             if($scope.contentTerms.related.length > 0){
                 var matched = [];
                 // for earch term in related go though results get name if also found in results.
@@ -212,6 +212,9 @@ factory('filterFactory', ['$http',function ($http) {
             this.isCollapsed= true;
 
             this.groups= {
+                all: {
+                    included: false
+                },
                 sciences: {
                     included: false,
                     name: 'science',
