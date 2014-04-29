@@ -213,7 +213,8 @@ factory('filterFactory', ['$http',function ($http) {
 
             this.groups= {
                 all: {
-                    included: false
+                    included: false,
+                    name: 'all'
                 },
                 sciences: {
                     included: false,

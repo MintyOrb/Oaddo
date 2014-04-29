@@ -2,16 +2,16 @@
 
     <!-- NOTE: this is a temporary solution to be changed when the database is improved -->
     <div id="step5" class="f-flexC f-wrapReverse f-m-around ">
-        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-class="{buttonSelected : filter.groups.all.included }" ng-click="filter.setAll(true)" > All </button>
-        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.contentTypes.included }" ng-click="filter.selectGroup('content type')" > Content Types </button>
-        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.disciplines.included }" ng-click="filter.selectGroup('discipline')" > Disciplines </button>
-        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.sciences.included }" ng-click="filter.selectGroup('science')" > The Sciences </button>
-        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.humanities.included }" ng-click="filter.selectGroup('humanities')" > Humanities </button>
-        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.physicalObjects.included }" ng-click="filter.selectGroup('physical object')" > Physical Objects </button>
-        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.locations.included }" ng-click="filter.selectGroup('location')" > Locations </button>
-        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.concepts.included }" ng-click="filter.selectGroup('concept')" > Concepts </button>
-        <!-- <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.jargon.included }" ng-click="filter.selectGroup('jargon')" > Jargon </button> -->
-        <button class="noOutline btn btn-sm btn-default termContainerBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.activities.included }" ng-click="filter.selectGroup('activity')" > Activities </button>
+        <button class="noOutline btn btn-sm btn-default termGroupBtn" ng-class="{buttonSelected : filter.groups.all.included }" ng-click="filter.setAll(true)" > All </button>
+        <button class="noOutline btn btn-sm btn-default termGroupBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.contentTypes.included }" ng-click="filter.selectGroup('content type')" > Content Types </button>
+        <button class="noOutline btn btn-sm btn-default termGroupBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.disciplines.included }" ng-click="filter.selectGroup('discipline')" > Disciplines </button>
+        <button class="noOutline btn btn-sm btn-default termGroupBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.sciences.included }" ng-click="filter.selectGroup('science')" > The Sciences </button>
+        <button class="noOutline btn btn-sm btn-default termGroupBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.humanities.included }" ng-click="filter.selectGroup('humanities')" > Humanities </button>
+        <button class="noOutline btn btn-sm btn-default termGroupBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.physicalObjects.included }" ng-click="filter.selectGroup('physical object')" > Physical Objects </button>
+        <button class="noOutline btn btn-sm btn-default termGroupBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.locations.included }" ng-click="filter.selectGroup('location')" > Locations </button>
+        <button class="noOutline btn btn-sm btn-default termGroupBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.concepts.included }" ng-click="filter.selectGroup('concept')" > Concepts </button>
+        <!-- <button class="noOutline btn btn-sm btn-default termGroupBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.jargon.included }" ng-click="filter.selectGroup('jargon')" > Jargon </button> -->
+        <button class="noOutline btn btn-sm btn-default termGroupBtn" ng-class="{buttonSelected : !filter.groups.all.included && filter.groups.activities.included }" ng-click="filter.selectGroup('activity')" > Activities </button>
     </div>
     <div id="step4" ui-on-Drop="recievingHandler($data, contentTerms.related)" drop-channel="noneShallPass" drag-enter-class="droppable" class='well well-sm termBox'>
         <div class="termWellLabel text-center">related</div>

@@ -6,9 +6,17 @@
         <!-- diable zoom on mobile devies -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <base href="/">
+
         <!-- load styles before content -->
         <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="app/universalLibrary.css">
+
+        <!-- file upload shim - needs to be loaded before angular (according to their documentation) -->
+        <script type="text/javascript" src="resources/angular-file-upload-shim.min.js"></script>
+    
+        <!-- angular -->
+        <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+
         <title ng-bind="'Oaddo &mdash; ' + title">Oaddo</title>
     
     </head>
@@ -99,11 +107,8 @@
     </body>
      <!-- Scripts & css --> 
         <div>
-            <!-- file upload shim - needs to be loaded before angular -->
-            <script type="text/javascript" src="resources/angular-file-upload-shim.min.js"></script>
-        
-            <!-- angular -->
-            <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+           
+            <!-- Angular -->
             <script type="text/javascript" src="bower_components/angular-cookies/angular-cookies.min.js"></script>
             <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
             <script type="text/javascript" src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
