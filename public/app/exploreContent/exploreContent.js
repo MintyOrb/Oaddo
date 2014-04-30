@@ -5,6 +5,7 @@ angular.module('universalLibrary').
 
 controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
 
+    $scope.noMoreContent = false;
     $scope.contentTerms = contentTerms;
     $scope.returnedContent = [];
 
@@ -18,13 +19,41 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
     });
 
     var getRelatedContent = function(){
+        $scope.noMoreContent = false;
         $http.post('/explore', { 
             includedTerms: $scope.contentTerms.selected,
             excludedTerms: $scope.contentTerms.discarded, 
-            language: appLanguage.languageCode }).
+            language: appLanguage.languageCode,
+            skip: 0 
+        }).
         success(function(data){
+            if(data.length === 0){
+                $scope.noMoreContent = true;
+            } else {
+                $scope.returnedContent = data;
+            }
+        });
+    };
 
-            $scope.returnedContent = data;
+    $scope.loadMoreContent = function(){
+        console.log("loading more: " );
+        console.log("skip: " + $scope.returnedContent.length);
+        $http.post('/explore', { 
+            includedTerms: $scope.contentTerms.selected,
+            excludedTerms: $scope.contentTerms.discarded, 
+            language: appLanguage.languageCode,
+            skip: $scope.returnedContent.length, 
+        }).
+        success(function(data){
+            console.log("success contnet: ");
+            console.log(data);
+            if(data.length === 0){
+                $scope.noMoreContent = true;
+            } else {
+                for (var ii = 0; ii < data.length; ii++) {
+                    $scope.returnedContent.push(data[ii]);
+                } 
+            }
         });
     };
 

@@ -669,7 +669,8 @@ exports.relatedContent = function (request, reply){
         defaultLanguage: 'en',               // default to english
         includedTerms: [],
         userID: id,
-        numberOfIncluded: count
+        numberOfIncluded: count,
+        skip: request.payload.skip
     };
 
     // TODO: consider merging filesystemID, weburl, and embedSrc into one property
@@ -683,6 +684,7 @@ exports.relatedContent = function (request, reply){
             // "WITH collect(DISTINCT termNode.UUID) AS termIDs, collect(langNode.name) as names, collect(lang.languageCode) as codes, content, meta ",            
             // 'RETURN DISTINCT  {termID: termIDs, name: names, language: codes } AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
+            'SKIP {skip}',
             'LIMIT 15'
         ].join('\n');
     } else if(member){
@@ -699,6 +701,7 @@ exports.relatedContent = function (request, reply){
                 "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
             'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
+            'SKIP {skip}',
             'LIMIT 15'
         ].join('\n');
 
@@ -715,11 +718,12 @@ exports.relatedContent = function (request, reply){
                 "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
             'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY'
+            'SKIP {skip}',
             'LIMIT 15'
         ].join('\n');
     }
     
-    // add UUIDs from included terms to inclucde array
+    // add UUIDs from included terms to included array
     for (var i = 0; i < request.payload.includedTerms.length; i++) {
         properties.includedTerms.push(request.payload.includedTerms[i].UUID);
         count += 1;
