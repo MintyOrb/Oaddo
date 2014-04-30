@@ -286,6 +286,7 @@ html, body {
 .marginTop10 {margin-top: 10px}
 .marginTop100 {margin-top: 100px}
 
+.marginLR10 {margin-left: 10px; margin-right: 10px;}
 .width50p {width: 50%}
 .width80p {min-width: 80%}
 .width100p {min-width: 100%}

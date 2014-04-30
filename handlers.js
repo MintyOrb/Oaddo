@@ -822,7 +822,7 @@ exports.getContentAbout = function (request, reply){
 
     db.query(query, properties, function (err, about) {
         if (err) {console.log("error in db query: " + err);}
-            reply({value:about[0].value || "No value statement found. Create an account or login to add one!",description:about[0].description || "No description found. Create an account or signin to add one!",title:about[0].title || "No title found. Create an account or login to add one!"});
+            reply({value:about[0].value || "",description:about[0].description || "",title:about[0].title || ""});
     });   
 };
 
@@ -839,6 +839,7 @@ exports.requestCode = function(request, reply){
     var properties = { 
         reason: request.payload.reason,
         email: request.payload.email,
+        date: new Date()
     };
     db.query(query, properties, function (err, node) {
         if (err) {
