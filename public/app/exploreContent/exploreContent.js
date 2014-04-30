@@ -29,15 +29,13 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
         success(function(data){
             if(data.length === 0){
                 $scope.noMoreContent = true;
-            } else {
-                $scope.returnedContent = data;
             }
+            $scope.returnedContent = data;
         });
     };
 
+    // this is essential the same as the realted content function. Combine to be more DRY.
     $scope.loadMoreContent = function(){
-        console.log("loading more: " );
-        console.log("skip: " + $scope.returnedContent.length);
         $http.post('/explore', { 
             includedTerms: $scope.contentTerms.selected,
             excludedTerms: $scope.contentTerms.discarded, 
