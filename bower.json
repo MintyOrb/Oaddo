@@ -28,7 +28,8 @@
     "angular-cookies": "*",
     "angular-resource": "*",
     "angular-route": "*",
-    "intro.js": "~0.7.1"
+    "intro.js": "~0.7.1",
+    "angulartics": "~0.15.17"
   },
   "resolutions": {
     "angular": "1.2.14"
