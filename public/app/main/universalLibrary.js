@@ -23,6 +23,7 @@ var universalLibrary = angular.module('universalLibrary',
 config(function($routeProvider, $locationProvider, $httpProvider) {
 
     //function for checking login status before a route change
+    // NOTE: this just checks a cookie value and is VERY EASILY faked. However, if fake no malicious behavior should be able to occur.
     var checkLoggedin = function ($q, $http, $location, $window, LoginService, $cookieStore) {
         
         console.log("check logged in function here.");

@@ -3,11 +3,12 @@
 
 angular.module('universalLibrary').
 
-controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
+controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms, $cookieStore, $timeout) {
 
     $scope.noMoreContent = false;
     $scope.contentTerms = contentTerms;
     $scope.returnedContent = [];
+    $scope.autoStartTutorial = true;
 
     $scope.$watchCollection("contentTerms.selected", function(){
         getRelatedContent();
@@ -40,7 +41,8 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
             includedTerms: $scope.contentTerms.selected,
             excludedTerms: $scope.contentTerms.discarded, 
             language: appLanguage.languageCode,
-            skip: $scope.returnedContent.length, 
+            skip: $scope.returnedContent.length,
+            orderby: 'something' // use code? string literal? 
         }).
         success(function(data){
             console.log("success contnet: ");
@@ -55,12 +57,26 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
         });
     };
 
+    // don't run tutorial if logged in
+    if($scope.Login.loggedIn){
+        $cookieStore.put("showTutorial", false);
+    }
+    if($cookieStore.get('showTutorial') !== false){
+        $timeout(function(){
+            $scope.StartIntro();
+        }, 
+        1000);
+    }
+    // do not auto run tutorial if it has been run before
+    $scope.onExit = function(){
+        $cookieStore.put("showTutorial", false);
+    };
     
     $scope.IntroOptions = {
         steps:[
             {
                 element: '#step1',
-                intro: "This tutorial will show you how to navigate the content exploration page.",
+                intro: "Welcome to Oaddo!<br><br>This tutorial will show you how to find interesting content.",
                 position: 'top',
             },
             {
@@ -75,7 +91,7 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
             },
             {
                 element: '#step4',
-                intro: "...you can select terms from this container, which is automatically filled with terms related to those in the search container. To add a term, just click on it or drag it into the search container.",
+                intro: "...you can select terms from this container, which is automatically filled with terms related to those in the search container. <br><br>To add a term, just click on it or drag it into the search container.",
                 position: 'bottom'
             },
             {
@@ -95,7 +111,7 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms) {
             }
         ],
         showStepNumbers: false,
-        autoStart: false,
+        autoStart: $scope.autoStartTutorial,
         exitOnOverlayClick: true,
         exitOnEsc: true,
         showBullets: true,

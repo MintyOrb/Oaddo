@@ -1,5 +1,5 @@
-<div ng-controller="exploreCtrl" ng-intro-options="IntroOptions" ng-intro-method="startIntro">
-    <button class="btn btn-primary col-sm-offset-2 marginBottom10" ng-click="startIntro()">start tutorial</button>
+<div ng-controller="exploreCtrl" ng-intro-options="IntroOptions" ng-intro-method="StartIntro" ng-intro-onexit="onExit">
+    <button class="btn btn-primary col-sm-offset-2 marginBottom10" ng-click="StartIntro()">start tutorial</button>
 	<div ui-on-Drop="" >
 		<div id="step3" ng-controller="termTypeAheadCtrl" class="input-group col-sm-3 col-sm-offset-7 marginBottom20">
 		    <input type="text" class="form-control" ng-model="displayOptions.DBTerm" typeahead-on-select="addToSelectedFromDB(contentTerms.selected)" typeahead="term as term.name for term in findTerm()" placeholder="type search term here">
@@ -10,6 +10,13 @@
 	   	
 	</div>
 	<br>
+
+	<!-- <div class='row col-md-8 col-md-offset-2'>
+		Order by:
+		<button ng-click="" class='btn btn-default btn-sm margin10'>Date Added</button>
+		<button class='btn btn-default btn-sm margin10'>Something else</button>
+		<button class='btn btn-default btn-sm margin10'>another</button>
+	</div> -->
 
 	<div id="step7" class="cardsContainer f-flexC f-row f-wrap f-m-around">
 		<div class="f-flexC  f-column f-m-between cardContainer panel panel-default margin5" ng-repeat="content in returnedContent">

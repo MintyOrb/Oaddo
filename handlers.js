@@ -658,6 +658,7 @@ exports.relatedContent = function (request, reply){
     var id = null;
     var member = false;    
     var count = 0;
+    var orderBy = "";
 
     if(request.user !== undefined){
         id = request.user[0].id;
@@ -670,7 +671,8 @@ exports.relatedContent = function (request, reply){
         includedTerms: [],
         userID: id,
         numberOfIncluded: count,
-        skip: request.payload.skip
+        skip: request.payload.skip,
+        orderBy: orderBy
     };
 
     // TODO: consider merging filesystemID, weburl, and embedSrc into one property
@@ -683,11 +685,12 @@ exports.relatedContent = function (request, reply){
             'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // "WITH collect(DISTINCT termNode.UUID) AS termIDs, collect(langNode.name) as names, collect(lang.languageCode) as codes, content, meta ",            
             // 'RETURN DISTINCT  {termID: termIDs, name: names, language: codes } AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
-            // 'ORDER BY'
+            // 'ORDER BY',
             'SKIP {skip}',
             'LIMIT 15'
         ].join('\n');
     } else if(member){
+        console.log("member query was run: ");
         query = [
             "MATCH (user:member {UUID: {userID} }), (meta:contentMeta)<-[metaLang:HAS_META]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",
@@ -699,8 +702,8 @@ exports.relatedContent = function (request, reply){
             "WHERE ",
                 "connected = {numberOfIncluded} ",
                 "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
-            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
-            // 'ORDER BY'
+            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value, content.dateAdded AS dateAdded',
+            // 'ORDER BY dateAdded DESC',
             'SKIP {skip}',
             'LIMIT 15'
         ].join('\n');
