@@ -235,6 +235,7 @@ controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewCo
     $scope.saveNewTerms = function(){
         $http.put('/contentTerms',{newTerms:$scope.content.terms, contentID:$scope.content.UUID})
         .success(function(){
+            console.log("success in adding term: ");
             $scope.content.changesNotMade = true;
             $scope.panel.editTerms = false;
             $scope.content.originalTerms=[];

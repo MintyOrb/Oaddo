@@ -131,8 +131,8 @@ exports.addAccount = function (request, reply) {
 
 //new terms
 exports.addTerm = function (request, reply) {
-
-    // TODO: determine how to handle def in case en/en-gb - remove region specification (gb)?
+    console.log("add term called: " );
+    // TODO: determine how to handle definion in case en vs en-gb - remove region specification (gb)?
     // right now its just adding all as they come in
     
     var UUID = uuid.v4(); // Unique ID for term being added
@@ -185,10 +185,10 @@ exports.addTerm = function (request, reply) {
         "RETURN groupNode, termNode"
     ].join("\n");
 
-    var checkProperties = {mid: request.payload.mid};
-
+    
     // used to see if term is already in the database
     var checkQuery = "MATCH (node:term {MID: {mid} }) RETURN node.UUID as UUID";
+    var checkProperties = {mid: request.payload.mid};
     
     async.series([
         
@@ -197,8 +197,11 @@ exports.addTerm = function (request, reply) {
             db.query(checkQuery, checkProperties, function (err, results) {
                 if (err) {console.log("error performing db query: " + err);}
                 if (results[0] === undefined){
+                    console.log("term not already in db: ");
                     callback();
                 } else{
+                    console.log("term found: " );
+                    console.log(results[0]);
                     reply({newTerm: false, UUID: results[0].UUID});
                     callback(true); // if already found, stop execution of functions
                 }
@@ -225,6 +228,7 @@ exports.addTerm = function (request, reply) {
                     createProperties.metaProps.push(metaProp);
                     defMeta = ""; // reset def so it is not added in incorrect languages
                 }
+                console.log("made meta (translations) : ");
                 callback();   
             });
         },
@@ -233,6 +237,7 @@ exports.addTerm = function (request, reply) {
         function(callback){
             db.query(createQuery, createProperties, function (err, results) {
                 if (err) {console.log("neo4j error: " + err);}
+                console.log("successfully added term: ");
                 callback();
             });
         },
@@ -240,6 +245,7 @@ exports.addTerm = function (request, reply) {
         function(callback){
             db.query(connectGroupsQuery, termGroupProperties, function (err, results) {
                 if (err) {console.log("neo4j error: " + err);}
+                console.log("connected term to groups: " );
                 reply({newTerm: true, UUID: UUID});
                 callback();
                 
@@ -259,10 +265,16 @@ exports.termTypeAhead = function (request, reply){
      };
     //TODO: use english as default if not found in preferred language
     //TODO: use users secondary languge choice if first not found?
+    //TODO: search for aliases of term?
+    // var query = [
+    //     "MATCH (contentNode:content)-[:TAGGED_WITH]-(core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) ",
+    //     "WHERE langNode.name =~ {match} ",
+    //     "RETURN core.UUID as UUID, langNode.name as name, count(DISTINCT contentNode) AS connections LIMIT 8"
+    // ].join('\n');
     var query = [
-        "MATCH (contentNode:content)-[:TAGGED_WITH]-(core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) ",
+        "MATCH (core:term)-[r:HAS_LANGUAGE {languageCode:{code}}]-(langNode) ",
         "WHERE langNode.name =~ {match} ",
-        "RETURN core.UUID as UUID, langNode.name as name, count(DISTINCT contentNode) AS connections LIMIT 8"
+        "RETURN core.UUID as UUID, langNode.name as name LIMIT 8"
     ].join('\n');
 
     db.query(query, properties, function (err, matches) {
@@ -277,7 +289,8 @@ exports.termTypeAhead = function (request, reply){
 
 exports.relatedTerms = function (request, reply) {
     
-    // TODO: compare query speed of other term type methods (as labels, as properties)
+    // TODO: compare query speed of other term type methods (as labels, as properties...)
+    // TODO: improve method of matching terms
 
     var matchAllTerms;
     var query = "";
@@ -379,7 +392,7 @@ exports.getTermGroups = function(request, reply){
 
 exports.setTermGroups = function(request, reply){
 
-    // TODO: log changes made and by whom - record date, user id, changes
+    // TODO: log changes made and by whom - record date, user id, changes - as seperate node?
     var properties = {
         id: request.payload.uuid,
         newGroups: [],
@@ -669,6 +682,7 @@ exports.relatedContent = function (request, reply){
         language: request.payload.language,  // first choice
         defaultLanguage: 'en',               // default to english
         includedTerms: [],
+        excludedTerms: [],
         userID: id,
         numberOfIncluded: count,
         skip: request.payload.skip,
@@ -677,32 +691,73 @@ exports.relatedContent = function (request, reply){
 
     // TODO: consider merging filesystemID, weburl, and embedSrc into one property
     if(request.payload.includedTerms.length === 0){
+        // query = [
+        //     "MATCH (meta:contentMeta)<-[metaLang:HAS_META]-(content:content)-[:TAGGED_WITH]->(termNode:term)-[lang:HAS_LANGUAGE]->(langNode:termMeta) ",
+        //     "WHERE ",
+        //         "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
+        //         "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
+        //     'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+        //     // "WITH collect(DISTINCT termNode.UUID) AS termIDs, collect(langNode.name) as names, collect(lang.languageCode) as codes, content, meta ",            
+        //     // 'RETURN DISTINCT  {termID: termIDs, name: names, language: codes } AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+        //     // 'ORDER BY',
+        //     'SKIP {skip}',
+        //     'LIMIT 15'
+        // ].join('\n');
         query = [
-            "MATCH (meta:contentMeta)<-[metaLang:HAS_META]-(content:content)-[:TAGGED_WITH]->(termNode:term)-[lang:HAS_LANGUAGE]->(langNode:termMeta) ",
+            "MATCH (content:content)-[:TAGGED_WITH]->(termNode:term)-[lang:HAS_LANGUAGE]->(langNode:termMeta) ",
             "WHERE ",
-                "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
-                "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
-            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+                // "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
+                " lang.languageCode IN [ {language} , {defaultLanguage} ] ",
+            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID ',
             // "WITH collect(DISTINCT termNode.UUID) AS termIDs, collect(langNode.name) as names, collect(lang.languageCode) as codes, content, meta ",            
             // 'RETURN DISTINCT  {termID: termIDs, name: names, language: codes } AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
             // 'ORDER BY',
             'SKIP {skip}',
             'LIMIT 15'
         ].join('\n');
+        // query = [
+        //     "MATCH (content:content) ",
+        //     'RETURN DISTINCT  content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, content.dateAdded AS date ',
+        //     // "WITH collect(DISTINCT termNode.UUID) AS termIDs, collect(langNode.name) as names, collect(lang.languageCode) as codes, content, meta ",            
+        //     // 'RETURN DISTINCT  {termID: termIDs, name: names, language: codes } AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value',
+        //     'ORDER BY date DESC ',
+        //     'SKIP {skip}',
+        //     'LIMIT 15'
+        // ].join('\n');
     } else if(member){
         console.log("member query was run: ");
+        // query = [
+        //     "MATCH (user:member {UUID: {userID} }), (meta:contentMeta)<-[metaLang:HAS_META]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
+        //     "WHERE ",
+        //         "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
+        //         "AND NOT (user)-[:BLOCKED]-(content) ",
+        //         'AND termNode.UUID IN {includedTerms} ',
+        //         'AND NOT termNode.UUID IN {excludedTerms}',
+        //     "WITH content, count(*) AS connected, meta ",
+        //     "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE]-(langNode:termMeta) ",
+        //     "WHERE ",
+        //         "connected = {numberOfIncluded} ",
+        //         "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
+        //     'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value, content.dateAdded AS dateAdded',
+        //     // 'ORDER BY dateAdded DESC',
+        //     'SKIP {skip}',
+        //     'LIMIT 15'
+        // ].join('\n');
         query = [
-            "MATCH (user:member {UUID: {userID} }), (meta:contentMeta)<-[metaLang:HAS_META]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
+            "MATCH (user:member {UUID: {userID} }), (content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",
-                "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
-                "AND NOT (user)-[:BLOCKED]-(content) ",
+                // "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
+                " NOT (user)-[:BLOCKED]-(content) ",
                 'AND termNode.UUID IN {includedTerms} ',
-            "WITH content, count(*) AS connected, meta ",
+                'AND NOT termNode.UUID IN {excludedTerms}',
+            // "WITH content, count(*) AS connected, meta ",
+            "WITH content, count(*) AS connected ",
             "MATCH (content)-[:TAGGED_WITH]-(termNode:term)-[lang:HAS_LANGUAGE]-(langNode:termMeta) ",
             "WHERE ",
                 "connected = {numberOfIncluded} ",
                 "AND lang.languageCode IN [ {language} , {defaultLanguage} ] ",
-            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value, content.dateAdded AS dateAdded',
+            // 'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, meta.description AS description, meta.title AS title, meta.value AS value, content.dateAdded AS dateAdded',
+            'RETURN DISTINCT  collect( {termID: termNode.UUID, meta: {name: langNode.name, language: lang.languageCode } } ) AS terms, content.displayType AS displayType, content.savedAs AS savedAs, content.webURL AS webURL, content.embedSrc AS embedsrc, content.UUID AS UUID, content.dateAdded AS dateAdded',
             // 'ORDER BY dateAdded DESC',
             'SKIP {skip}',
             'LIMIT 15'
@@ -731,6 +786,12 @@ exports.relatedContent = function (request, reply){
         properties.includedTerms.push(request.payload.includedTerms[i].UUID);
         count += 1;
     }
+    // add UUIDs from excluded terms to excluded array
+    for ( i = 0; i < request.payload.excludedTerms.length; i++) {
+        properties.excludedTerms.push(request.payload.excludedTerms[i].UUID);
+        // count += 1;
+    }
+    console.log(properties);
     properties.numberOfIncluded = count;
     db.query(query, properties, function (err, results) {
         if (err) {throw err;}
@@ -747,12 +808,12 @@ exports.getContent = function (request, reply){
         "MATCH (meta:contentMeta)-[r:HAS_META]-(contentNode:content {UUID: {id} }) ",
         'WHERE r.languageCode IN [{language}, "en"]',
         'RETURN contentNode.displayType AS displayType, contentNode.savedAs AS savedAs, contentNode.webURL AS webURL, contentNode.embedSrc AS embedSrc '
-        ].join('\n');
+    ].join('\n');
+
     var properties = { 
         id: request.query.uuid,
         language: request.query.language,
     };
-
     db.query(query, properties, function (err, content) {
         if (err) {console.log("error in db query: " + err);}
         if(content[0] === undefined){
@@ -764,7 +825,7 @@ exports.getContent = function (request, reply){
 };
 
 exports.getContentTerms = function (request, reply){
-        
+
     var query = "MATCH (metaNode:termMeta)-[:HAS_LANGUAGE { languageCode: { language } }]-(termNode:term)-[:TAGGED_WITH]-(contentNode:content {UUID: {id} }) RETURN metaNode.name AS name, termNode.UUID AS UUID";
     var properties = { 
         id: request.query.uuid,
@@ -816,7 +877,7 @@ exports.updateContentTerms = function (request, reply){
     });
 };
 exports.getContentAbout = function (request, reply){
-        
+ 
     var query = [
         "MATCH (contentNode:content {UUID: {id} })-[r:HAS_META]-(metaNode:contentMeta) ",
         'WHERE r.languageCode IN [{language}, "en"]',
