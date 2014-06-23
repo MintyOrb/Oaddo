@@ -27,7 +27,7 @@ var options = {
 var plugins = {
     yar: {
         cookieOptions: {
-            password: 'WOWOWOWSOSECRET', // cookie secret // process.env.COOKIE_SECRET || 'DEV', 
+            password: 'WOWOWOWSOSECRET', // cookie secret // change to: process.env.COOKIE_SECRET || 'DEV', 
             isSecure: false // required for non-https applications
         }
     },
@@ -91,7 +91,7 @@ server.route([
         console.log("login failure. about to reply with a 200 anyway");
         reply({message:"Incorrect username or password"});
     }},
-    //NOTE: is this a security fault?
+   
     { method: 'GET', path: '/loginSuccess', config: {auth: 'passport'}, handler: function(request, reply){
         console.log("successful login here. about to reply with a 200...");
         reply({loginSuccessful:true});

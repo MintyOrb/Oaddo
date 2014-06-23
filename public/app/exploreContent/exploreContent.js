@@ -141,7 +141,16 @@ service('viewContent', [function () {
 }]).
 
 
-controller('contentPageCtrl', ['$sce', '$http','$routeParams', '$scope', "viewContent", "appLanguage", '$window', 'filterFactory',function ($sce, $http, $routeParams, $scope, viewContent, appLanguage, $window, filterFactory) {
+controller('contentPageCtrl', [
+    '$sce', 
+    '$http',
+    '$routeParams', 
+    '$scope', 
+    "viewContent", 
+    "appLanguage", 
+    '$window', 
+    'filterFactory',
+    function ($sce, $http, $routeParams, $scope, viewContent, appLanguage, $window, filterFactory) {
 
 // TODO: refactor. A lot of this code is the same as in the termSelectionCtrl (in shared)
 
