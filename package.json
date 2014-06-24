@@ -10,7 +10,7 @@
     "passport": "0.2.0",
     "passport-local": "0.1.6",
     "neo4j": "0.2.20",
-    "request": "2.27.0",
+    "request": "2.36.1",
     "karma": "0.10.x",
     "bcrypt": "0.7.7",
     "node-gyp": "0.12.2",
