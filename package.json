@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "hapi": "6.0.x",
+    "hapi": "4.x.x",
     "yar": "2.3.1",
     "joi": "4.6.1",
     "travelogue": "2.0.1",
