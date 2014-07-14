@@ -6,6 +6,7 @@
 		
 	<!-- TODO: set max/min zoom based on image size -->
 	<!-- TODO: find zoom solution for mobile -->
+	<!-- TODO: replace with this library jQuery?  - http://codecanyon.net/item/smooth-zoom-pan-jquery-image-viewer/511142 -->
 	<zui  ng-if="content.display.displayType === 'image'" url="http://s3.amazonaws.com/submitted_images/{{content.display.savedAs}}"></zui>
 
 	<!-- TODO: modify for mobile (go to full page panel) -->
@@ -62,12 +63,7 @@
 					</div>
 				</div>
 
-				<div ng-show="Login.loggedIn" class="col-md-12 col-md-offset-1">
-					<button class="btn btn-default noOutline">add source</button>
-					<button class="btn btn-default noOutline">add link</button>
-					<button class="btn btn-default noOutline">add fact</button>
-					<button class="btn btn-default noOutline">add criticism</button>
-				</div>
+
 			</div>
 
 		</div>

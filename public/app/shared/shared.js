@@ -52,13 +52,13 @@ controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLangua
             groups: $scope.filter.groups,
             language: appLanguage.languageCode }).
         success(function(data){
-            // TODO: update # of term connections if term is not being replaced
             if($scope.contentTerms.related.length > 0){
                 var matched = [];
                 // for earch term in related go though results get name if also found in results.
                 for (var i = 0; i < $scope.contentTerms.related.length; i++) {
                     for (var x = 0; x < data.results.length; x++) {
                         if($scope.contentTerms.related[i].name === data.results[x].name){
+                            $scope.contentTerms.related[i].connections = data.results[x].connections; // update # content matching term
                             matched.push(data.results[x].name);
                         }
                     }
