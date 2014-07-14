@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "phantomjs": "1.9.7-14",
     "hapi": "4.x.x",
     "yar": "2.3.1",
     "joi": "4.6.1",
