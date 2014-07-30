@@ -11,7 +11,7 @@ var config = {
     hostname: '0.0.0.0',
     port: parseInt(process.env.PORT) || 8000,
     urls: {
-        successRedirect:'/loginSuccess',
+        successRedirect:'/loginSuccess', //are these actually used?
         failureRedirect:'/loginFailure'
     }
 };
@@ -42,6 +42,8 @@ server.pack.require(plugins, function (err) {
         throw err;
     }
 });
+// TODO: switch to hawk (holder-of-key) or hapi-auth-basic or hapi-auth-cookie for auth? - just move away from passport...
+// TODO: add hapi Bell for third-party login
 server.auth.strategy('passport', 'passport');
 
 //setup auth
@@ -122,13 +124,22 @@ server.route([
 
     { method: 'POST', path: '/explore', handler: handlers.relatedContent},
    
-    { method: 'GET', path: '/content', handler: handlers.getContent},
+    { method: 'GET', path: '/content/{uuid}', handler: handlers.getContent},
 
-    { method: 'GET', path: '/contentTerms', handler: handlers.getContentTerms},
+    { method: 'GET', path: '/content/{uuid}/terms', handler: handlers.getContentTerms},
+    
+    { method: 'PUT', path: '/content/{uuid}/terms', config: {auth: 'passport'}, handler: handlers.updateContentTerms},
 
-    { method: 'PUT', path: '/contentTerms', config: {auth: 'passport'}, handler: handlers.updateContentTerms},
+    // needs to be filled out:
+    // { method: 'GET', path: '/content/{uuid}/questions', handler: handlers.getContentAbout},
+    // { method: 'GET', path: '/content/{uuid}/facts', handler: handlers.getContentAbout},
+    // { method: 'GET', path: '/content/{uuid}/about', handler: handlers.getContentAbout},
+    // { method: 'GET', path: '/content/{uuid}/description', handler: handlers.getContentAbout},//?
+    // { method: 'GET', path: '/content/{uuid}/value', handler: handlers.getContentAbout},//?
+    // { method: 'GET', path: '/content/{uuid}/general', handler: handlers.getContentAbout},//?
+    // { method: 'GET', path: '/content/{uuid}/criticisms', handler: handlers.getContentAbout},
 
-    { method: 'GET', path: '/contentAbout', handler: handlers.getContentAbout},
+    { method: 'GET', path: '/contentAbout', handler: handlers.getContentAbout}, // remove this
 
 
 ]);     

@@ -196,7 +196,7 @@ controller('contentPageCtrl', [
     // });
 
     // TODO: handle error - if content with UUID not found, display error - just do 404?
-    $http.get('/content', {params: {uuid: $scope.content.UUID, language: appLanguage.languageCode}})
+    $http.get('/content/' + $scope.content.UUID, {params: {language: appLanguage.languageCode}})
     .success(function(data){
         viewContent.selected = data[0];  
         $scope.content.display = viewContent.selected;
@@ -207,7 +207,7 @@ controller('contentPageCtrl', [
 
     $scope.getContentTerms = function(){
         if($scope.content.terms.length === 0){
-            $http.get('/contentTerms', {params: {uuid: $scope.content.UUID, language: appLanguage.languageCode}})
+            $http.get('/content/' + $scope.content.UUID + '/terms', {params: {language: appLanguage.languageCode}})
             .success(function(returned){
                 for (var ii = 0; ii < returned.length; ii++) {
                     $scope.content.terms.push(returned[ii]);
@@ -242,7 +242,7 @@ controller('contentPageCtrl', [
     };
 
     $scope.saveNewTerms = function(){
-        $http.put('/contentTerms',{newTerms:$scope.content.terms, contentID:$scope.content.UUID})
+        $http.put('/content/' + $scope.content.UUID + '/terms', {newTerms:$scope.content.terms})
         .success(function(){
             console.log("success in adding term: ");
             $scope.content.changesNotMade = true;

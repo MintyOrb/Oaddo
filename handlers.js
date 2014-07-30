@@ -7,7 +7,7 @@ var bcrypt = require('bcrypt'),
     freebase = require('freebase'),
     async = require('async'),
     uuid = require('node-uuid'),
-    webshot = require('webshot'),
+    // webshot = require('webshot'),
     youtube = require('youtube-node'),
     AWS = require('aws-sdk'),
     s3 = new AWS.S3();
@@ -811,7 +811,7 @@ exports.getContent = function (request, reply){
     ].join('\n');
 
     var properties = { 
-        id: request.query.uuid,
+        id: request.params.uuid,
         language: request.query.language,
     };
     db.query(query, properties, function (err, content) {
@@ -828,7 +828,7 @@ exports.getContentTerms = function (request, reply){
 
     var query = "MATCH (metaNode:termMeta)-[:HAS_LANGUAGE { languageCode: { language } }]-(termNode:term)-[:TAGGED_WITH]-(contentNode:content {UUID: {id} }) RETURN metaNode.name AS name, termNode.UUID AS UUID";
     var properties = { 
-        id: request.query.uuid,
+        id: request.params.uuid,
         language: request.query.language,
     };
 
@@ -845,7 +845,7 @@ exports.updateContentTerms = function (request, reply){
     // TODO: log changes made and by whom - record date, user id, changes
 
     var properties = {
-        contentID: request.payload.contentID,
+        contentID: request.params.uuid,
         termIDs: [],
         date: new Date(),
         userID: request.user[0].id
@@ -876,6 +876,7 @@ exports.updateContentTerms = function (request, reply){
         }
     });
 };
+
 exports.getContentAbout = function (request, reply){
  
     var query = [
@@ -895,7 +896,9 @@ exports.getContentAbout = function (request, reply){
 };
 
 
-
+exports.addFact = function (request, reply){
+    
+};
 
 
 
