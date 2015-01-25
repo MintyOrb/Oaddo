@@ -28,6 +28,7 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms, $c
             skip: 0 
         }).
         success(function(data){
+            console.log(data);
             if(data.length === 0){
                 $scope.noMoreContent = true;
             }

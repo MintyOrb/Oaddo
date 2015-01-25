@@ -765,7 +765,7 @@ exports.relatedContent = function (request, reply){
 
     } else {
         query = [
-            "MATCH (meta:contentMeta)<-[metaLang:HAS_META {languageCode: {language} }]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
+            "MATCH (meta:contentMeta)<-[metaLang:HAS_META]-(content:content)-[:TAGGED_WITH]-(termNode:term) ",
             "WHERE ",
                 "metaLang.languageCode IN [ {language} , {defaultLanguage} ] ",
                 'AND termNode.UUID IN {includedTerms} ',
@@ -791,9 +791,10 @@ exports.relatedContent = function (request, reply){
         properties.excludedTerms.push(request.payload.excludedTerms[i].UUID);
         // count += 1;
     }
-    console.log(properties);
+    
     properties.numberOfIncluded = count;
     db.query(query, properties, function (err, results) {
+        console.log(results);
         if (err) {throw err;}
         reply(results);
     });
@@ -816,7 +817,7 @@ exports.getContent = function (request, reply){
     };
     db.query(query, properties, function (err, content) {
         if (err) {console.log("error in db query: " + err);}
-        if(content[0] === undefined){
+        if(content === undefined){
             reply({ message : 'content not found' });
         } else {
             reply(content);
