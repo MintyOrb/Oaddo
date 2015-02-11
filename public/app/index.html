@@ -2,7 +2,6 @@
 <html ng-app="universalLibrary">
     <head>
 
-        <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- diable zoom on mobile devies -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <base href="/">
@@ -127,7 +126,6 @@
             <!-- Angular -->
             <script type="text/javascript" src="bower_components/angular-cookies/angular-cookies.min.js"></script>
             <script type="text/javascript" src="bower_components/angular-route/angular-route.min.js"></script>
-            <script type="text/javascript" src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
             <script type="text/javascript" src="bower_components/angular-resource/angular-resource.min.js"></script>
             <script type="text/javascript" src="bower_components/angular-animate/angular-animate.min.js"></script>
         
@@ -139,11 +137,18 @@
 
 
             <!-- resources -->  
+
+            <!-- text angular -->
+            <link rel='stylesheet' href='/bower_components/textAngular/src/textAngular.css'>
+            <script src='/bower_components/textAngular/dist/textAngular-rangy.min.js'></script>
+            <script src='/bower_components/textAngular/dist/textAngular-sanitize.min.js'></script>
+            <script src='/bower_components/textAngular/dist/textAngular.min.js'></script>
+
+
             <script src="resources/angular-pageslide-directive.js"></script>    
             <link href="resources/css/animate.min.css" rel="stylesheet">
             <script type="text/javascript" src="bower_components/ngAnimate-animate.css/animate.js"></script>
             <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-            <script type="text/javascript" src='bower_components/textAngular/textAngular.min.js'></script>
             <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
             <script type="text/javascript" src="bower_components/angular-http-auth/src/http-auth-interceptor.js"></script>
             <script type="text/javascript" src="resources/angular-file-upload.min.js"></script>
