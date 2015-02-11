@@ -1,4 +1,3 @@
 {
-    "directory": "public/bower_components",
-    "tmp": ".bower-tmp"
+    "directory": "public/bower_components"
 }
