@@ -15,12 +15,16 @@ var universalLibrary = angular.module('universalLibrary',
         'angular-loading-bar',
         'ngAnimate-animate.css',
         'ngDragDrop',
-        'angular-intro',
         'angulartics',
-        'angulartics.google.analytics'
+        'angulartics.google.analytics',
+        'ngMaterial',
+        'ngAria'
     ]).
 
-config(function($routeProvider, $locationProvider, $httpProvider) {
+config(function($routeProvider, $locationProvider, $httpProvider, $mdThemingProvider) {
+
+    $mdThemingProvider.theme('default')
+        .primaryPalette('deep-orange');
 
     //function for checking login status before a route change
     // NOTE: this just checks a cookie value and is VERY EASILY faked. However, if fake no malicious behavior should be able to occur.

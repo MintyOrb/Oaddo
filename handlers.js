@@ -807,13 +807,13 @@ exports.getContent = function (request, reply){
     // TODO: increase view count by one
     var query = [
         "MATCH (meta:contentMeta)-[r:HAS_META]-(contentNode:content {UUID: {id} }) ",
-        'WHERE r.languageCode IN [{language}, "en"]',
+        'WHERE r.languageCode = {language}',
         'RETURN contentNode.displayType AS displayType, contentNode.savedAs AS savedAs, contentNode.webURL AS webURL, contentNode.embedSrc AS embedSrc '
     ].join('\n');
 
     var properties = { 
         id: request.params.uuid,
-        language: request.query.language,
+        language: request.query.language || 'en',
     };
     db.query(query, properties, function (err, content) {
         if (err) {console.log("error in db query: " + err);}

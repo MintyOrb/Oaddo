@@ -58,70 +58,6 @@ controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms, $c
         });
     };
 
-    // don't run tutorial if logged in
-    if($scope.Login.loggedIn){
-        $cookieStore.put("showTutorial", false);
-    }
-    if($cookieStore.get('showTutorial') !== false){
-        $timeout(function(){
-            $scope.StartIntro();
-        }, 
-        1000);
-    }
-    // do not auto run tutorial if it has been run before
-    $scope.onExit = function(){
-        $cookieStore.put("showTutorial", false);
-    };
-    
-    $scope.IntroOptions = {
-        steps:[
-            {
-                element: '#step1',
-                intro: "Welcome to Oaddo!<br><br>This tutorial will show you how to find interesting content.",
-                position: 'top',
-            },
-            {
-                element: '#step2',
-                intro: "This is the search term container. The terms in this container determine what content is returned below.",
-                position: 'top'
-            },
-            {
-                element: '#step3',
-                intro: 'You can manually add terms to the search container by typing them here. Or...',
-                position: 'bottom'
-            },
-            {
-                element: '#step4',
-                intro: "...you can select terms from this container, which is automatically filled with terms related to those in the search container. <br><br>To add a term, just click on it or drag it into the search container.",
-                position: 'bottom'
-            },
-            {
-                element: '#step5',
-                intro: 'You can filter the related terms by selecting a term group. Only terms in the selected group will be returned.',
-                position: 'bottom'
-            },
-            {
-                element: '#step6',
-                intro: 'This is the container for discarded terms. Terms in this container will not show up in the related terms container- you can use it to free up space for terms you might be more interested in.',
-                position: 'top'
-            },
-            {
-                element: '#step7',
-                intro: 'Content related to terms in the search container will appear here. Click on the content to go to its individual page.<br><br>Thats it!',
-                position: 'top'
-            }
-        ],
-        showStepNumbers: false,
-        autoStart: $scope.autoStartTutorial,
-        exitOnOverlayClick: true,
-        exitOnEsc: true,
-        showBullets: true,
-        nextLabel: '<strong>next</strong>',
-        prevLabel: 'Previous',
-        skipLabel: 'Exit',
-        doneLabel: 'Start exploring!',
-        scrollToElement: false
-   };
 }).
 
 filter('language', function() {
@@ -254,31 +190,6 @@ controller('contentPageCtrl', [
             }
         });
     };
-
-    // $scope.getPossibleTerms = function(){
-    //     $http.post('/relatedTerms', 
-    //         {
-    //             matchAll: false, 
-    //             uuid: $scope.content.UUID, 
-    //             language: appLanguage.languageCode,
-    //             keyTerms: $scope.content.terms,
-    //             groups: $scope.filter.groups
-    //         })
-    //     .success(function(data){
-    //         $scope.content.relatedTerms = data.results;
-    //     });
-    // };
-    // $scope.getRelatedContent = function(){
-    //     $http.post('/explore', { 
-    //         includedTerms: $scope.contentTerms.selected,
-    //         excludedTerms: $scope.contentTerms.discarded, 
-    //         language: appLanguage.languageCode }).
-    //     success(function(data){
-    //         $scope.returnedContent = data; 
-    //     });
-    // };
-
-
 
 }]).
 

@@ -5,6 +5,8 @@
 
 /**{outline: solid 1px;}*/
 
+/*overwrite material css (for display of content*/
+.md-content {overflow: visible;}
 
 /* override bootstrap 3 css*/
 .hr{margin:5px; border-top: 1px solid #D8D8D8;}*/
@@ -17,11 +19,6 @@
 .well {
   position: relative;
   min-height: 70px;
-}
-.navbar {
-	z-index: 501; /*needs to be above content panel*/
-	border-radius: 4px;
-	margin-top: 10px;
 }
 .btn-default .badge {
 	background-color: #B3B3B3;
@@ -46,10 +43,6 @@
 	margin-top: 10px
 }
 
-/* overwrite well default colored background to make the intro looks less funny*/
-.introjs-showElement{
-	background-color: white;
-}
 
 
 .noOutline:focus {
