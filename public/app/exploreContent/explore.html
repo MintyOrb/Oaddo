@@ -1,38 +1,38 @@
 <div ng-controller="exploreCtrl">
-		<div ng-controller="termTypeAheadCtrl" class="input-group col-sm-3 col-sm-offset-7 marginBottom20 marginTop10">
-		    <input 
-		    	type="text" 
-		    	class="form-control" 
-		    	ng-model="displayOptions.DBTerm" 
-		    	typeahead-on-select="addToSelectedFromDB(contentTerms.selected)" 
-		    	typeahead="term as term.name for term in findTerm()" 
-		    	placeholder="type search term here"
-		    >
-		    <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
-		</div>
+	<div ng-controller="termTypeAheadCtrl" class="input-group col-sm-3 col-sm-offset-7 marginBottom20 marginTop10">
+	    <input 
+	    	type="text" 
+	    	class="form-control" 
+	    	ng-model="displayOptions.DBTerm" 
+	    	typeahead-on-select="addToSelectedFromDB(contentTerms.selected)" 
+	    	typeahead="term as term.name for term in findTerm()" 
+	    	placeholder="type search term here"
+	    >
+	    <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
+	</div>
 
-	   	<ng-include ng-controller='termSelectionCtrl' class="col-sm-8 col-sm-offset-2 padding0" src="'app/shared/termSelectionPartial.html'"></ng-include>
+   	<ng-include ng-controller='termSelectionCtrl' class="col-sm-8 col-sm-offset-2 padding0" src="'app/shared/termSelectionPartial.html'"></ng-include>
 	   	
 
-<br>
+	<br>
 
-<!-- view options -->
-<!-- <div class="col-sm-10 col-sm-offset-2">
+	<!-- view options -->
+	<!-- <div class="col-sm-10 col-sm-offset-2">
 		<button class="btn btn-sm btn-default">List</button>
 		<button class="btn btn-sm btn-default">Panel</button>
-	</div> -->
+	</div>
 
-	<!-- <div class='row col-md-8 col-md-offset-2'>
+	<div class='row col-md-8 col-md-offset-2'>
 		Order by:
 		<button ng-click="" class='btn btn-default btn-sm margin10'>Date Added</button>
 		<button class='btn btn-default btn-sm margin10'>Something else</button>
 		<button class='btn btn-default btn-sm margin10'>another</button>
 	</div> -->
 
-<ng-include src="'app/exploreContent/panelPartial.html'"></ng-include>
+	<ng-include src="'app/exploreContent/panelPartial.html'"></ng-include>
 
 	
-	</div>
+
 	<div class="f-flexC f-m-center">
 		<button ng-hide="noMoreContent" ng-click="loadMoreContent();" class="btn btn-default margin20 ">load more content</button>
 		<p ng-show="noMoreContent" class="margin20"><em>Sorry, no more related content</em></p>
