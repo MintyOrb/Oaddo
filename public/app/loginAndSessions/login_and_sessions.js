@@ -1,7 +1,7 @@
 /*global console, angular, setTimeout, alert*/
 'use strict';
 
-angular.module('universalLibrary').
+angular.module('oaddo').
     
 controller('LoginModalInstanceCtrl' , function ($scope, $modalInstance, LoginService, authService, $http, $cookieStore) {
     console.log("instance ctrl here");

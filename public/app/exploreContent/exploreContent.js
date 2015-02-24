@@ -1,7 +1,7 @@
 /*global console, angular, setTimeout, window, FileReader, $ */
 'use strict';
 
-angular.module('universalLibrary').
+angular.module('oaddo').
 
 controller("exploreCtrl", function ($scope, $http, appLanguage, contentTerms, $cookieStore, $timeout) {
 

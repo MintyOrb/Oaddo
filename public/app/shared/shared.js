@@ -1,7 +1,7 @@
 /*global console, angular, setTimeout, window, FileReader, $ */
 'use strict';
 
-angular.module('universalLibrary').
+angular.module('oaddo').
 
 controller("termSelectionCtrl", function ($scope, contentTerms, $http, appLanguage, filterFactory, $modal) {
 

@@ -1,7 +1,7 @@
 /*global console, angular, setTimeout, alert, window */
 'use strict';
 
-var universalLibrary = angular.module('universalLibrary', 
+var oaddo = angular.module('oaddo', 
     [
         'ngRoute', 
         'ui.bootstrap',

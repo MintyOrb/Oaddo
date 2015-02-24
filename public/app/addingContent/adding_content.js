@@ -1,7 +1,7 @@
 /*global console, angular, setTimeout, window, FileReader, $ */
 'use strict';
 
-angular.module('universalLibrary').
+angular.module('oaddo').
 
 controller('addingContentCtrl', ['$location', '$scope', 'contentTerms', 'appLanguage', '$http', function ($location, $scope, contentTerms, appLanguage, $http) {
     

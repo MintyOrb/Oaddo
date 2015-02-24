@@ -6,10 +6,10 @@
 /**{outline: solid 1px;}*/
 
 /*overwrite material css (for display of content*/
-.md-content {overflow: visible;}
-
+/*.md-default-theme {overflow: visible;}
+*/
 /* override bootstrap 3 css*/
-.hr{margin:5px; border-top: 1px solid #D8D8D8;}*/
+.hr{margin:5px; border-top: 1px solid #D8D8D8;}
 .row{margin:0px;}
 .container {width:auto;}
 .form-control{
