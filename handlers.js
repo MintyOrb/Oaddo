@@ -806,7 +806,8 @@ exports.getContent = function (request, reply){
 
     // TODO: increase view count by one
     var query = [
-        "MATCH (meta:contentMeta)-[r:HAS_META]-(contentNode:content {UUID: {id} }) ",
+        "MATCH (contentNode:content {UUID: {id} }) ",
+        "OPTIONAL MATCH (meta:contentMeta)-[r:HAS_META]-(contentNode)",
         'WHERE r.languageCode = {language}',
         'RETURN contentNode.displayType AS displayType, contentNode.savedAs AS savedAs, contentNode.webURL AS webURL, contentNode.embedSrc AS embedSrc '
     ].join('\n');
@@ -881,7 +882,8 @@ exports.updateContentTerms = function (request, reply){
 exports.getContentAbout = function (request, reply){
  
     var query = [
-        "MATCH (contentNode:content {UUID: {id} })-[r:HAS_META]-(metaNode:contentMeta) ",
+        "MATCH (contentNode:content {UUID: {id} })",
+        "OPTIONAL MATCH (contentNode)-[r:HAS_META]-(metaNode:contentMeta)",
         'WHERE r.languageCode IN [{language}, "en"]',
         "RETURN metaNode.value AS value, metaNode.description AS description, metaNode.title AS title "
         ].join('\n'); 
@@ -892,7 +894,7 @@ exports.getContentAbout = function (request, reply){
 
     db.query(query, properties, function (err, about) {
         if (err) {console.log("error in db query: " + err);}
-            reply({value:about[0].value || "",description:about[0].description || "",title:about[0].title || ""});
+        reply({value:about[0].value || "",description:about[0].description || "",title:about[0].title || ""});
     });   
 };
 
