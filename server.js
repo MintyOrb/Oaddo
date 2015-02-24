@@ -62,6 +62,7 @@ Passport.deserializeUser(function (obj, done) {
 
 // routes
 server.route([        
+    { method: 'GET', path: '/{path*}', handler: {file: './public/app/index.html'} },
 
 	//resource routes
     { method: 'GET', path: '/bower_components/{path*}', handler: { directory: { path: './public/bower_components/' } } },
@@ -70,7 +71,6 @@ server.route([
     { method: 'GET', path: '/img/{path*}', handler: { directory: { path: './public/img/' } } },
 
     //serve index as entry point into angular app
-    { method: 'GET', path: '/{path*}', handler: {file: './public/app/index.html'} },
 
     //auth routes
     { method: 'POST', path: '/login', config: {
@@ -124,13 +124,12 @@ server.route([
 
     { method: 'POST', path: '/explore', handler: handlers.relatedContent},
    
-    { method: 'GET', path: '/content/{uuid}', handler: handlers.getContent},
+    { method: 'GET', path: '/contentdata/{uuid}', handler: handlers.getContent},
 
     { method: 'GET', path: '/content/{uuid}/terms', handler: handlers.getContentTerms},
     
     { method: 'PUT', path: '/content/{uuid}/terms', config: {auth: 'passport'}, handler: handlers.updateContentTerms},
 
-    // needs to be filled out:
     // { method: 'GET', path: '/content/{uuid}/questions', handler: handlers.getContentAbout},
     // { method: 'GET', path: '/content/{uuid}/facts', handler: handlers.getContentAbout},
     // { method: 'GET', path: '/content/{uuid}/about', handler: handlers.getContentAbout},

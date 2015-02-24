@@ -24,8 +24,9 @@
 		<!-- TODO: get style out of html -->
 	<md-toolbar style="background-color: whitesmoke" ng-cloak md-scroll-shrink>
 		<div class="md-toolbar-tools">
+			<span flex="5"></span>
 			<a href="/" style="color:black"><span>Oaddo</span><span class="h6"> alpha</span></a>
-			<!-- fill up the space between left and right area -->
+			
 			<span flex></span>
 	        <div class="btn-group" dropdown>
 	            <button ng-cloak class="btn btn-default noAction"><img id="langIcon" ng-cloak src="img/langIcon.png">{{displayLanguage.nativeName}}</button> 
@@ -34,6 +35,7 @@
 	                <li ng-repeat="(key, lang) in displayLanguage.languages"><a ng-click="displayLanguage.dropdownSelect(key, lang)">{{lang.nativeName}}</a></li>
 	            </ul>
 	        </div>
+	        <span flex="5"></span>
 	       <!--  <button ng-cloak ng-click="Login.open()" ng-hide="Login.loggedIn"class="btn btn-default noOutline">Login</button>
 	        <button ng-cloak ng-click="Login.logout()" ng-show="Login.loggedIn" class="btn btn-default noOutline">Logout</button>
 	        <span style="color:black" ng-show="Login.loggedIn"><a href="addContent">add content</a></span>
