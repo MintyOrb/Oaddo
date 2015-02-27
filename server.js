@@ -3,8 +3,9 @@
 
 //import dependencies
 var Hapi = require('hapi'),
-	LocalStrategy = require('passport-local').Strategy,
-    handlers = require("./handlers");
+    handlers = require("./handlers"),
+    LocalStrategy = require('passport-local').Strategy,
+    authsession = require("./authsession");
 
 //server config
 var config = {
@@ -17,10 +18,7 @@ var config = {
 };
 
 var options = { 
-    payload:{
-        maxBytes:104857600 //100 mb
-    }
-        
+    payload:{ maxBytes:104857600 } //100 mb   
 };
 
 //hapi plugins
@@ -35,30 +33,7 @@ var plugins = {
 };
 
 //init server
-var server = new Hapi.Server(config.hostname, config.port, options);
-
-server.pack.require(plugins, function (err) { 
-    if (err) {
-        throw err;
-    }
-});
-// TODO: switch to hawk (holder-of-key) or hapi-auth-basic or hapi-auth-cookie for auth? - just move away from passport...
-// TODO: add hapi Bell for third-party login
-server.auth.strategy('passport', 'passport');
-
-//setup auth
-var Passport = server.plugins.travelogue.passport;
-
-Passport.use(new LocalStrategy( handlers.authUser ) );
-
-    //for sessions
-Passport.serializeUser(function(user, done) {
-    done(null, user);
-});
-
-Passport.deserializeUser(function (obj, done) {
-    done(null, obj);
-});
+var server = module.exports.s = new Hapi.Server(config.hostname, config.port, options);
 
 // routes
 server.route([        
@@ -73,18 +48,7 @@ server.route([
     //serve index as entry point into angular app
 
     //auth routes
-    { method: 'POST', path: '/login', config: {
-            handler: function (request, reply) {
-
-                console.log("/login handler here.");
-    
-                Passport.authenticate('local', {
-                    successRedirect: config.urls.successRedirect,
-                    failureRedirect: config.urls.failureRedirect
-                })(request, reply);
-            }
-        }
-    },
+    { method: 'POST', path: '/login', config: { handler: authsession.login } },
     
     //responding with 200 rather than 401 because http-auth module logs all 401s
     //and resends the requests after a successful login. ie login failure attempts
@@ -100,9 +64,9 @@ server.route([
     }},
 
     //api routes
-    { method: 'POST', path: '/user', handler: handlers.addAccount },
+    { method: 'POST', path: '/user', handler: authsession.addAccount },
 
-    { method: 'POST', path: '/logout', config: {auth: 'passport'}, handler: handlers.logout},
+    { method: 'POST', path: '/logout', config: {auth: 'passport'}, handler: authsession.logout},
 
     { method: 'POST', path: '/requestCode', handler: handlers.requestCode},
 
